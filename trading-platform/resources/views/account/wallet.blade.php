@@ -1,6 +1,6 @@
 @extends('layouts/app')
 @section('more_css')
-  {{ HTML::style('css/wallet.css') }}
+  <link href="{{ asset('css/wallet.css') }}" rel="stylesheet">
 @endsection
 @section('content')
   <div class="wallet-page">

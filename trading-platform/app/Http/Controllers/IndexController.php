@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class IndexController extends Controller
 {
-    protected $title = 'Rentomoon - Rental your currentcy';
+    protected $title = 'Rentomoon';
 
 
     public function __invoke(){

@@ -20,7 +20,7 @@ Route::get('/test', function(){
 
 
 Route::post('/register/check', 'Auth\RegisterController@ajaxValidator');
-
+Route::get('/trade', 'TradeController@index')->name('trade');
 
 Route::group( ['middleware' => 'auth' ], function()
 {
