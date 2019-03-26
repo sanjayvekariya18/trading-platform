@@ -4,7 +4,6 @@
 @endsection
 @section('content')
   <div class="wallet-page">
-
     <div class="listWrap">
       <h3>Wallet Balances</h3>
       <ul class="float-right">
