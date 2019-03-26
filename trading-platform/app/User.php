@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'username', 'email', 'password',
     ];
 
     /**
@@ -36,4 +36,25 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public static function current_wallet($currency_id){
+      $user = auth()->user();
+      if( $user != null ){
+        return self::find($user->id)->wallets()->where('currency_id','=',$currency_id)->first();
+      }
+      return null;
+    }
+
+    public static function current_wallets(){
+      $user = auth()->user();
+      if( $user != null ){
+        return self::find($user->id)->wallets;
+      }
+      return null;
+    }
+
+    public function wallets(){
+      return $this->hasMany('\App\Wallets','user_id');
+    }
 }

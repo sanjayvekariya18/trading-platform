@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -25,7 +27,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -35,5 +37,37 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+    /**
+     * Handle an authentication attempt.
+     *
+     * @return Response
+     */
+    public function login(Request $request)
+    {
+        $this->validate($request, [
+            'email'    => 'required',
+            'password' => 'required',
+        ]);
+
+        $login_type = filter_var($request->input('email'), FILTER_VALIDATE_EMAIL )
+            ? 'email'
+            : 'username';
+
+        $request->merge([
+            $login_type => $request->input('email')
+        ]);
+
+        if (Auth::attempt($request->only($login_type, 'password'))) {
+            return redirect()->intended($this->redirectPath());
+        }
+
+        return redirect()->back()
+            ->withInput()
+            ->withErrors([
+                'login' => 'These credentials do not match our records.',
+            ]);
+
+
     }
 }

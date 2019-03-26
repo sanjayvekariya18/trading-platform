@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
+
 
 class RegisterController extends Controller
 {
@@ -49,9 +51,9 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:users,username','without_spaces'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
     }
 
@@ -63,10 +65,30 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
+        $user = User::create([
+            'username' => $data['username'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        //create wallet for user
+        $list_currency_has_wallets = \App\Currency::list_has_wallets();
+        $wallets_to_insert = [];
+        foreach ($list_currency_has_wallets as $key => $id) {
+          $wallets_to_insert[] = array(
+            'user_id' => $user->id,
+            'balance' => 0.0,
+            'balance_lock' => 0.0,
+            'currency_id' => $id
+          );
+        }
+        \App\Wallets::insert($wallets_to_insert);
+        return $user;
+    }
+    public function ajaxValidator(Request $request){
+        $validator = $this->validator($request->all());
+        if( $validator->passes() )
+          return response()->json(['success' => 1]);
+        return response()->json(['success' => 0, 'error' => $validator->errors()]);
     }
 }
