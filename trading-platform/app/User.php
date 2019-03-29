@@ -57,4 +57,8 @@ class User extends Authenticatable
     public function wallets(){
       return $this->hasMany('\App\Wallets','user_id');
     }
+
+    public function orders(){
+      return $this->hasMany('\App\Order');
+    }
 }
