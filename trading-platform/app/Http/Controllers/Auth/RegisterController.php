@@ -91,4 +91,10 @@ class RegisterController extends Controller
           return response()->json(['success' => 1]);
         return response()->json(['success' => 0, 'error' => $validator->errors()]);
     }
+
+    protected function registered(Request $request, $user)
+    {
+        $user->generateToken();
+        return response()->json(['data' => $user->toArray()], 201);
+    }
 }

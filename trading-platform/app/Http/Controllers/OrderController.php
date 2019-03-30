@@ -14,17 +14,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        return Order::where('user_id',\Auth::user()->id)->get();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $orders = Order::where('user_id',\Auth::user()->id)->get();
+        return response()->json(['orders' => $orders], 200);
     }
 
     /**
@@ -35,7 +26,11 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        return Order::crete($request->all());
+        // $request->request->remove('api_token'); // to remove property from $request
+        // return $request->toarray();
+        // return Order::create($request->all());
+        $order =  Order::create($request->all());
+        return response()->json(['order' => $order], 201);
     }
 
     /**
@@ -50,17 +45,6 @@ class OrderController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -71,7 +55,7 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($id);
         $order->update($request->all());
-        return $order;
+        return response()->json($order, 200);
     }
 
     /**
@@ -84,6 +68,8 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($id);
         $order->delete();
-        return 204;
+        return response()->json(null, 204);
     }
+
+    
 }

@@ -20,7 +20,9 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers;
+   use AuthenticatesUsers {
+        logout as performLogout;
+    }
 
     /**
      * Where to redirect users after login.
@@ -59,15 +61,35 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($request->only($login_type, 'password'))) {
-            return redirect()->intended($this->redirectPath());
+            if($request->wantsJson()){
+                $user = $this->guard()->user();
+                $user->generateToken();
+                return response()->json([
+                    'data' => $user->toArray(),
+                ]);
+            }else{
+                return redirect()->intended($this->redirectPath());
+            }
+        }else{
+            if($request->wantsJson()){
+                return $this->sendFailedLoginResponse($request);
+            }else{
+                return redirect()->back()
+                ->withInput()
+                ->withErrors([
+                    'login' => 'These credentials do not match our records.',
+                ]);
+            }
         }
+    }
 
-        return redirect()->back()
-            ->withInput()
-            ->withErrors([
-                'login' => 'These credentials do not match our records.',
-            ]);
-
-
+    public function userLogout(Request $request)
+    {
+        $user = \Auth::guard('api')->user();
+        if ($user) {
+            $user->api_token = null;
+            $user->save();
+        }
+        return response()->json(['data' => 'User logged out.'], 200);
     }
 }

@@ -54,6 +54,14 @@ class User extends Authenticatable
       return null;
     }
 
+    public function generateToken()
+    {
+        $this->api_token = str_random(60);
+        $this->save();
+
+        return $this->api_token;
+    }
+
     public function wallets(){
       return $this->hasMany('\App\Wallets','user_id');
     }
