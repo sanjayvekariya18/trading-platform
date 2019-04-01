@@ -8,7 +8,11 @@ class Order extends Model
 {
     protected $guarded=[];
     
-    public function orders(){
+    public function user(){
       return $this->belongsTo('\App\User');
+    }
+
+    public function currencyPair(){
+      return $this->belongsTo('\App\Currency_pair');
     }
 }
