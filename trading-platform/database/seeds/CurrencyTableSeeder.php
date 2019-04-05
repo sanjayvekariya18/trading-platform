@@ -11,7 +11,7 @@ class CurrencyTableSeeder extends Seeder
      */
     public function run()
     {
-        // Let's clear the users table first
+        // Let's clear the currency table first
         Currency::truncate();
 
         // Let's make sure everyone has the same password and 

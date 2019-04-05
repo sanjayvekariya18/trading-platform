@@ -17,7 +17,7 @@ class CreateCurrencyPairsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('from_asset');
             $table->integer('to_asset');
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateOrdersTable extends Migration
+class CreateOrderStopLimitsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('order_stop_limits', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('order_no', 15)->unique();
             $table->integer('user_id')->references('id')->on('users');
+            $table->string('order_no', 15)->unique();
             $table->integer('currency_pair_id')->references('id')->on('currency_pairs');
+            $table->decimal('stop', 15, 8);
+            $table->decimal('limit', 15, 8);
             $table->decimal('amount', 15, 8);
-            $table->decimal('price', 15, 8);
             $table->string('order_type', 15);
             $table->string('side', 4);
             $table->string('remark', 100)->nullable()->default(NULL);
@@ -37,6 +38,6 @@ class CreateOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('order_stop_limits');
     }
 }

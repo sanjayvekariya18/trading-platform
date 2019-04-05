@@ -104,6 +104,4 @@ class ExchangeController extends Controller
                 ->get();
         return response()->json(['orders' => $orders], 200);
     }
-
-    
 }
