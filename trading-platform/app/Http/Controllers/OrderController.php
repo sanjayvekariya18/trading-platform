@@ -65,6 +65,10 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $output = "";
+
+        echo "<pre>";
+        print_r($request->all());
+        die;
         
         DB::beginTransaction();
         DB::enableQueryLog();
@@ -431,8 +435,9 @@ class OrderController extends Controller
             }
             
             DB::table('orders')->where('amount', '<=',0 )->delete();
+            $output .= $this->CreateOrderStopLimitConvert();
         DB::commit();
-        return response()->json(['output' => $output], 201);
+            return response()->json(['output' => $output], 201);
     }
 
     public function manageWallet($walletParam)
@@ -545,30 +550,123 @@ class OrderController extends Controller
         $output = $remark;
     }
 
-    public function CreateOrderStopLimitConvert(Request $request)
+    public function CreateOrderStopLimitConvert()
     {
         $orderStopLimits = Order_stop_limit::where('order_status','Pending')->get();
         foreach ($orderStopLimits as $orderStopLimit) {
-            while($fetchStatus = 0){
-                $order = Order::where('side',$orderStopLimit->side)
-                    ->where('order_status',"Confirmed")
-                    ->where('currency_pair_id',$request->currency_pair_id)
-                    ->orderBy('id','DESC')
-                    ->limit(1)
-                    ->get()->first();
-                $lastPrice = $order->price;
+            $order = Order::where('side',$orderStopLimit->side)
+                ->where('order_status',"Confirmed")
+                ->where('currency_pair_id',$orderStopLimit->currency_pair_id)
+                ->orderBy('id','DESC')
+                ->limit(1)
+                ->get()->first();
+            $lastPrice = $order->price;
 
-                if($lastPrice > 0){
-                    
+            if($lastPrice > 0){
+                if($orderStopLimit->side == "Pending"){
+                    if($lastPrice > $orderStopLimit->stop && $orderStopLimit->limit > $orderStopLimit->stop){
+                        $remark = "Refund Stop/Limit buy confirm order no :".$orderStopLimit->order_no;
+                        $total = $orderStopLimit->limit * $orderStopLimit->amount;
+                        $walletParam = array(
+                            'currency_id' => $orderStopLimit->currencyPair->from_asset,
+                            'user_id' => $orderStopLimit->user_id,
+                            'context_id' => $orderStopLimit->id,
+                            'source' => "Stop-Limit",
+                            'transaction_type' => "ADD",
+                            'amount' => $total,
+                            'remark' => $remark
+                        );
+                        $this->manageWallet($walletParam);
+
+                        DB::table('order_stop_limits')->where('id',$orderStopLimit->id)->update(['oder_status' => "Confirmed"]);
+
+                        $request = new Request;
+                        $request->setMethod('POST');
+                        $request->request->add([
+                            'user_id' => $orderStopLimit->user_id,
+                            'currency_pair_id',$orderStopLimit->currency_pair_id,
+                            'amount' => $orderStopLimit->amount,
+                            'price' => $orderStopLimit->limit,
+                            'order_type' => "Stop-Limit",
+                            'side' => $orderStopLimit->side,
+                        ]);
+                        $this->store($request);
+                    }
+                }else{
+                    if($lastPrice < $orderStopLimit->stop && $orderStopLimit->limit < $orderStopLimit->stop){
+                        $remark = "Refund Stop/Limit sell confirm order no :".$orderStopLimit->order_no;
+                        $total = $orderStopLimit->limit * $orderStopLimit->amount;
+                        $walletParam = array(
+                            'currency_id' => $orderStopLimit->currencyPair->from_asset,
+                            'user_id' => $orderStopLimit->user_id,
+                            'context_id' => $orderStopLimit->id,
+                            'source' => "Stop-Limit",
+                            'transaction_type' => "ADD",
+                            'amount' => $total,
+                            'remark' => $remark
+                        );
+                        $this->manageWallet($walletParam);
+
+                        DB::table('order_stop_limits')->where('id',$orderStopLimit->id)->update(['oder_status' => "Confirmed"]);
+
+                        $request = new Request;
+                        $request->setMethod('POST');
+                        $request->request->add([
+                            'user_id' => $orderStopLimit->user_id,
+                            'currency_pair_id',$orderStopLimit->currency_pair_id,
+                            'amount' => $orderStopLimit->amount,
+                            'price' => $orderStopLimit->limit,
+                            'order_type' => "Stop-Limit",
+                            'side' => $orderStopLimit->side,
+                        ]);
+                        $this->store($request);
+                    }
                 }
+            }else{
+                $output = "Last Trade Price not Fetch in this pair.";
             }
+            $output .= "Last Price: ".$lastPrice."<br>";
+            $output .= "@Id : ".$orderStopLimit->id." @Stop ".$orderStopLimit->stop." @Limit ".$orderStopLimit->limit." @Amount ".$orderStopLimit->amount."<br>";
+        }
+    }
+
+    public function cancelOrder(Request $request)
+    {
+        $order = Order::
+                with('currencyPair')
+                ->where('id',$request->order_id)
+                ->where('user_id',\Auth::user()->id)
+                ->where('order_status','Pending')
+                ->get()->first();
+        /* echo "<pre>";
+        print_r($order->currencyPair);
+        die; */
+        if(!$order){
+            $output = 'Order Not Found..!';
+            return response()->json(['output' => $output], 200);
+        }
+        DB::table("orders")->where('id',$order->id)->update(['order_status' => "Canceled"]);
+    
+        if($order->side = "BUY"){
+            $amount = $order->amount * $order->price;
+            $remark = "Cancel-Buy-Order No-".$order->order_no;
+        }else{
+            $amount = $order->amount;
+            $remark = "Cancel-Sell-Order No-".$order->order_no;
         }
 
+        $walletParam = array(
+            'currency_id' => $order->currencyPair->from_asset,
+            'user_id' => $order->user_id,
+            'context_id' => $order->id,
+            'source' => "Order",
+            'transaction_type' => "ADD",
+            'amount' => $amount,
+            'remark' => $remark
+        );
+        $this->manageWallet($walletParam);
+        $output = "Trade canceled successfully.";
+        return response()->json(['output' => $output], 200);
     }
 
-    public function getChart()
-    {
-        $currencyPairId = 1;
-        $internval = 1440;
-    }
 }

@@ -104,4 +104,28 @@ class ExchangeController extends Controller
                 ->get();
         return response()->json(['orders' => $orders], 200);
     }
+
+    public function getChartData($curPairId)
+    {
+        $chart = \DB::select("SELECT 	
+                    MAX(price) AS high, MIN(price) AS low,
+                    COALESCE(        
+                    (        
+                        SELECT price        
+                        FROM orders       
+                        WHERE order_status = 'Confirmed' ORDER BY created_at ASC LIMIT 1
+                    ),0) as open,
+                    COALESCE( 
+                    (
+                        SELECT price FROM orders 
+                        WHERE order_status = 'Confirmed' ORDER BY created_at DESC LIMIT 1 
+                    ),0) as close		
+                    FROM 
+                        orders U       
+                    WHERE 
+                        order_status = 'Confirmed' 
+                        AND currency_pair_id = ".$curPairId
+                );
+        return response()->json(['data' => $chart], 200);
+    }
 }
