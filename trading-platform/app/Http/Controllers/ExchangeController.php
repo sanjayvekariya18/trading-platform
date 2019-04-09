@@ -35,6 +35,16 @@ class ExchangeController extends Controller
         return response()->json(['currencies' => $currencies], 200);
     }
 
+    public function getCurrencyPair($currencyId)
+    {
+        $currency_pairs = Currency_pair::where('from_asset',$currencyId)->with('fromAsset')->with('toAsset')->get();
+        if(count($currency_pairs) > 0){
+            return response()->json(['currency_pairs' => $currency_pairs], 200);
+        }else{
+            return response()->json(['data' => "Data Not Found"], 200);
+        }
+    }
+
     public function getCurrencyPairs()
     {
 

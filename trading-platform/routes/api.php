@@ -25,6 +25,7 @@ Route::post('login','Auth\LoginController@login');
 
 // Get Currency Paair List With Change
 Route::get('currency_pairs','ExchangeController@getCurrencyPairs');
+Route::get('currency_pair/{id}','ExchangeController@getCurrencyPair');
 
 // Get Trade History For Selected Pair
 Route::get('trade_history/{pairId}','ExchangeController@getTradeHistory');

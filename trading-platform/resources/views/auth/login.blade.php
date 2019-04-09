@@ -16,7 +16,7 @@
                 {{ $errors->first('login') }}
               </div>
             @endif
-            <form class="login-form" method="post" action="/login" >
+            <form class="login-form" method="post" action="{{url('/login')}}" >
                 @csrf
                 <fieldset>
                     <div class="form-group">
