@@ -13,7 +13,11 @@
         </div>
         <div class="col-xl-8 col-lg-8 col-md-8 d-none d-md-block d-lg-block">
           <ul class="crypt-heading-menu fright">
-            <li><a href="javascript:void(0);">Exchange</a></li>
+            <li>
+              <!-- <a [routerLink]="['/exchange']" routerLinkActive="active">Exchange</a> -->
+              <a routerLinkActive="active">Exchange</a>
+
+            </li>
             <li><a href="javascript:void(0);">Overview</a></li>
             <li><a href="javascript:void(0);">Market Cap</a></li>
             <li><a href="javascript:void(0);">Trading</a></li>
@@ -26,15 +30,16 @@
             </li>
           </ul>
         </div>
-        <i
-          class="menu-toggle pe-7s-menu d-xs-block d-sm-block d-md-none d-sm-none"
-        ></i>
+        <i class="menu-toggle pe-7s-menu d-xs-block d-sm-block d-md-none d-sm-none"></i>
       </div>
     </div>
   </div>
   <div class="crypt-mobile-menu">
     <ul class="crypt-heading-menu">
-      <li class="active"><a href="#">Exchange</a></li>
+      <li class="active">
+        <!-- <a [routerLink]="['/exchange']" routerLinkActive="active">Exchange</a> -->
+        <a routerLinkActive="active">Exchange</a>
+      </li>
       <li><a href="#">Market Cap</a></li>
       <li><a href="#">Treanding</a></li>
       <li><a href="#">Tools</a></li>

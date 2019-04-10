@@ -1,0 +1,74 @@
+<div class="container-fluid">
+  <div class="row sm-gutters">
+    <div class="col-md-3 col-lg-3 col-xl-3 col-xxl-2">
+      <div class="crypt-market-status mt-3">
+        <div>
+          <ul class="nav nav-tabs" id="crypt-tab">
+            <li role="presentation">
+              <a href="#btc" data-toggle="tab" [ngClass]="{ active: selectedItem == '1' }"
+                (click)="GetMarketList(1)">btc</a>
+            </li>
+            <li role="presentation">
+              <a href="#eth" data-toggle="tab" [ngClass]="{ active: selectedItem == '2' }"
+                (click)="GetMarketList(2)">eth</a>
+            </li>
+            <li role="presentation">
+              <a href="#usdt" data-toggle="tab" [ngClass]="{ active: selectedItem == '3' }"
+                (click)="GetMarketList(3)">usdt</a>
+            </li>
+          </ul>
+          <div class="tab-content crypt-tab-content">
+            <div role="tabpanel" class="tab-pane" id="usdt">
+              <app-loader [IsLoading]="loading"></app-loader>
+              <table class="table table-striped">
+                <thead>
+                  <tr class="table-head">
+                    <th scope="col">Coin</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Volume</th>
+                  </tr>
+                </thead>
+                <tbody class="crypt-table-hover">
+                  <tr *ngFor="let item of dataList" (click)="GetRowDetail(item)" class="cr_success"
+                    [ngClass]="{ 'bg-row': item.Name === selectedRow }">
+                    <td class="align-middle">{{ item.Name }}</td>
+                    <td class="crypt-down align-middle">
+                      <!-- <span class="pr-2" data-toggle="tooltip" data-placement="right"
+                        title="$ 0.05">{{ item.LastPrice | appDynamicDigit: 8 }}</span> -->
+                      <span class="pr-2" data-toggle="tooltip" data-placement="right" title="$ 0.05">{{ item.LastPrice</span>
+                    </td>
+                    <td appColor [attr.value]="item.ChangePer">
+                      <span class="d-block">6.6768876</span>
+                      <!-- <span>{{ item.ChangePer | appDynamicDigit: 2 }}%</span> -->
+                      <span>{{ item.ChangePer}}%</span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="dataList?.length == 0">
+                    <td colspan="3">No data found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-8">
+      <app-chart [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency"></app-chart>
+      <app-buy-sell [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency"
+        [orderType]="orderType" [price]="price" [amount]="amount" [total]="total" [buyModel]="buyModel"
+        [sellModel]="sellModel"></app-buy-sell>
+      <!-- <div id="depthchart" class="depthchart h-40 crypt-dark-segment"></div> -->
+    </div>
+    <div class="col-md-4 col-lg-3 col-xl-3 col-xxl-2">
+      <app-trade-history [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency" [pairId]="pairId">
+      </app-trade-history>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <app-orders [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency" [pairId]="pairId"
+    (orederTypeChange)="changeOrderType($event)" (priceChange)="changePrice($event)"
+    (amountChange)="changeAmount($event)" (totalChange)="changeTotal($event)" (buyModelChange)="changeBuyModel($event)"
+    (sellModelChange)="changeSellModel($event)"></app-orders>
+</div>
