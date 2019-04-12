@@ -31,12 +31,12 @@ export class StopLimitModel {
   public pairId: number;
   public BaseCurrency: string;
   public MainCurrency: string;
-  public BuyStop: number ;
+  public BuyStop: number;
   public BuyLimit: number;
   public BuyAmount: number;
   public BuyTotal: number;
 
-  public SellStop: number ;
+  public SellStop: number;
   public SellLimit: number;
   public SellAmount: number;
   public SellTotal: number;
@@ -47,10 +47,11 @@ export class StopLimitModel {
 }
 
 export class Exchange {
-  public FromCoin: string;
-  public ToCoin: string;
-  public Price: string;
-  public Amount: string;
+  public price: string;
+  public amount: string;
+  public currency_pair_id: string;
+  public order_type: string;
+  public side: string;
 }
 
 export class DailyExchange {

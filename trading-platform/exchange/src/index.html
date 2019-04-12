@@ -1,24 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head class="crypt-dark">
+  <head>
     <meta charset="utf-8" />
-    <title>Exchange</title>
     <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="stylesheet" href="./assets/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="./assets/css/style.css" />
-    <link rel="stylesheet" href="./assets/css/icons.css" />
-    <link rel="stylesheet" href="./assets/css/ui.css" />
+    <title>Home | Exchanger</title>
+
+    <link rel="stylesheet" href="./assets/exchanger/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./assets/exchanger/css/style.css">
+    <link rel="stylesheet" href="./assets/exchanger/css/icons.css">
+    <link rel="stylesheet" href="./assets/exchanger/css/ui.css">
+    <link rel="stylesheet" href="./assets/css/ladda.min.css">
+    <link rel="stylesheet" href="./assets/css/toastr.min.css">
+    <link rel="stylesheet" href="./assets/css/bs-datepicker.min.css">
+    <link rel="stylesheet" href="./assets/css/perfect-scrollbar.min.css">
+      <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" />
+
+    <!-- Meta -->
+    <meta http-equiv="content-type" content="text/html" />
+    <meta http-equiv="Cache-control" content="public" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+
+    <meta
+      name="Description"
+      content="meet the first cryptocurrency that changes your life"
+    />
+    <meta
+      name="Keywords"
+      content="exchange, coin, currency, bitcoin, btc, buucoin, crypto, crypto currency"
+    />
+    <meta name="Language" content="English" />
+    <meta name="distribution" content="Global" />
+    <meta name="country" content="India" />
+
+    <!-- For ssl -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" /> -->
+
+    <!-- Apple -->
+    <link
+      rel="mask-icon"
+      href="assets/favicon/safari-pinned-tab.svg"
+      color="#5bbad5"
+    />
+    <meta name="apple-mobile-web-app-title" content="Buu Coin" />
+    <meta name="application-name" content="Buu Coin" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <!-- Android -->
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Microsoft -->
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Facebook meta tag -->
+    <meta property="og:image:width" content="279" />
+    <meta property="og:image:height" content="279" />
+    <meta property="og:title" content="BuuCoin" />
+    <meta
+      property="og:description"
+      content="meet first cryptocurrency that change your life"
+    />
+    <meta property="og:url" content="http://www.buucoins.exchange" />
+    <meta
+      property="og:image"
+      content="http://www.buucoins.exchange/assets/favicon/logo.png"
+    />
+
+    <!-- Style Sheet -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Muli:300,400,600"
+      rel="stylesheet"
+    />
+
+    <style type="text/css">
+      .app-loading {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1111;
+      }
+
+      .app-loading .spinner {
+        height: 200px;
+        width: 200px;
+        animation: rotate 2s linear infinite;
+        transform-origin: center center;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        z-index: 9999;
+      }
+
+      .app-loading .spinner .path {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+        animation: dash 1.5s ease-in-out infinite;
+        stroke-linecap: round;
+        stroke: #ddd;
+      }
+
+      @keyframes rotate {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes dash {
+        0% {
+          stroke-dasharray: 1, 200;
+          stroke-dashoffset: 0;
+        }
+
+        50% {
+          stroke-dasharray: 89, 200;
+          stroke-dashoffset: -35px;
+        }
+
+        100% {
+          stroke-dasharray: 89, 200;
+          stroke-dashoffset: -124px;
+        }
+      }
+    </style>
   </head>
+
   <body class="crypt-dark">
-    <app-root></app-root>
-    <script src="./assets/js/jquery.js"></script>
-    <script src="./assets/js/popper.min.js"></script>
-    <script src="./assets/bootstrap/js/bootstrap.bundle.js"></script>
-    <script src="./assets/bootstrap/js/bootstrap.js"></script>
-    <script src="./assets/js/main.js"></script>
-    <script src="./assets/js/amc.js"></script>
-    <script src="./assets/js/tv.js"></script>
+    <noscript>
+      <h1>Sorry, but app is not available without javascript</h1>
+    </noscript>
+    <app-root>
+      <div class="app-loading">
+        <div class="logo"></div>
+        <svg class="spinner" viewBox="25 25 50 50">
+          <circle
+            class="path"
+            cx="50"
+            cy="50"
+            r="20"
+            fill="none"
+            stroke-width="2"
+            stroke-miterlimit="10"
+          />
+        </svg>
+      </div>
+    </app-root>
+    <!-- <script src="./assets/exchanger/amc/core.js"></script>
+    <script src="./assets/exchanger/amc/charts.js"></script>
+    <script src="./assets/exchanger/amc/animated.js"></script> -->
+    <script src="./assets/exchanger/js/jquery.js"></script>
+    <script src="./assets/exchanger/js/popper.min.js"></script>
+    <script src="./assets/exchanger/bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="./assets/exchanger/bootstrap/js/bootstrap.js"></script>
+    <script src="./assets/exchanger/js/main.js"></script>
+    <script src="./assets/exchanger/js/amc.js"></script>
+    <script src="./assets/exchanger/js/tv.js"></script>
   </body>
 </html>

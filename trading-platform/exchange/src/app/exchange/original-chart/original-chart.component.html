@@ -1,0 +1,38 @@
+<app-loader [IsLoading]="loading"></app-loader>
+
+<div id="chartdiv"></div>
+
+<ul class="btn-group-add-chart">
+    <li>
+      <button (click)="FilterChart(1,'Time','T')" class="btn btn-sm">Time</button>
+    </li>
+    <li>
+      <button class="btn btn-sm ft-btn">{{miniteheader}}<i class="fa fa-caret-down" aria-hidden="true"></i>
+      </button>
+      <ul class="ft-list ft-list-d hide">
+        <li (click)="FilterChart(1,'1m','m')">1m</li>
+        <li (click)="FilterChart(5,'5m','m')">5m</li>
+        <li (click)="FilterChart(15,'15m','m')">15m</li>
+        <li (click)="FilterChart(30,'30m','m')">30m</li>
+      </ul>
+    </li>
+    <li>
+      <button class="btn btn-sm ft-btn1">{{hourheader}}<i class="fa fa-caret-down" aria-hidden="true"></i> </button>
+      <ul class="ft-list1 ft-list-d hide ">
+        <li (click)="FilterChart(60,'1h','h')">1h</li>
+        <li (click)="FilterChart(120,'2h','h')">2h</li>
+        <li (click)="FilterChart(240,'4h','h')">4h</li>
+        <li (click)="FilterChart(360,'6h','h')">6h</li>
+        <li (click)="FilterChart(720,'12h','h')">12h</li>
+      </ul>
+    </li>
+    <li>
+      <button class="btn btn-sm" (click)="FilterChart(1440,'1D','D')">1D</button>
+    </li>
+    <li>
+      <button class="btn btn-sm" (click)="FilterChart(10080,'1W','W')">1W</button>
+    </li>
+    <li>
+      <button class="btn btn-sm" (click)="FilterChart(43200,'1M','M')">1M</button>
+    </li>
+</ul>

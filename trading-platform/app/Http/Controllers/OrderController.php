@@ -15,33 +15,6 @@ use Ixudra\Curl\Facades\Curl;
 class OrderController extends Controller
 {
 
-    public function data()
-    {
-        // $response = Curl::to('https://webapi.listerexchange.com/api/Exchange/GetOrder?currency=LTCC/BTC')->get();
-        $response = Curl::to('https://webapi.listerexchange.com/api/Exchange/GetUserTrade?id=2')->get();
-        echo "<pre>";
-        $json = json_decode($response);
-        print_r($json);
-       /*  echo $this->getOrderNo();
-        die; */
-        foreach ($json->Data as $order) {
-        // foreach ($json->Data->sellList as $order) {
-        // foreach ($json->Data->buyList as $order) {
-        $data = array(
-                'order_no' => $this->getOrderNo(),
-                'user_id' => 2,
-                'currency_pair_id' => 3,
-                'amount' => $order->Amount,
-                'price' => $order->Price,
-                'side' => "SELL",
-                'order_type' => "Market",
-                // 'order_status' => "Pending",
-                'order_status' => "Confirmed",
-            );
-            Order::insert($data);
-        }
-    }
-
     /**
      * Display a listing of the Order By Status.
      *
@@ -51,9 +24,17 @@ class OrderController extends Controller
     {
         $orders = Order::where('user_id',\Auth::user()->id)
                         ->where('order_status',$request->order_status)
+                        ->where('currency_pair_id',$request->currency_pair_id)
                         ->orderBy('updated_at','DESC')
                         ->get();
-        return response()->json(['orders' => $orders], 200);
+        if(count($orders) > 0){
+            $response['message'] = "SUCCESS";
+            $response['data'] = $orders;
+        }else{
+            $response['message'] = "EMPTY";
+            $response['data'] = null;
+        }
+        return response()->json($response, 200);
     }
 
     /**
@@ -66,9 +47,9 @@ class OrderController extends Controller
     {
         $output = "";
 
-        echo "<pre>";
+        /* echo "<pre>";
         print_r($request->all());
-        die;
+        die; */
         
         DB::beginTransaction();
         DB::enableQueryLog();
@@ -437,7 +418,7 @@ class OrderController extends Controller
             DB::table('orders')->where('amount', '<=',0 )->delete();
             $output .= $this->CreateOrderStopLimitConvert();
         DB::commit();
-            return response()->json(['output' => $output], 201);
+        return response()->json(['output' => $output], 201);
     }
 
     public function manageWallet($walletParam)
@@ -669,4 +650,35 @@ class OrderController extends Controller
         return response()->json(['output' => $output], 200);
     }
 
+    public function getWalletAmount(Request $request)
+    {
+        $fromWalletAmt = Wallets::select('balance')
+            ->join('currency','currency.id','wallets.currency_id')
+            ->where('currency.asset',$request->BaseCurrency)
+            ->get()->first();
+        if($fromWalletAmt){
+            $data["BaseCurrencyValue"] =  $fromWalletAmt->balance;
+        }else{
+            $data["BaseCurrencyValue"] =  "Wallet(".$request->BaseCurrency.") Not Found";
+        }
+        $toWalletAmt = Wallets::select('balance')
+            ->join('currency','currency.id','wallets.currency_id')
+            ->where('currency.asset',$request->MainCurrency)
+            ->get()->first();
+        if($toWalletAmt){
+            $data["MainCurrencyValue"] =  $toWalletAmt->balance;
+        }else{
+            $data["MainCurrencyValue"] =  "Wallet(".$request->MainCurrency.") Not Found";
+        }
+        // Get Configuration Setting
+        $data['TradeFees'] = Config::where('name','trade_fee')->get()->first()->value;
+        $data['MinTrade'] = Config::where('name','min_trade')->get()->first()->value;
+
+        return response()->json(['message' => "SUCCESS",'data' => $data], 200);
+    }
+
+    public function getUserTradeHistory(Request $request)
+    {
+        # code...
+    }
 }

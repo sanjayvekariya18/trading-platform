@@ -34,6 +34,9 @@ Route::get('trade_history/{pairId}','ExchangeController@getTradeHistory');
 Route::get('sell_orders/{pairId}','ExchangeController@getSellOrders');
 Route::get('buy_orders/{pairId}','ExchangeController@getBuyOrders');
 
+// Get Daily Exchange
+Route::get('DailyExchange/{pairId}','ExchangeController@getDailyExchange');
+
 Route::get('all_orders','ExchangeController@getAllOrders');
 Route::get('active_order','ExchangeController@getActiveOrders');
 Route::get('close_order','ExchangeController@getCloseOrders');
@@ -47,4 +50,5 @@ Route::middleware('auth:api')->prefix('private')->group(function() {
     Route::post('orders/cancel','OrderController@cancelOrder');
     Route::get('wallets','WalletController@getWallets');    
     Route::get('wallet/{wallet_id}/{currency_id}','WalletController@getWallet');  
+    Route::post('walletAmount','OrderController@getWalletAmount');  
 });

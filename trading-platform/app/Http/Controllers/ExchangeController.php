@@ -8,7 +8,7 @@ use App\Currency;
 use App\Currency_pair;
 use App\User;
 use App\Wallets;
-
+use Carbon\Carbon;
 class ExchangeController extends Controller
 {
     public function getAllOrders()
@@ -69,14 +69,8 @@ class ExchangeController extends Controller
         $response = array();
         $data = array();
         if(count($currency_pairs) > 0){
-            foreach ($currency_pairs as $key => $currency_pair) {
-                $data[] = array(
-                    'id' => $currency_pair->id,
-                    'name' => $currency_pair->toAsset->asset."/".$currency_pair->fromAsset->asset,
-                );
-            }
             $response['message'] = "SUCCESS";
-            $response['data'] = $data;
+            $response['data'] = $this->getCurrencyChange($currency_pairs);
         }else{
             $response['message'] = "EMPTY";
             $response['data'] = null;
@@ -86,25 +80,38 @@ class ExchangeController extends Controller
 
     public function getCurrencyPairs()
     {
-        $response = array('message' => "SUCCESS");
         $data = array();
         $currency_pairs = Currency_pair::with('fromAsset')->with('toAsset')->get();
+        if(count($currency_pairs) > 0){
+            $response['message'] = "SUCCESS";
+            $response['data'] = $this->getCurrencyChange($currency_pairs);
+        }else{
+            $response['message'] = "EMPTY";
+            $response['data'] = null;
+        }
+        return response()->json($response, 200);
+    }
+
+    public function getCurrencyChange($currency_pairs)
+    {
         foreach ($currency_pairs as $key => $currency_pair) {
             $currentTrade = Order::orderBy('id','desc')
-                                        ->where('currency_pair_id',$currency_pair->id)
-                                        ->where('order_status','Confirmed')
-                                        ->whereDate('updated_at',date('Y-m-d'))
-                                        ->limit(1)
-                                        ->get()->first();
+                                ->where('currency_pair_id',$currency_pair->id)
+                                ->where('order_status','Confirmed')
+                                ->whereDate('updated_at',date('Y-m-d'))
+                                ->limit(1)
+                                ->get()->first();
             
             $previousTrade = Order::orderBy('id','desc')
-                                        ->where('currency_pair_id',$currency_pair->id)
-                                        ->where('order_status','Confirmed')
-                                        ->whereDate('updated_at',date('Y-m-d',strtotime("-1 days")))
-                                        ->limit(1)
-                                        ->get()->first();
+                                ->where('currency_pair_id',$currency_pair->id)
+                                ->where('order_status','Confirmed')
+                                ->whereDate('updated_at',date('Y-m-d',strtotime("-1 days")))
+                                ->limit(1)
+                                ->get()->first();
+
             $data[$key]['id'] = $currency_pair->id;
             $data[$key]['name'] = $currency_pair->toAsset->asset."/".$currency_pair->fromAsset->asset;
+            
             if($currentTrade){
                 if($previousTrade){
                     $price = (($currentTrade->price - $previousTrade->price)/$previousTrade->price)*100;
@@ -122,8 +129,7 @@ class ExchangeController extends Controller
                 $data[$key]['price'] = 0.00000000;
             }
         }
-        $response['data'] = $data;
-        return response()->json($response, 200);
+        return $data;
     }
 
     public function getTradeHistory($pairId)
@@ -175,7 +181,63 @@ class ExchangeController extends Controller
             $response['message'] = "EMPTY";
             $response['data'] = null;
         }
-        return response()->json(['orders' => $orders], 200);
+        return response()->json($response, 200);
+    }
+
+    public function getDailyExchange($curPairId)
+    {
+       /* 
+        Last Price
+        Daily Change
+        highest24hours
+        lowest24hours
+        Volume24Hours
+       */
+        $currentTrade = Order::orderBy('id','desc')
+                    ->where('currency_pair_id',$curPairId)
+                    ->where('order_status','Confirmed')
+                    ->whereDate('updated_at',date('Y-m-d'))
+                    ->limit(1)
+                    ->get()->first();
+            
+        $previousTrade = Order::orderBy('id','desc')
+                    ->where('currency_pair_id',$curPairId)
+                    ->where('order_status','Confirmed')
+                    ->whereDate('updated_at',date('Y-m-d',strtotime("-1 days")))
+                    ->limit(1)
+                    ->get()->first();
+
+        $last24Hour = Order::selectRaw('MIN(price),MAX(price),SUM(price*amount)')
+                    ->where('currency_pair_id',$curPairId)
+                    ->where('order_status','Confirmed')
+                    ->where('created_at', '>=', Carbon::now()->subDay())
+                    ->first();
+
+        $data['highest24hours'] = $last24Hour->max;
+        $data['lowest24hours'] = $last24Hour->min;
+        $data['volume24hours'] = $last24Hour->sum;
+        
+        if($currentTrade){
+            if($previousTrade){
+                $price = (($currentTrade->price - $previousTrade->price)/$previousTrade->price)*100;
+                $data['dailyChange'] = $price;
+            }else{
+                $data['dailyChange'] = $currentTrade->price;
+            }
+            $data['lastPrice'] = $currentTrade->price;
+        }else{
+            if($previousTrade){
+                $data['dailyChange'] = $previousTrade->price;
+            }else{
+                $data['dailyChange'] = 0.00000000;
+            }
+            $data['lastPrice'] = 0.00000000;
+        }
+        
+        $response['message'] = "SUCCESS";
+        $response['data'] = $data;
+        
+        return response()->json($response, 200);
     }
 
     public function getChartData($curPairId)

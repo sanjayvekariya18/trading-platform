@@ -1,0 +1,79 @@
+<!-- New Theme -->
+<div class="row sm-gutters">
+  <div class="col-lg-12 col-md-12 col-xl-12">
+    <div class="crypt-market-status">
+      <ul class="nav nav-tabs">
+        <li role="presentation">
+          <a href="#active-orders" class="active" data-toggle="tab">Open Orders</a>
+        </li>
+        <li role="presentation">
+          <a href="#closed-orders" data-toggle="tab">My Order</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="active-orders">
+          <app-loader [IsLoading]="loading"></app-loader>
+          <div class="data-box support-scroll-container ps" [perfectScrollbar]="config"
+            style="position: relative;    max-height: calc(98vh - 170px);">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th class="text-center" scope="col">
+                    Price <span>({{ baseCurrency }})</span>
+                  </th>
+                  <th class="text-center" scope="col">
+                    Amount <span>({{ mainCurrency }})</span>
+                  </th>
+                  <th class="text-center" scope="col">
+                    Value <span>({{ baseCurrency }})</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of openOrderlist">
+                  <td class="crypt-up" class="text-center">{{ item.price | appDynamicDigit: 8 }}</td>
+                  <td class="crypt-up" class="text-center">{{ item.amount | appDynamicDigit: 8 }}</td>
+                  <td class="crypt-up" class="text-center">
+                    {{ item.price * item.amount | appDynamicDigit: 8 }}
+                  </td>
+                </tr>
+                <tr *ngIf="openOrderlist?.length == 0">
+                  <td colspan="4">No data found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="closed-orders">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th class="text-center" scope="col">
+                  Price <span>({{ baseCurrency }})</span>
+                </th>
+                <th class="text-center" scope="col">
+                  Amount <span>({{ mainCurrency }})</span>
+                </th>
+                <th class="text-center" scope="col">
+                  Value <span>({{ baseCurrency }})</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of tradeHisList">
+                <td class="text-center">{{ item.price | appDynamicDigit: 8 }}</td>
+                <td class="text-center">{{ item.amount | appDynamicDigit: 8 }}</td>
+                <td class="text-center">
+                  {{ item.price * item.amount | appDynamicDigit: 8 }}
+                </td>
+              </tr>
+              <tr *ngIf="tradeHisList?.length == 0">
+                <td colspan="4">No data found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

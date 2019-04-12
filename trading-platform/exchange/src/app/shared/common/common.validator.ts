@@ -1,4 +1,4 @@
-import { FormControl, AbstractControl } from '@angular/forms';
+import { FormControl, AbstractControl } from "@angular/forms";
 
 export interface IValidationResult {
   [key: string]: boolean;
@@ -21,7 +21,7 @@ export class Validator {
 
   public static checkPassword(control: FormControl): IValidationResult {
     if (control.parent !== undefined) {
-      if (control.parent.value.Password !== '' && control.value !== '') {
+      if (control.parent.value.Password !== "" && control.value !== "") {
         const password = control.parent.value.Password;
         const confirmPassword = control.value;
         if (password === confirmPassword) {
@@ -35,7 +35,7 @@ export class Validator {
 
   public static MatchPassword(control: FormControl): IValidationResult {
     if (control.parent !== undefined) {
-      if (control.parent.value.NewPassword !== '' && control.value !== '') {
+      if (control.parent.value.NewPassword !== "" && control.value !== "") {
         if (control.parent.value.NewPassword === control.value) {
           return null;
         } else {
@@ -45,14 +45,16 @@ export class Validator {
     }
   }
 
-  public static RangeValidationBuy(control: AbstractControl): IValidationResult {
+  public static RangeValidationBuy(
+    control: AbstractControl
+  ): IValidationResult {
     if (control.parent !== undefined) {
       if (
-        control.parent.value.Range !== '' &&
-        control.value !== '' &&
-        control.parent.value.Range != null
+        control.parent.value.range !== "" &&
+        control.value !== "" &&
+        control.parent.value.range != null
       ) {
-        if (control.parent.value.Range < control.value) {
+        if (control.parent.value.range < control.value) {
           return { rangeValidation: true };
         } else {
           return null;
@@ -62,14 +64,16 @@ export class Validator {
     return null;
   }
 
-  public static RangeValidationSell(control: AbstractControl): IValidationResult {
+  public static RangeValidationSell(
+    control: AbstractControl
+  ): IValidationResult {
     if (control.parent !== undefined) {
       if (
-        control.parent.value.Range !== '' &&
-        control.value !== '' &&
-        control.parent.value.Range != null
+        control.parent.value.range !== "" &&
+        control.value !== "" &&
+        control.parent.value.range != null
       ) {
-        if (control.parent.value.Range < control.parent.value.Amount) {
+        if (control.parent.value.range < control.parent.value.amount) {
           return { rangeValidation: true };
         } else {
           return null;
@@ -82,17 +86,19 @@ export class Validator {
   public static MinimumValidation(control: AbstractControl): IValidationResult {
     if (control.parent !== undefined) {
       if (
-        control.parent.value.Minimum !== '' &&
+        control.parent.value.Minimum !== "" &&
         control.parent.value.Minimum != null &&
-        control.value !== ''
+        control.value !== ""
       ) {
         if (
-          control.parent.value.Price !== '' &&
+          control.parent.value.Price !== "" &&
           control.parent.value.Price != null &&
-          control.parent.value.Amount !== '' &&
+          control.parent.value.Amount !== "" &&
           control.parent.value.Amount != null
         ) {
-          const checkMinimumValidation = control.parent.value.Price * control.parent.value.Amount < control.parent.value.Minimum;
+          const checkMinimumValidation =
+            control.parent.value.Price * control.parent.value.Amount <
+            control.parent.value.Minimum;
           if (checkMinimumValidation) {
             return { minimumValidation: true };
           }
@@ -101,11 +107,13 @@ export class Validator {
     }
   }
 
-  public static StopLimitValidateBuy(control: AbstractControl): IValidationResult {
+  public static StopLimitValidateBuy(
+    control: AbstractControl
+  ): IValidationResult {
     if (control.parent !== undefined) {
       if (
-        control.parent.value.BuyStop !== '' &&
-        control.value !== '' &&
+        control.parent.value.BuyStop !== "" &&
+        control.value !== "" &&
         control.parent.value.BuyStop != null
       ) {
         if (control.value < control.parent.value.BuyStop) {
@@ -117,11 +125,13 @@ export class Validator {
     }
   }
 
-  public static StopLimitValidateSell(control: AbstractControl): IValidationResult {
+  public static StopLimitValidateSell(
+    control: AbstractControl
+  ): IValidationResult {
     if (control.parent !== undefined) {
       if (
-        control.parent.value.SellStop !== '' &&
-        control.value !== '' &&
+        control.parent.value.SellStop !== "" &&
+        control.value !== "" &&
         control.parent.value.SellStop != null
       ) {
         if (control.value > control.parent.value.SellStop) {
@@ -135,7 +145,7 @@ export class Validator {
 
   public static checkAmountValid(control: AbstractControl): IValidationResult {
     if (control.parent !== undefined) {
-      if (control.value !== '') {
+      if (control.value !== "") {
         if (control.value <= 0) {
           return { marketAmt: true };
         } else {
