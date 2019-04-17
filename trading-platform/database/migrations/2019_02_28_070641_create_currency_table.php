@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-
 class CreateCurrencyTable extends Migration
 {
     /**
@@ -25,7 +24,8 @@ class CreateCurrencyTable extends Migration
             $table->integer('decimal_after');
             $table->integer('order');
             $table->boolean('has_wallet');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();;
         });
     }
 

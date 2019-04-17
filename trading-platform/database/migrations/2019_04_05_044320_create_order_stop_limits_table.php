@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-
 class CreateOrderStopLimitsTable extends Migration
 {
     /**
@@ -27,7 +26,8 @@ class CreateOrderStopLimitsTable extends Migration
             $table->string('order_status',10);
             $table->float('fee', 8, 2)->nullable()->default(0);
             $table->string('fee_remark', 100)->nullable()->default(NULL);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

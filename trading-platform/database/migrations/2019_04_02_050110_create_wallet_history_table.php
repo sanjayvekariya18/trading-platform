@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-
 class CreateWalletHistoryTable extends Migration
 {
     /**
@@ -21,7 +20,8 @@ class CreateWalletHistoryTable extends Migration
             $table->string('transaction_type');
             $table->decimal('amount', 15, 8);
             $table->string('remark', 100)->nullable()->default(NULL);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

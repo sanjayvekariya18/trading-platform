@@ -19,7 +19,8 @@ class CreateWalletsTable extends Migration
             $table->decimal('balance', 15, 8);
             $table->decimal('balance_lock', 15, 8);
             $table->integer('currency_id');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

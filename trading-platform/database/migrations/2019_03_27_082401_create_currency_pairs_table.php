@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-
 class CreateCurrencyPairsTable extends Migration
 {
     /**
@@ -18,7 +17,8 @@ class CreateCurrencyPairsTable extends Migration
             $table->integer('from_asset');
             $table->integer('to_asset');
             $table->boolean('status')->default(true);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 
