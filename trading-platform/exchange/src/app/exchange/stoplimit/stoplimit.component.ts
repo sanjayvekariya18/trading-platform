@@ -182,22 +182,21 @@ export class StoplimitComponent implements OnInit, OnChanges {
     if (isValid) {
       this.isBuyLoading = true;
       const obj = {
-        Amount: model.BuyAmount,
-        BaseCurrency: this.stopLimitObj.BaseCurrency,
-        Limit: model.BuyLimit,
-        MainCurrency: this.stopLimitObj.MainCurrency,
-        OrderType: 1,
-        PairId: this.pairId,
-        Stop: model.BuyStop
+        stop: model.BuyStop,
+        limit: model.BuyLimit,
+        amount: model.BuyAmount,
+        currency_pair_id: this.pairId,
+        side: "BUY"
+
       };
       this.exchangeService.OrderStopLimit(obj).subscribe((res: any) => {
         if (res !== null) {
           this.isBuySubmitted = false;
           this.ResetForm();
           this.GetExchange(null);
-          this.toast.success(res.data);
+          this.toast.success(res.output);
         } else {
-          this.toast.error(res.data);
+          this.toast.error(res.output);
         }
         this.isBuyLoading = false;
       });
@@ -209,23 +208,21 @@ export class StoplimitComponent implements OnInit, OnChanges {
     if (isValid) {
       this.isSellLoading = true;
       const obj = {
-        Amount: model.SellAmount,
-        BaseCurrency: this.stopLimitObj.BaseCurrency,
-        Limit: model.SellLimit,
-        MainCurrency: this.stopLimitObj.MainCurrency,
-        OrderType: 2,
-        PairId: this.pairId,
-        Stop: model.SellStop
+        stop: model.SellStop,
+        limit: model.SellLimit,
+        amount: model.SellAmount,
+        currency_pair_id: this.pairId,
+        side: "SELL"
       };
       this.exchangeService.OrderStopLimit(obj).subscribe((res: any) => {
         if (res !== null) {
           this.isSellSubmitted = false;
           this.ResetForm();
           this.GetExchange(null);
-          this.toast.success(res.data);
+          this.toast.success(res.output);
         } else {
           this.isSellLoading = false;
-          this.toast.error(res.data);
+          this.toast.error(res.output);
         }
         this.isSellLoading = false;
       });

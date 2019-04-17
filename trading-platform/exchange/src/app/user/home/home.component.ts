@@ -64,7 +64,9 @@ export class HomeComponent implements OnInit {
       this.route = path.url;
     });
     this.authenticationService.isLoginChanged.subscribe(isLogins => {
-      this.isLogin = isLogins;
+      setTimeout(() => {
+        this.isLogin = isLogins;
+      }, 10);
     });
   }
 
@@ -109,7 +111,7 @@ export class HomeComponent implements OnInit {
     this.GetMarketList(this.selectedItem);
 
     const currentUser = JSON.parse(localStorage.getItem("buucurrentUser"));
-    this.email = currentUser.email;
+    if (currentUser) this.email = currentUser.email;
   }
 
   // GetBaseCurrency() {
@@ -132,7 +134,6 @@ export class HomeComponent implements OnInit {
   }
 
   GetRowDetail(item) {
-    console.log(item);
     this.selectedRow = item.name;
     this.pairId = item.id;
     const data = item.name.split("/");

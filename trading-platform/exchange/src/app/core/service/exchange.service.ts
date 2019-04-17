@@ -6,7 +6,7 @@ import { HttpService } from "./http.service";
 
 @Injectable()
 export class ExchangeService {
-  constructor(private http: HttpClient, public httpService: HttpService) {}
+  constructor(private http: HttpClient, public httpService: HttpService) { }
 
   GetOrder(currency: string) {
     return this.http.get(
@@ -38,8 +38,9 @@ export class ExchangeService {
 
   OrderStopLimit(model: any) {
     return this.http.post(
-      `${environment.apiUrl}Exchange/OrderStopLimit`,
-      model,
+      `${environment.apiUrl}private/orderStopLimit`,
+      `currency_pair_id=${model.currency_pair_id}&amount=${model.amount}
+      &stop=${model.stop}&limit=${model.limit}&side=${model.side}`,
       this.httpService.GetAuthHttpCommon()
     );
   }
@@ -47,8 +48,7 @@ export class ExchangeService {
   BuyTrade(model: Exchange) {
     return this.http.post(
       `${environment.apiUrl}private/orders/create`,
-      `currency_pair_id=${model.currency_pair_id}&amount=${model.amount}
-      &price=${model.price}&order_type=${model.order_type}&side=${model.side}`,
+      `currency_pair_id=${model.currency_pair_id}&amount=${model.amount}&price=${model.price}&order_type=${model.order_type}&side=${model.side}`,
       this.httpService.GetAuthHttpCommon()
     );
   }
@@ -56,24 +56,23 @@ export class ExchangeService {
   SellTrade(model: Exchange) {
     return this.http.post(
       `${environment.apiUrl}private/orders/create`,
-      `currency_pair_id=${model.currency_pair_id}&amount=${model.amount}
-      &price=${model.price}&order_type=${model.order_type}&side=${model.side}`,
+      `currency_pair_id=${model.currency_pair_id}&amount=${model.amount}&price=${model.price}&order_type=${model.order_type}&side=${model.side}`,
       this.httpService.GetAuthHttpCommon()
     );
   }
 
   BuyMarketTrade(model: any) {
     return this.http.post(
-      `${environment.apiUrl}Exchange/BuyMarketTrade`,
-      model,
+      `${environment.apiUrl}private/orders/marketOrder`,
+      `currency_pair_id=${model.currency_pair_id}&amount=${model.amount}&order_type=${model.order_type}&side=${model.side}`,
       this.httpService.GetAuthHttpCommon()
     );
   }
 
   SellMarketTrade(model: any) {
     return this.http.post(
-      `${environment.apiUrl}Exchange/SellMarketTrade`,
-      model,
+      `${environment.apiUrl}private/orders/marketOrder`,
+      `currency_pair_id=${model.currency_pair_id}&amount=${model.amount}&order_type=${model.order_type}&side=${model.side}`,
       this.httpService.GetAuthHttpCommon()
     );
   }
@@ -89,7 +88,7 @@ export class ExchangeService {
     return this.http.post(
       `${environment.apiUrl}private/orders`,
       `order_status=${obj.order_status}&currency_pair_id=${
-        obj.currency_pair_id
+      obj.currency_pair_id
       }`,
       this.httpService.GetAuthHttpCommon()
     );

@@ -15,16 +15,15 @@ class CreateOrderStopLimitsTable extends Migration
         Schema::create('order_stop_limits', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id')->references('id')->on('users');
-            $table->string('order_no', 15)->unique();
+            $table->string('order_no', 50)->unique();
             $table->integer('currency_pair_id')->references('id')->on('currency_pairs');
             $table->decimal('stop', 15, 8);
             $table->decimal('limit', 15, 8);
             $table->decimal('amount', 15, 8);
-            $table->string('order_type', 15);
             $table->string('side', 4);
             $table->string('remark', 100)->nullable()->default(NULL);
             $table->string('order_status',10);
-            $table->float('fee', 8, 2)->nullable()->default(0);
+            $table->decimal('fee', 15, 8)->nullable()->default(0);
             $table->string('fee_remark', 100)->nullable()->default(NULL);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();

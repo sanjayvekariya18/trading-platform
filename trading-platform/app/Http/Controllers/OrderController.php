@@ -58,12 +58,14 @@ class OrderController extends Controller
             $currencyPair = Currency_pair::find($request->currency_pair_id);
 
             // Get Currency Pair For Seller
-            $sellerCurrencyPair = Currency_pair::where('from_asset',$currencyPair->to_asset)->where('to_asset',$currencyPair->from_asset)->get()->first();
-
+            $sellerCurrencyPair = Currency_pair::
+                    where('from_asset',$currencyPair->to_asset)
+                    ->where('to_asset',$currencyPair->from_asset)->get()->first();
+            
             // Get Currency Symbol For Insert Note into Remark 
             $fromCurSym = $currencyPair->fromAsset->asset; 
             $toCurSym = $currencyPair->toAsset->asset;
-
+            
             // Get Configuration Setting
             $charge = Config::where('name','trade_fee')->get()->first()->value;
             $minTrade = Config::where('name','min_trade')->get()->first()->value;
@@ -334,7 +336,7 @@ class OrderController extends Controller
                         $order = new Order;
                         $order->order_no = $this->getOrderNo();
                         $order->user_id = $toUserId;
-                        $order->currency_pair_id = $sellerCurrencyPair->id;
+                        $order->currency_pair_id = $currencyPair->id;
                         $order->amount = $givenAmount;
                         $order->price = $price1;
                         $order->side = ($request->side == "BUY") ? "SELL" : "BUY";
@@ -416,8 +418,8 @@ class OrderController extends Controller
             }
             
             DB::table('orders')->where('amount', '<=',0 )->delete();
-            $output .= $this->CreateOrderStopLimitConvert();
-        DB::commit();
+            DB::commit();
+            $output .= $this->createOrderStopLimitConvert();
         return response()->json(['output' => $output], 201);
     }
 
@@ -449,7 +451,6 @@ class OrderController extends Controller
 
     public function getOrderNo($table = "orders",$prefix="T")
     {
-        $prefix =  "T";
         $datePart = date('Ym');
         $order = DB::table($table)->orderBy('id','DESC')->limit(1)->get()->first();
         if($order){
@@ -461,8 +462,11 @@ class OrderController extends Controller
         return $orderNo;
     }
 
-    public function CreateOrderStopLimit(Request $request)
+    public function createOrderStopLimit(Request $request)
     {
+        DB::beginTransaction();
+        DB::enableQueryLog();
+
         $total = 0.00000000;
         $remark = "";
 
@@ -508,7 +512,7 @@ class OrderController extends Controller
             $orderStopLimit = new Order_stop_limit;
             $orderStopLimit->user_id = \Auth::user()->id;
             $orderStopLimit->order_no = $this->getOrderNo("order_stop_limits","SL");
-            $orderStopLimit->currency_pair_id = $sellerCurrencyPair->id;
+            $orderStopLimit->currency_pair_id = $currencyPair->id;
             $orderStopLimit->stop = $request->stop;
             $orderStopLimit->limit = $request->limit;
             $orderStopLimit->amount = $request->amount;
@@ -529,18 +533,32 @@ class OrderController extends Controller
             $this->manageWallet($walletParam);
         }
         $output = $remark;
+        DB::commit();
+        return response()->json(['output' => $output], 201);
     }
 
-    public function CreateOrderStopLimitConvert()
+    public function createOrderStopLimitConvert()
     {
+        $output ="";
         $orderStopLimits = Order_stop_limit::where('order_status','Pending')->get();
         foreach ($orderStopLimits as $orderStopLimit) {
+
             $order = Order::where('side',$orderStopLimit->side)
-                ->where('order_status',"Confirmed")
-                ->where('currency_pair_id',$orderStopLimit->currency_pair_id)
-                ->orderBy('id','DESC')
-                ->limit(1)
-                ->get()->first();
+                    ->where('order_status',"Confirmed")
+                    ->where('currency_pair_id',$orderStopLimit->currency_pair_id)
+                    ->orderBy('id','DESC')
+                    ->limit(1)
+                    ->get()->first();
+
+            /* echo "<pre>";
+            print_r($orderStopLimit->toarray());
+            print_r($order->toarray());
+            die; */
+            if(!$order){
+                $output = "Last Trade Price not Fetch in this pair.";
+                return $output;
+            }
+
             $lastPrice = $order->price;
 
             if($lastPrice > 0){
@@ -559,18 +577,21 @@ class OrderController extends Controller
                         );
                         $this->manageWallet($walletParam);
 
-                        DB::table('order_stop_limits')->where('id',$orderStopLimit->id)->update(['oder_status' => "Confirmed"]);
+                        DB::table('order_stop_limits')->where('id',$orderStopLimit->id)->update(['order_status' => "Confirmed"]);
 
                         $request = new Request;
                         $request->setMethod('POST');
                         $request->request->add([
                             'user_id' => $orderStopLimit->user_id,
-                            'currency_pair_id',$orderStopLimit->currency_pair_id,
+                            'currency_pair_id'=> $orderStopLimit->currency_pair_id,
                             'amount' => $orderStopLimit->amount,
                             'price' => $orderStopLimit->limit,
                             'order_type' => "Stop-Limit",
                             'side' => $orderStopLimit->side,
                         ]);
+                        /* echo "<pre>";
+                        print_r($request);
+                        die; */
                         $this->store($request);
                     }
                 }else{
@@ -588,27 +609,30 @@ class OrderController extends Controller
                         );
                         $this->manageWallet($walletParam);
 
-                        DB::table('order_stop_limits')->where('id',$orderStopLimit->id)->update(['oder_status' => "Confirmed"]);
+                        DB::table('order_stop_limits')->where('id',$orderStopLimit->id)->update(['order_status' => "Confirmed"]);
 
                         $request = new Request;
                         $request->setMethod('POST');
                         $request->request->add([
                             'user_id' => $orderStopLimit->user_id,
-                            'currency_pair_id',$orderStopLimit->currency_pair_id,
+                            'currency_pair_id'=> $orderStopLimit->currency_pair_id,
                             'amount' => $orderStopLimit->amount,
                             'price' => $orderStopLimit->limit,
                             'order_type' => "Stop-Limit",
                             'side' => $orderStopLimit->side,
                         ]);
+                        /* echo "<pre>";
+                        print_r($request->toarray());
+                        // print_r($order->toarray());
+                        die; */
                         $this->store($request);
                     }
                 }
-            }else{
-                $output = "Last Trade Price not Fetch in this pair.";
             }
             $output .= "Last Price: ".$lastPrice."<br>";
-            $output .= "@Id : ".$orderStopLimit->id." @Stop ".$orderStopLimit->stop." @Limit ".$orderStopLimit->limit." @Amount ".$orderStopLimit->amount."<br>";
+            //$output .= "@Id : ".$orderStopLimit->id." @Stop ".$orderStopLimit->stop." @Limit ".$orderStopLimit->limit." @Amount ".$orderStopLimit->amount."<br>";
         }
+        return $output;
     }
 
     public function cancelOrder(Request $request)
@@ -655,6 +679,7 @@ class OrderController extends Controller
         $fromWalletAmt = Wallets::select('balance')
             ->join('currency','currency.id','wallets.currency_id')
             ->where('currency.asset',$request->BaseCurrency)
+            ->where('wallets.user_id',\Auth::user()->id)
             ->get()->first();
         if($fromWalletAmt){
             $data["BaseCurrencyValue"] =  $fromWalletAmt->balance;
@@ -664,6 +689,7 @@ class OrderController extends Controller
         $toWalletAmt = Wallets::select('balance')
             ->join('currency','currency.id','wallets.currency_id')
             ->where('currency.asset',$request->MainCurrency)
+            ->where('wallets.user_id',\Auth::user()->id)
             ->get()->first();
         if($toWalletAmt){
             $data["MainCurrencyValue"] =  $toWalletAmt->balance;
@@ -677,8 +703,83 @@ class OrderController extends Controller
         return response()->json(['message' => "SUCCESS",'data' => $data], 200);
     }
 
-    public function getUserTradeHistory(Request $request)
+    public function getOrder($currPairId)
     {
-        # code...
+        $orders = Order::where('user_id',\Auth::user()->id)
+                        ->where('order_status',$request->order_status)
+                        ->where('currency_pair_id',$request->currency_pair_id)
+                        ->orderBy('updated_at','DESC')
+                        ->get();
+        if(count($orders) > 0){
+            $response['message'] = "SUCCESS";
+            $response['data'] = $orders;
+        }else{
+            $response['message'] = "EMPTY";
+            $response['data'] = null;
+        }
+        return response()->json($response, 200);
+    }
+
+    public function marketOrder(Request $request)
+    {
+        $output = "";
+
+        /* echo "<pre>";
+        print_r($request->all());
+        die; */
+        
+        DB::beginTransaction();
+        DB::enableQueryLog();
+
+        // Get Currency Pair For Buyer
+        $currencyPair = Currency_pair::find($request->currency_pair_id);
+
+        // Get Currency Pair For Seller
+        $sellerCurrencyPair = Currency_pair::
+                where('from_asset',$currencyPair->to_asset)
+                ->where('to_asset',$currencyPair->from_asset)->get()->first();
+        
+        // Get Currency Symbol For Insert Note into Remark 
+        $fromCurSym = $currencyPair->fromAsset->asset; 
+        $toCurSym = $currencyPair->toAsset->asset;
+        
+        // Get Configuration Setting
+        $charge = Config::where('name','trade_fee')->get()->first()->value;
+        $minTrade = Config::where('name','min_trade')->get()->first()->value;
+        
+        // Get User Wallet for Given Currency
+        $walletAmount = Wallets::where('user_id',\Auth::user()->id)
+                        ->where('currency_id',$currencyPair->from_asset)
+                        ->get()->first();
+
+        // Check User Wallet is Exist or Not
+        if(!$walletAmount){
+            $output .= "Wallet Not Found For Currency[".$currencyPair->fromAsset->asset."]";
+            return response()->json(['output' => $output], 200);
+        } 
+
+        // Check Request Quantity and Price is Greater Then 0
+        if($request->amount <= 0){
+            $output .= "Please enter valid amount.";
+            return response()->json(['output' => $output], 200);
+        }
+
+        // Get Reuqested Quantity Into Another Variable
+        $Remaining = $request->amount;
+
+        // Loop continue till total quantities are buy or sell.
+        while($Remaining > 0){
+            if($request->side == "BUY"){
+                $toOrderId = NULL;
+                $order = Order::where('side','!=',$request->side)
+                        ->where('order_status',"Pending")
+                        ->where('amount','>' ,0)
+                        ->where('currency_pair_id',$request->currency_pair_id)
+                        ->orderBy('price','DESC')
+                        ->orderBy('id')
+                        ->limit(1)
+                        ->get()->first();
+            }
+        }
     }
 }

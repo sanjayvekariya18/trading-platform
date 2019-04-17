@@ -33,17 +33,16 @@ export class LoginComponent {
   }
 
   Login(obj: Login, isValid: boolean) {
-    debugger;
     this.isLoginSubmitted = true;
     this.email = obj.email;
     if (isValid) {
-      debugger;
       this.isLoading = true;
       this.authenticationService.Login(obj).subscribe((res: any) => {
-        if (res !== null) {
+        debugger;
+        if (res.message !== "ERROR") {
           this.SetLogin(res.data);
         } else {
-          this.toast.error(res.errors.email.toString());
+          this.toast.error(res.data.toString());
         }
         this.isLoading = false;
       });

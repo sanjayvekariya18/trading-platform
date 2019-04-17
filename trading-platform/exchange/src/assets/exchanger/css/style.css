@@ -1575,3 +1575,12 @@ scrollbar[orient="vertical"] {
     max-height: 855px;
     overflow-x: hidden;
 }
+
+.bg-row {
+    background: #242c40 !important;
+}
+
+.error-msg{
+    color: #dc3545 !important;
+    margin: 10px 0px 0 10px;
+}

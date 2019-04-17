@@ -90,7 +90,7 @@
                 <tbody class="crypt-table-hover">
 
                   <tr *ngFor="let item of dataList" (click)="GetRowDetail(item)" class="cr_success"
-                    [ngClass]="{ 'bg-row': item.name === selectedRow }">
+                    style="line-height: 2.2em;" [ngClass]="{ 'bg-row': item.name === selectedRow }">
 
                     <td class="align-middle">{{ item.name }}</td>
 
@@ -101,7 +101,6 @@
 
                     <td appColor [attr.value]="item.change">
                       <span class="d-block">{{ item.change | appDynamicDigit: 2 }}%</span>
-                      <b class="crypt-down">-5.4%</b>
                     </td>
 
                   </tr>

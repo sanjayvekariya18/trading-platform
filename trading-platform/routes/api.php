@@ -51,4 +51,6 @@ Route::middleware('auth:api')->prefix('private')->group(function() {
     Route::get('wallets','WalletController@getWallets');    
     Route::get('wallet/{wallet_id}/{currency_id}','WalletController@getWallet');  
     Route::post('walletAmount','OrderController@getWalletAmount');  
+    Route::post('orderStopLimit','OrderController@createOrderStopLimit');  
+    Route::post('orders/marketOrder','OrderController@marketOrder');
 });

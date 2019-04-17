@@ -97,8 +97,8 @@
                 <div *ngIf="!isLogin">
                   <div class="col-md-12">
                     <button type="button" class="btn crypt-button-green-full">
-                      <span (click)="GoToUrl('login')">Login</span> or
-                      <span (click)="GoToUrl('register')">Register</span> to
+                      <span (click)="GoToUrl('account/login')">Login</span> or
+                      <span (click)="GoToUrl('account/register')">Register</span> to
                       Trade
                     </button>
                   </div>
@@ -195,13 +195,13 @@
                   </p>
                 </div>
                 <div class="mt-1" *ngIf="!isLogin">
-                  <button type="button" class="btn crypt-button-red-full">
-                    <span (click)="GoToUrl('login')">Login</span> or
-                    <span (click)="GoToUrl('register')">Register</span> to Trade
+                  <button type="button" class="btn crypt-button-green-full">
+                    <span (click)="GoToUrl('account/login')">Login</span> or
+                    <span (click)="GoToUrl('account/register')">Register</span> to Trade
                   </button>
                 </div>
                 <div *ngIf="isLogin">
-                  <button type="submit" class="btn crypt-button-green-full">
+                  <button type="submit" class="btn crypt-button-red-full">
                     <span>Sell {{ exchange.MainCurrency }}</span>
                   </button>
                 </div>

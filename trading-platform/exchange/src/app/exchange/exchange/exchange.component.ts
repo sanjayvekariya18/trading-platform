@@ -1,4 +1,12 @@
-import { Component, Input, OnChanges, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  ViewChild,
+  Output,
+  EventEmitter
+} from "@angular/core";
 import {
   FormBuilder,
   FormControl,
@@ -53,8 +61,8 @@ export class ExchangeComponent implements OnInit, OnChanges {
   @Input() total: number;
   @Input() buyModel: any;
   @Input() sellModel: any;
-
   arrBalPerc = [25, 50, 75, 100];
+
   constructor(
     public authenticationService: AuthenticationService,
     public exchangeService: ExchangeService,
@@ -231,8 +239,8 @@ export class ExchangeComponent implements OnInit, OnChanges {
         ).toFixed(8);
         this.exchange.BuyTotal = parseFloat(
           this.exchange.BuyTotalFees +
-            parseFloat(this.exchange.BuyTotalFees) *
-              (parseFloat(this.exchange.BuyFees) / 100)
+          parseFloat(this.exchange.BuyTotalFees) *
+          (parseFloat(this.exchange.BuyFees) / 100)
         ).toFixed(8);
       } else {
         this.exchange.BuyTotal = "";
@@ -250,8 +258,8 @@ export class ExchangeComponent implements OnInit, OnChanges {
         );
         this.exchange.BuyTotal = parseFloat(
           this.exchange.BuyTotalFees +
-            parseFloat(this.exchange.BuyTotalFees) *
-              (parseFloat(this.exchange.BuyFees) / 100)
+          parseFloat(this.exchange.BuyTotalFees) *
+          (parseFloat(this.exchange.BuyFees) / 100)
         ).toFixed(8);
       } else {
         this.exchange.BuyAmount = null;
@@ -403,9 +411,9 @@ export class ExchangeComponent implements OnInit, OnChanges {
             this.exchange.BuyPrice == null
               ? 0
               : this.common.toFixedCustom(
-                  parseFloat(newTotalAmt) / this.exchange.BuyPrice,
-                  8
-                );
+                parseFloat(newTotalAmt) / this.exchange.BuyPrice,
+                8
+              );
         } else {
           const newTotalAmt = parseFloat(
             ((this.exchange.MainValue * value) / 100).toString()

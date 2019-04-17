@@ -123,7 +123,6 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
       const obj = {
         currency_pair_id: this.pairId,
         amount: model.amount,
-        price: model.price,
         order_type: "MARKET",
         side: "BUY"
       };
@@ -134,7 +133,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
           this.GetExchange(null);
           this.buysellmsg = `${res.data.message}<br/> Your Orderno is : ${
             res.data.TradeNo
-          }`;
+            }`;
           this.RefreshMarket(this.pairId);
           this.ShowPopUp();
         } else {
@@ -157,7 +156,6 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
       const obj = {
         currency_pair_id: this.pairId,
         amount: model.amount,
-        price: model.price,
         order_type: "MARKET",
         side: "SELL"
       };
@@ -168,7 +166,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
           this.GetExchange(null);
           this.buysellmsg = `${res.data.message}<br/> Your Orderno is : ${
             res.data.TradeNo
-          }`;
+            }`;
           this.RefreshMarket(this.pairId);
           this.ShowPopUp();
         } else {
@@ -201,9 +199,9 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
             this.exchange.SellPrice == null
               ? 0
               : this.common.toFixedCustom(
-                  parseFloat(newTotalAmt) / this.exchange.SellPrice,
-                  8
-                );
+                parseFloat(newTotalAmt) / this.exchange.SellPrice,
+                8
+              );
         } else {
           const newTotalAmt = parseFloat(
             ((this.exchange.MainValue * value) / 100).toString()
