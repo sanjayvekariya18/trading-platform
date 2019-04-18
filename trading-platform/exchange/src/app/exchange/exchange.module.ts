@@ -7,9 +7,10 @@ import { OrdersComponent } from './orders/orders.component';
 import { StoplimitComponent } from './stoplimit/stoplimit.component';
 import { OriginalChartComponent } from './original-chart/original-chart.component';
 import { MarketExchangeComponent } from './market-exchange/market-exchange.component';
+import { HomeTradeHistoryComponent } from './home-trade-history/home-trade-history.component';
 
 const component = [OrdersComponent, ChartComponent, StoplimitComponent,
-  ExchangeComponent, OriginalChartComponent, MarketExchangeComponent];
+  ExchangeComponent, OriginalChartComponent, MarketExchangeComponent, HomeTradeHistoryComponent];
 
 @NgModule({
   declarations: [...component],

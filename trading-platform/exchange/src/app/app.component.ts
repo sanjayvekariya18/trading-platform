@@ -37,19 +37,10 @@ export class AppComponent implements OnInit {
 
     this.authenticationService.CheckUserLoggedIn();
     const currentUrl = this.url.path().substring(1);
-    const str = [
-      "account/templogin",
-      "account/register",
-      "account/resetpassword",
-      "account/confirmuser",
-      "account/login"
-    ];
+    const str = ["account/login"];
 
-    if (
-      (currentUrl === "" && this.isLogin) ||
-      (this.isLogin && str.includes(currentUrl))
-    ) {
-      this.router.navigate(["user/market"]);
+    if ((currentUrl === "" && this.isLogin) || (this.isLogin && str.includes(currentUrl))) {
+      this.router.navigate(["trade"]);
     }
   }
 }

@@ -63,7 +63,7 @@ export class ExchangeService {
 
   BuyMarketTrade(model: any) {
     return this.http.post(
-      `${environment.apiUrl}private/orders/marketOrder`,
+      `${environment.apiUrl}private/orders/create`,
       `currency_pair_id=${model.currency_pair_id}&amount=${model.amount}&order_type=${model.order_type}&side=${model.side}`,
       this.httpService.GetAuthHttpCommon()
     );
@@ -71,7 +71,7 @@ export class ExchangeService {
 
   SellMarketTrade(model: any) {
     return this.http.post(
-      `${environment.apiUrl}private/orders/marketOrder`,
+      `${environment.apiUrl}private/orders/create`,
       `currency_pair_id=${model.currency_pair_id}&amount=${model.amount}&order_type=${model.order_type}&side=${model.side}`,
       this.httpService.GetAuthHttpCommon()
     );

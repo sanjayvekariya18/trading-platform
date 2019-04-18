@@ -355,7 +355,7 @@ export class ExchangeComponent implements OnInit, OnChanges {
   }
 
   RefreshMarket(pairId) {
-    const baseMarketId = localStorage.getItem("buuBaseMarketId");
+    const baseMarketId = localStorage.getItem("BaseMarketId");
     this.tradeService.MarketRefresh(baseMarketId);
     this.tradeService.ChartRefresh();
     this.tradeService.GetDailyExchange(pairId);

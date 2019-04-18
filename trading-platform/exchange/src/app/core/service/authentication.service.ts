@@ -17,7 +17,7 @@ export class AuthenticationService {
   isUserNameChanged: EventEmitter<string> = new EventEmitter<string>();
   isLoginChanged: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  constructor(private http: HttpClient, public httpService: HttpService) {}
+  constructor(private http: HttpClient, public httpService: HttpService) { }
 
   Register(obj: Register) {
     return this.http.post(`${environment.apiUrl}/register`, obj);
@@ -58,8 +58,8 @@ export class AuthenticationService {
   }
 
   CheckUserLoggedIn(): boolean {
-    if (localStorage.getItem("buucurrentUser")) {
-      const currentUser = JSON.parse(localStorage.getItem("buucurrentUser"));
+    if (localStorage.getItem("currentUser")) {
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
       const setDate: any = new Date(Date.parse(currentUser.SetDate));
       const currentDate: any = new Date();
@@ -69,8 +69,8 @@ export class AuthenticationService {
       if (hours >= 2) {
         this.isUserNameChanged.emit("");
         this.isLoginChanged.emit(false);
-        localStorage.removeItem("buucurrentUser");
-        window.location.href = "/user/market";
+        localStorage.removeItem("currentUser");
+        window.location.href = "/trade";
         return false;
       }
 
@@ -88,8 +88,8 @@ export class AuthenticationService {
   }
 
   GetUserName(): string {
-    if (localStorage.getItem("buucurrentUser")) {
-      const currentUser = JSON.parse(localStorage.getItem("buucurrentUser"));
+    if (localStorage.getItem("currentUser")) {
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
       return currentUser.Firstname === null || currentUser.Lastname === null
         ? currentUser.Email
         : `${currentUser.Firstname} ${currentUser.Lastname}`;
@@ -98,10 +98,10 @@ export class AuthenticationService {
   }
 
   Logout() {
-    localStorage.removeItem("buucurrentUser");
-    localStorage.removeItem("buuBaseMarketId");
-    localStorage.removeItem("buuMarketList");
-    localStorage.removeItem("buuselectedMarket");
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("BaseMarketId");
+    localStorage.removeItem("MarketList");
+    localStorage.removeItem("selectedMarket");
     localStorage.removeItem("chartInterval");
     this.CheckUserLoggedIn();
   }

@@ -7,10 +7,11 @@ import { AppRoutingModule } from "./app.routes";
 import { CoreModule } from "./core";
 import { SharedModule } from "./shared";
 import { UiModule } from "./ui";
-import { HomeComponent } from "./home/main-home/main-home.component";
+import { TradeComponent } from './trade/trade.component';
+import { ExchangeModule } from "./exchange/exchange.module";
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent],
+  declarations: [AppComponent, TradeComponent],
   imports: [
     // Angular
     BrowserAnimationsModule,
@@ -24,8 +25,9 @@ import { HomeComponent } from "./home/main-home/main-home.component";
     UiModule,
 
     // app
-    AppRoutingModule
+    AppRoutingModule,
+    ExchangeModule
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

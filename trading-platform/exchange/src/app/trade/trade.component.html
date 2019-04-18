@@ -13,7 +13,7 @@
         </div>
         <div class="col-xl-8 col-lg-8 col-md-8 d-none d-md-block d-lg-block">
           <ul class="crypt-heading-menu fright">
-            <li>
+            <!-- <li>
               <a [routerLink]="['/user/balance']" routerLinkActive="active">Exchange</a>
             </li>
             <li>
@@ -27,7 +27,7 @@
             </li>
             <li>
               <a [routerLink]="['/user/balancehistory']" routerLinkActive="active">Account</a>
-            </li>
+            </li> -->
             <li class="crypt-box-menu menu-green" *ngIf="!isLogin">
               <a href="javascript:void(0);">login</a>
             </li>
@@ -77,7 +77,7 @@
             </li>
           </ul>
           <div class="tab-content crypt-tab-content">
-            <div role="tabpanel" class="tab-pane active" id="usd">
+            <div role="tabpanel" class=" active" id="usd">
               <app-loader [IsLoading]="loading"></app-loader>
               <table class="table table-striped">
                 <thead>

@@ -50,8 +50,8 @@ export class LoginComponent {
   }
 
   SetLogin(data) {
-    localStorage.setItem("buucurrentUser", JSON.stringify(data));
+    localStorage.setItem("currentUser", JSON.stringify(data));
     this.authenticationService.CheckUserLoggedIn();
-    window.location.href = "/user/market";
+    window.location.href = "/trade";
   }
 }

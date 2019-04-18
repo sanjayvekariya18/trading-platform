@@ -6,17 +6,17 @@ import {
   ExchangeService,
   ToastService,
   TradeService
-} from "../../core/service";
-import { ApiResponseStatus, Common } from "../../shared/common";
-import { Response } from "../../shared/model";
+} from "../core/service";
+import { ApiResponseStatus, Common } from "../shared/common";
+import { Response } from "../shared/model";
 
 declare var $: any;
 
 @Component({
-  selector: "app-home",
-  templateUrl: "./home.component.html"
+  selector: 'app-trade',
+  templateUrl: './trade.component.html',
 })
-export class HomeComponent implements OnInit {
+export class TradeComponent implements OnInit {
   public baseCurrencyData = [];
   public pair: string;
   public baseCurrency: string;
@@ -36,19 +36,10 @@ export class HomeComponent implements OnInit {
   dataList: any;
   selectedRow: any;
   route: string;
-  clsSection = "";
   result: any;
   isExchange = true;
-  staticCurrency: { Id: number; Name: string }[] = [
-    { Id: 1, Name: "BTC" },
-    { Id: 2, Name: "ETH" },
-    { Id: 3, Name: "USDT" }
-  ];
   buyFirstRowPrice: any;
   sellFirstRowPrice: any;
-  newYorkTime: any;
-  londonTime: any;
-  moscowTime: any;
   isLogin: false;
 
   constructor(
@@ -85,17 +76,17 @@ export class HomeComponent implements OnInit {
 
     // this.GetBaseCurrency();
     if (
-      localStorage.getItem("buuMarketList") &&
-      localStorage.getItem("buuBaseMarketId")
+      localStorage.getItem("MarketList") &&
+      localStorage.getItem("BaseMarketId")
     ) {
-      if (localStorage.getItem("buuselectedMarket")) {
-        this.result = JSON.parse(localStorage.getItem("buuselectedMarket"));
+      if (localStorage.getItem("selectedMarket")) {
+        this.result = JSON.parse(localStorage.getItem("selectedMarket"));
       } else {
-        const marketList = JSON.parse(localStorage.getItem("buuMarketList"));
+        const marketList = JSON.parse(localStorage.getItem("MarketList"));
         this.dataList = marketList;
         this.result = this.dataList.first();
       }
-      this.selectedItem = localStorage.getItem("buuBaseMarketId");
+      this.selectedItem = localStorage.getItem("BaseMarketId");
       const baseName = this.result.name.split("/");
       this.baseCurrency = baseName[1];
       this.mainCurrency = baseName[0];
@@ -110,7 +101,7 @@ export class HomeComponent implements OnInit {
     }
     this.GetMarketList(this.selectedItem);
 
-    const currentUser = JSON.parse(localStorage.getItem("buucurrentUser"));
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     if (currentUser) this.email = currentUser.email;
   }
 
@@ -125,11 +116,11 @@ export class HomeComponent implements OnInit {
   GetMarketList(paramValue) {
     this.loading = true;
     this.selectedItem = paramValue;
-    localStorage.setItem("buuBaseMarketId", this.selectedItem);
+    localStorage.setItem("BaseMarketId", this.selectedItem);
     this.exchangeService.GetMarketList(paramValue).subscribe((res: any) => {
       this.loading = false;
       this.dataList = res.data;
-      localStorage.setItem("buuMarketList", JSON.stringify(this.dataList));
+      localStorage.setItem("MarketList", JSON.stringify(this.dataList));
     });
   }
 
@@ -139,9 +130,9 @@ export class HomeComponent implements OnInit {
     const data = item.name.split("/");
     this.baseCurrency = data[1];
     this.mainCurrency = data[0];
-    localStorage.setItem("buuselectedMarket", JSON.stringify(item));
-    localStorage.setItem("buuMarketList", JSON.stringify(this.dataList));
-    this.router.navigate(["/user/market"]);
+    localStorage.setItem("selectedMarket", JSON.stringify(item));
+    localStorage.setItem("MarketList", JSON.stringify(this.dataList));
+    this.router.navigate(["/trade"]);
   }
 
   receiveAvtar($event) {
@@ -193,3 +184,4 @@ export class HomeComponent implements OnInit {
     this.sellModel = $event;
   }
 }
+

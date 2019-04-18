@@ -4,7 +4,7 @@ import { HttpHeaders } from "@angular/common/http";
 @Injectable()
 export class HttpService {
   GetAuthHttpCommon() {
-    const currentUser = JSON.parse(localStorage.getItem("buucurrentUser"));
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     const token = currentUser && currentUser.api_token;
     return {
       headers: new HttpHeaders()
@@ -15,7 +15,7 @@ export class HttpService {
   }
 
   GetOnlyAuth() {
-    const currentUser = JSON.parse(localStorage.getItem("buucurrentUser"));
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     const token = currentUser && currentUser.api_token;
     return {
       headers: new HttpHeaders()

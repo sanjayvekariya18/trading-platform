@@ -1,16 +1,15 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { HomeComponent } from "./home/main-home/main-home.component";
 import { NotfoundComponent } from "./ui/notfound/notfound.component";
+import { TradeComponent } from "./trade/trade.component";
 
 const routes: Routes = [
-  { path: "", redirectTo: "user/market", pathMatch: "full" },
-  { path: "home", component: HomeComponent },
+  { path: "", redirectTo: "/", pathMatch: "full" },
+  { path: 'trade', component: TradeComponent },
   {
     path: "account",
     loadChildren: "src/app/account/account.module#AccountModule"
   },
-  { path: "user", loadChildren: "src/app/user/user.module#UserModule" },
   { path: "**", component: NotfoundComponent }
 ];
 
@@ -18,4 +17,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
