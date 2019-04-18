@@ -24,11 +24,11 @@
               </div>
             </div>
             <div class="input-group mb-2"
-              [ngClass]="{'has-error': isBuySubmitted && buyForm.get('Amount').hasError('marketAmt')}">
+              [ngClass]="{'has-error': isBuySubmitted && buyForm.get('amount').hasError('marketAmt')}">
               <div class="input-group-prepend">
                 <span class="input-group-text">Amount</span>
               </div>
-              <input type="number" class="form-control" formControlName="Amount" placeholder="Enter Amount"
+              <input type="number" class="form-control" formControlName="amount" placeholder="Enter amount"
                 [(ngModel)]="exchange.BuyAmount" appEightDigit />
               <div class="input-group-append">
                 <span class="input-group-text">{{ exchange.MainCurrency }}</span>
@@ -72,12 +72,12 @@
               </div>
             </div>
             <div class="input-group mb-2"
-              [ngClass]="{'has-error': isSellSubmitted && sellForm.get('Amount').hasError('marketAmt')}">
+              [ngClass]="{'has-error': isSellSubmitted && sellForm.get('amount').hasError('marketAmt')}">
               <div class="input-group-prepend">
                 <span class="input-group-text">Amount</span>
               </div>
-              <input type="number" formControlName="Amount" placeholder="Enter Amount" [(ngModel)]="exchange.SellAmount"
-                placeholder="Enter Amount" appEightDigit class="form-control" (keyup)="setAmtValid()" />
+              <input type="number" formControlName="amount" placeholder="Enter Amount" [(ngModel)]="exchange.SellAmount"
+                placeholder="Enter amount" appEightDigit class="form-control" (keyup)="setAmtValid()" />
               <div class="input-group-append">
                 <span class="input-group-text">{{exchange.MainCurrency}}</span>
               </div>
@@ -116,7 +116,7 @@
       <div class="modal-body xs-p-30" *ngIf="isOpen">
         <div class="row">
           <div class="col-md-12">
-            <div class="text-white" [innerHTML]="buysellmsg"></div>
+            <div class="text-primary" [innerHTML]="buysellmsg"></div>
           </div>
           <div class="col-md-12 text-right xs-mt-20">
             <button type="button" class="btn btn-info" data-dismiss="bs-modal" (click)="ClosePopUp()">Close</button>

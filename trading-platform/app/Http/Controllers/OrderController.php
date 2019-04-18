@@ -82,23 +82,30 @@ class OrderController extends Controller
             } 
 
             // Check Request Quantity and Price is Greater Then 0
-            if($request->price <= 0 || $request->amount <= 0){
-                $output .= "Please enter valid amount.";
-                return response()->json(['output' => $output], 200);
-            }
-
-            // Check Trade Value is Greater or Equal Min. Trade
-            if(($request->price * $request->amount) < $minTrade){
-                $output .= 'Please enter mininum price :'.$minTrade;
-                return response()->json(['output' => $output], 200);
-            }
-
-            // Check User Wallet Balance is Greater Then Trade Value For Buyer and Seller
-            if(($request->side == "BUY" && $walletAmount->balance < ($request->price * $request->amount)) || 
-                ($request->side == "SELL" && $walletAmount->balance < $request->amount)){
-
-                    $output .= 'You have not sufficient fund to do this trade.';
+            if($request->has('price') && $request->order_type != "MARKET"){
+                if($request->price <= 0 || $request->amount <= 0){
+                    $output .= "Please enter valid amount.";
                     return response()->json(['output' => $output], 200);
+                }
+
+                // Check Trade Value is Greater or Equal Min. Trade
+                if(($request->price * $request->amount) < $minTrade){
+                    $output .= 'Please enter mininum price :'.$minTrade;
+                    return response()->json(['output' => $output], 200);
+                }
+
+                // Check User Wallet Balance is Greater Then Trade Value For Buyer and Seller
+                if(($request->side == "BUY" && $walletAmount->balance < ($request->price * $request->amount)) || 
+                    ($request->side == "SELL" && $walletAmount->balance < $request->amount)){
+
+                        $output .= 'You have not sufficient fund to do this trade.';
+                        return response()->json(['output' => $output], 200);
+                }
+            }else{
+                if($request->amount <= 0){
+                    $output .= "Please enter valid amount.";
+                    return response()->json(['output' => $output], 200);
+                }
             }
 
             // Get Reuqested Quantity Into Another Variable
@@ -109,15 +116,26 @@ class OrderController extends Controller
                 
                 if($request->side == "BUY"){ // For Buy Order
                     $toOrderId = NULL;
-                    $order = Order::where('side','!=',$request->side)
+                    if($request->has('price') && $request->order_type != "MARKET"){
+                        $order = Order::where('side','!=',$request->side)
                             ->where('price','<=',$request->price)
                             ->where('order_status',"Pending")
-                            ->where('amount','>' ,0)
+                            ->where('amount','>',0)
                             ->where('currency_pair_id',$request->currency_pair_id)
                             ->orderBy('price')
                             ->orderBy('id')
                             ->limit(1)
                             ->get()->first();
+                    }else{
+                        $order = Order::where('side','!=',$request->side)
+                            ->where('order_status',"Pending")
+                            ->where('amount','>',0)
+                            ->where('currency_pair_id',$request->currency_pair_id)
+                            ->orderBy('price','DESC')
+                            ->orderBy('id')
+                            ->limit(1)
+                            ->get()->first();
+                    }
                     if($order){
                         $availableAmount = $order->amount;
                         $toOrderId = $order->id;
@@ -128,7 +146,8 @@ class OrderController extends Controller
                     }
                 }else{ // For Sell Order
                     $toOrderId = NULL;
-                    $order = Order::where('side','!=',$request->side)
+                    if($request->has('price') && $request->order_type != "MARKET"){
+                        $order = Order::where('side','!=',$request->side)
                             ->where('price','>=',$request->price)
                             ->where('order_status',"Pending")
                             ->where('amount','>' ,0)
@@ -137,6 +156,16 @@ class OrderController extends Controller
                             ->orderBy('id')
                             ->limit(1)
                             ->get()->first();
+                    }else{
+                        $order = Order::where('side','!=',$request->side)
+                            ->where('order_status',"Pending")
+                            ->where('amount','>' ,0)
+                            ->where('currency_pair_id',$request->currency_pair_id)
+                            ->orderBy('price','DESC')
+                            ->orderBy('id')
+                            ->limit(1)
+                            ->get()->first();
+                    }
                     if($order){
                         $availableAmount = $order->amount;
                         $toOrderId = $order->id;
@@ -229,7 +258,7 @@ class OrderController extends Controller
                         $order = new Order;
                         $order->order_no = $this->getOrderNo();
                         $order->user_id = $toUserId;
-                        $order->currency_pair_id = $sellerCurrencyPair->id;
+                        $order->currency_pair_id = $currencyPair->id;
                         $order->amount = $givenAmount;
                         $order->price = $price1;
                         $order->side = ($request->side == "BUY") ? "SELL" : "BUY";
@@ -371,55 +400,59 @@ class OrderController extends Controller
                         $this->manageWallet($walletParam);
                     }
                 }else{
-                    
-                    $order = new Order;
-                    $order->order_no = $this->getOrderNo();
-                    $order->user_id = \Auth::user()->id;
-                    $order->currency_pair_id = $currencyPair->id;
-                    $order->amount = $Remaining;
-                    $order->price = $request->price;
-                    $order->side = $request->side;
-                    $order->order_type = $request->order_type;
-                    $order->order_status = "Pending";
-                    $order->save();
-                    
-                    if($request->side == "BUY"){
-                        $total = $Remaining * $request->price;
+                    if($request->has('price') && $request->order_type != "MARKET"){
+                        $order = new Order;
+                        $order->order_no = $this->getOrderNo();
+                        $order->user_id = \Auth::user()->id;
+                        $order->currency_pair_id = $currencyPair->id;
+                        $order->amount = $Remaining;
+                        $order->price = $request->price;
+                        $order->side = $request->side;
+                        $order->order_type = $request->order_type;
+                        $order->order_status = "Pending";
+                        $order->save();
+                        
+                        if($request->side == "BUY"){
+                            $total = $Remaining * $request->price;
 
-                        $remark1 = ' Trade buy confirmed order no :'.$order->order_no;
-                        $walletParam = array(
-                            'currency_id' => $currencyPair->from_asset,
-                            'user_id' => \Auth::user()->id,
-                            'context_id' => $order->id,
-                            'source' => "Order",
-                            'transaction_type' => "SUB",
-                            'amount' => $total,
-                            'remark' => $remark1
-                        );
-                        $this->manageWallet($walletParam);
-                    }else{
-                        $remark1 = ' Trade sell confirmed order no :'. $order->order_no;
-                        $walletParam = array(
-                            'currency_id' => $currencyPair->from_asset,
-                            'user_id' => \Auth::user()->id,
-                            'context_id' => $order->id,
-                            'source' => "Order",
-                            'transaction_type' => "SUB",
-                            'amount' => $Remaining,
-                            'remark' => $remark1
-                        );
-                        $this->manageWallet($walletParam);
+                            $remark1 = ' Trade buy confirmed order no :'.$order->order_no;
+                            $walletParam = array(
+                                'currency_id' => $currencyPair->from_asset,
+                                'user_id' => \Auth::user()->id,
+                                'context_id' => $order->id,
+                                'source' => "Order",
+                                'transaction_type' => "SUB",
+                                'amount' => $total,
+                                'remark' => $remark1
+                            );
+                            $this->manageWallet($walletParam);
+                        }else{
+                            $remark1 = ' Trade sell confirmed order no :'. $order->order_no;
+                            $walletParam = array(
+                                'currency_id' => $currencyPair->from_asset,
+                                'user_id' => \Auth::user()->id,
+                                'context_id' => $order->id,
+                                'source' => "Order",
+                                'transaction_type' => "SUB",
+                                'amount' => $Remaining,
+                                'remark' => $remark1
+                            );
+                            $this->manageWallet($walletParam);
+                        }
+                        $output .= 'Your Order(' .$order->order_no .') is pending.';    
                     }
-
+                    /* else{
+                        $output = "Last Trade Price not Fetch in this pair.";
+                    } */
                     $toOrderId = 0;
                     $Remaining = 0;
-                    $output .= 'Your Order(' .$order->order_no .') is pending.';    
                 }
             }
-            
-            DB::table('orders')->where('amount', '<=',0 )->delete();
+            DB::table('orders')->where('amount','<=',0)->delete();
             DB::commit();
-            $output .= $this->createOrderStopLimitConvert();
+            if($request->has('price') && $request->order_type != "MARKET"){
+                $output .= $this->createOrderStopLimitConvert();
+            }
         return response()->json(['output' => $output], 201);
     }
 
@@ -718,68 +751,5 @@ class OrderController extends Controller
             $response['data'] = null;
         }
         return response()->json($response, 200);
-    }
-
-    public function marketOrder(Request $request)
-    {
-        $output = "";
-
-        /* echo "<pre>";
-        print_r($request->all());
-        die; */
-        
-        DB::beginTransaction();
-        DB::enableQueryLog();
-
-        // Get Currency Pair For Buyer
-        $currencyPair = Currency_pair::find($request->currency_pair_id);
-
-        // Get Currency Pair For Seller
-        $sellerCurrencyPair = Currency_pair::
-                where('from_asset',$currencyPair->to_asset)
-                ->where('to_asset',$currencyPair->from_asset)->get()->first();
-        
-        // Get Currency Symbol For Insert Note into Remark 
-        $fromCurSym = $currencyPair->fromAsset->asset; 
-        $toCurSym = $currencyPair->toAsset->asset;
-        
-        // Get Configuration Setting
-        $charge = Config::where('name','trade_fee')->get()->first()->value;
-        $minTrade = Config::where('name','min_trade')->get()->first()->value;
-        
-        // Get User Wallet for Given Currency
-        $walletAmount = Wallets::where('user_id',\Auth::user()->id)
-                        ->where('currency_id',$currencyPair->from_asset)
-                        ->get()->first();
-
-        // Check User Wallet is Exist or Not
-        if(!$walletAmount){
-            $output .= "Wallet Not Found For Currency[".$currencyPair->fromAsset->asset."]";
-            return response()->json(['output' => $output], 200);
-        } 
-
-        // Check Request Quantity and Price is Greater Then 0
-        if($request->amount <= 0){
-            $output .= "Please enter valid amount.";
-            return response()->json(['output' => $output], 200);
-        }
-
-        // Get Reuqested Quantity Into Another Variable
-        $Remaining = $request->amount;
-
-        // Loop continue till total quantities are buy or sell.
-        while($Remaining > 0){
-            if($request->side == "BUY"){
-                $toOrderId = NULL;
-                $order = Order::where('side','!=',$request->side)
-                        ->where('order_status',"Pending")
-                        ->where('amount','>' ,0)
-                        ->where('currency_pair_id',$request->currency_pair_id)
-                        ->orderBy('price','DESC')
-                        ->orderBy('id')
-                        ->limit(1)
-                        ->get()->first();
-            }
-        }
     }
 }

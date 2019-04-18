@@ -67,10 +67,10 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
 
   BindData() {
     this.buyForm = new FormGroup({
-      Amount: new FormControl("", [Validator.checkAmountValid])
+      amount: new FormControl("", [Validator.checkAmountValid])
     });
     this.sellForm = new FormGroup({
-      Amount: new FormControl("", [Validator.checkAmountValid])
+      amount: new FormControl("", [Validator.checkAmountValid])
     });
   }
 
@@ -131,13 +131,11 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
           this.isBuySubmitted = false;
           this.ResetForm();
           this.GetExchange(null);
-          this.buysellmsg = `${res.data.message}<br/> Your Orderno is : ${
-            res.data.TradeNo
-            }`;
+          this.buysellmsg = res.output;
           this.RefreshMarket(this.pairId);
           this.ShowPopUp();
         } else {
-          this.toast.error(res.data.message);
+          this.toast.error(res.output);
         }
         this.isBuyLoading = false;
       });
@@ -164,9 +162,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
           this.isSellSubmitted = false;
           this.ResetForm();
           this.GetExchange(null);
-          this.buysellmsg = `${res.data.message}<br/> Your Orderno is : ${
-            res.data.TradeNo
-            }`;
+          this.buysellmsg = res.output;
           this.RefreshMarket(this.pairId);
           this.ShowPopUp();
         } else {
@@ -178,12 +174,11 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
   }
 
   RefreshMarket(pairId) {
-    const baseMarketId = localStorage.getItem("buuBaseMarketId");
-    this.tradeService.MarketRefresh(baseMarketId);
-    this.tradeService.ChartRefresh();
-    this.tradeService.GetDailyExchange(pairId);
-    //this.tradeService.GetOrder(pairId);
-    this.tradeService.TradeHistory(pairId);
+    // const baseMarketId = localStorage.getItem("BaseMarketId");
+    // this.tradeService.MarketRefresh(baseMarketId);
+    // this.tradeService.ChartRefresh();
+    // this.tradeService.GetDailyExchange(pairId);
+    // this.tradeService.TradeHistory(pairId);
   }
 
   calcBalance(value, type) {
