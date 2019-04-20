@@ -28,6 +28,7 @@ export class OrdersComponent implements OnChanges {
   totalSell: string;
   buyCount = 0;
   loading = false;
+  hisloading = false;
   config: PerfectScrollbarConfigInterface = {};
 
   @Input() baseCurrency: string;
@@ -45,7 +46,7 @@ export class OrdersComponent implements OnChanges {
     public tradeService: TradeService,
     private userService: UserService,
     private toast: ToastService
-  ) {}
+  ) { }
 
   GetOrder(): void {
     this.loading = true;
@@ -76,7 +77,7 @@ export class OrdersComponent implements OnChanges {
         : this.mainCurrency;
 
     this.GetUserPendingOrders("Pending", this.pairId);
-    this.GetUserConfirmOrders("Confirmed", this.pairId);
+    // this.GetUserConfirmOrders("Confirmed", this.pairId);
   }
 
   SellRowClick(item): void {
@@ -114,14 +115,14 @@ export class OrdersComponent implements OnChanges {
 
   GetUserConfirmOrders(orderstatus: string, id: number) {
     const obj = { order_status: orderstatus, currency_pair_id: id };
-    this.loading = true;
+    this.hisloading = true;
     this.exchangeService.GetUserTrade(obj).subscribe((res: any) => {
       if (res !== null) {
         this.tradeHisList = res.data;
       } else {
         this.toast.error(res.message);
       }
-      this.loading = false;
+      this.hisloading = false;
     });
   }
 }

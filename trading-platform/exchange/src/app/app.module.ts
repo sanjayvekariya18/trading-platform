@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { environment } from "../environments/environment";
+///angular-notifier/styles.
 import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app.routes";
 import { CoreModule } from "./core";
@@ -16,7 +17,6 @@ import { ExchangeModule } from "./exchange/exchange.module";
     // Angular
     BrowserAnimationsModule,
     BrowserModule,
-
     // Core & Shared
     CoreModule,
     SharedModule,

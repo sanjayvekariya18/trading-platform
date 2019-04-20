@@ -30,16 +30,17 @@
   </div>
 </div>
 
-<div class="tradingview-widget-container mb-3">
+<!-- <div class="tradingview-widget-container mb-3">
   <div id="crypt-candle-chart"></div>
-</div>
+</div> -->
 
-<!-- <div class="clschart" *ngIf="!isOriginal">
-    <app-original-chart [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency"></app-original-chart>
-  </div>
-  <div class="clschart" *ngIf="isOriginal">
-    <app-depth-chart [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency"></app-depth-chart>
-  </div> -->
+<div class="clschart" *ngIf="!isOriginal">
+  <app-original-chart [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency">
+  </app-original-chart>
+</div>
+<!-- <div class="clschart" *ngIf="isOriginal">
+  <app-depth-chart [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency"></app-depth-chart>
+</div> -->
 <!-- <ul class="btn-group-add-chart col-md-offset-9 col-md-3">
     <li>
       <button class="btn btn-sm" (click)="showHideChart(1)">Original</button>

@@ -6,8 +6,10 @@ import { ReCaptchaModule } from 'angular2-recaptcha/angular2-recaptcha';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { PerfectScrollbarConfigInterface, PerfectScrollbarModule,
-  PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar/dist/ngx-perfect-scrollbar';
+import {
+  PerfectScrollbarConfigInterface, PerfectScrollbarModule,
+  PERFECT_SCROLLBAR_CONFIG
+} from 'ngx-perfect-scrollbar/dist/ngx-perfect-scrollbar';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
 import { ToastrModule } from 'ngx-toastr';
 import { Common } from './common';
@@ -19,6 +21,8 @@ import { DataTablesModule } from 'angular-datatables/src/angular-datatables.modu
 
 import { NgMarqueeModule } from 'ng-marquee';
 
+import { NotifierModule, NotifierOptions } from 'angular-notifier';
+
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   wheelPropagation: true
 };
@@ -27,12 +31,35 @@ const pipes = [DateFormatPipe, DynamicDigitPipe, TradeDatePipe, FilterArrayPipe,
 
 const directives = [EightDigitDirective, NumberOnlyDirective];
 
+
+const notifierDefaultOptions: NotifierOptions = {
+  position: {
+    horizontal: {
+      position: 'right',
+      distance: 12
+    },
+    vertical: {
+      position: 'top',
+      distance: 12,
+      gap: 10
+    }
+  },
+  theme: 'material',
+  behaviour: {
+    autoHide: 5000,
+    onClick: false,
+    onMouseover: 'pauseAutoHide',
+    showDismissButton: true,
+    stacking: 4
+  },
+};
+
 @NgModule({
   imports: [
     // Angular
     CommonModule,
     FormsModule,
-    ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
+    ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
     // 3rd party
     AccordionModule.forRoot(),
     LaddaModule.forRoot({ style: 'zoom-in' }),
@@ -43,7 +70,8 @@ const directives = [EightDigitDirective, NumberOnlyDirective];
     ReCaptchaModule,
     ToastrModule.forRoot({ positionClass: 'toast-top-right' }),
     NgMarqueeModule,
-    DataTablesModule
+    DataTablesModule,
+    NotifierModule.withConfig(notifierDefaultOptions)
   ],
   declarations: [...pipes, ...directives],
   exports: [
@@ -61,7 +89,8 @@ const directives = [EightDigitDirective, NumberOnlyDirective];
     ReCaptchaModule,
     ToastrModule,
     NgMarqueeModule,
-    DataTablesModule
+    DataTablesModule,
+    NotifierModule
   ],
   providers: [
     {

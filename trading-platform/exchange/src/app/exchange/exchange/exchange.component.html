@@ -224,23 +224,25 @@
 <div class="modal fade modal-order cs-modal" bsModal #modal="bs-modal" tabindex="-1" role="dialog"
   aria-labelledby="mySmallModalLabel" [config]="{ backdrop: 'static' }" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content user-balance-box">
+    <div class="modal-content">
       <div class="modal-header">
+        <h4 class="modal-title pull-left">Order Details</h4>
         <button type="button" class="close" data-dismiss="bs-modal" (click)="ClosePopUp()">
           &times;
         </button>
-        <h4 class="modal-title pull-left">Order Details</h4>
       </div>
       <div class="modal-body xs-p-30" *ngIf="isOpen">
         <div class="row">
           <div class="col-md-12">
             <div class="text-info" [innerHTML]="buysellmsg"></div>
           </div>
-          <div class="col-md-12 text-right xs-mt-20">
-            <button type="button" class="btn btn-sm btn-info" data-dismiss="bs-modal" (click)="ClosePopUp()">
-              Close
-            </button>
-          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="col-md-12 text-right xs-mt-20">
+          <button type="button" class="btn btn-sm btn-primary" data-dismiss="bs-modal" (click)="ClosePopUp()">
+            Close
+          </button>
         </div>
       </div>
     </div>

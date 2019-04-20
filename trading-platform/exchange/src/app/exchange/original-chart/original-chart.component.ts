@@ -58,12 +58,7 @@ export class OriginalChartComponent implements OnChanges, OnInit {
     });
   }
 
-  ChartObservable() {
-    this.tradeService.chartRefreshAll$().subscribe((data: any) => {
-      const interval = localStorage.getItem('chartInterval');
-      this.chartData(interval);
-    });
-  }
+
 
   ngOnChanges(change: any) {
     this.pairId =
@@ -84,7 +79,8 @@ export class OriginalChartComponent implements OnChanges, OnInit {
     this.loading = true;
     const that = this;
     anychart.data.loadJsonFile(
-      `${environment.apiUrl}Market/GetChartData/${this.pairId}/${minite}`,
+      //`${environment.apiUrl}Market/GetChartData/${this.pairId}/${minite}`,
+      'https://webapi.listerexchange.com/api/Market/GetChartData/2/1440',
       function (data) {
         $('#chartdiv').html('');
         const result = [];
@@ -118,7 +114,7 @@ export class OriginalChartComponent implements OnChanges, OnInit {
 
         const candlesLegend = candlesPlot.legend();
         candlesLegend.title(false);
-        candlesLegend.fontSize(9);
+        candlesLegend.fontSize(12);
 
         const sma10 = candlesPlot.sma(mapping, 10).series();
         sma10.stroke('red');
@@ -167,6 +163,13 @@ export class OriginalChartComponent implements OnChanges, OnInit {
         that.loading = false;
       }
     );
+  }
+
+  ChartObservable() {
+    this.tradeService.chartRefreshAll$().subscribe((data: any) => {
+      const interval = localStorage.getItem('chartInterval');
+      this.chartData(interval);
+    });
   }
 
   GetDailyExchangeObservable() {

@@ -1,41 +1,15 @@
 <div class="crypt-market-status mt-3">
   <div>
     <ul class="nav nav-tabs">
-      <!-- <li role="presentation">
-        <a href="#history" class="active" data-toggle="tab">Market</a>
-      </li> -->
       <li role="presentation">
         <a href="#market-trading" data-toggle="tab">Trade History</a>
       </li>
     </ul>
     <div class="tab-content">
-      <!--  <div role="tabpanel" class="tab-pane active mx-height" id="history">
-        <app-loader [IsLoading]="tradeListLoading"></app-loader>
-
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Price</th>
-              <th scope="col">Size</th>
-              <th scope="col">Volume</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="crypt-up">0.0000234</td>
-              <td>0.0000564</td>
-              <td>4.3456600</td>
-            </tr>
-            <tr>
-              <td class="crypt-down">0.000056</td>
-              <td>2.23559</td>
-              <td>5.3424984</td>
-            </tr>
-          </tbody>
-        </table>
-      </div> -->
       <div role="tabpanel" class="tab-pane active mx-height" id="market-trading">
-        <div class="table-responsive" [perfectScrollbar]="config" style="position: relative;height: 380px">
+        <app-loader [IsLoading]="tradeListLoading"></app-loader>
+        <div class="table-responsive ps" [perfectScrollbar]="config"
+          style="position: relative; max-height: calc(93vh - 110px);">
           <table class="table table-striped">
             <thead>
               <tr>
@@ -53,7 +27,8 @@
               </tr>
               <tr *ngIf="tradeHisList?.length == 0" class="text-center">
                 <td> </td>
-                <td colspan="6"> You have not made any trades yet. Once you make some trades, they will appear here</td>
+                <td colspan="3"> You have not made any trades yet. Once you make some trades, they will appear here
+                </td>
               </tr>
             </tbody>
           </table>

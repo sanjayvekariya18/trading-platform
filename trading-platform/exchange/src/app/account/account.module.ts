@@ -12,4 +12,4 @@ const component = [
   imports: [SharedModule, UiModule, AccountRoutingModule],
   declarations: [...component]
 })
-export class AccountModule {}
+export class AccountModule { }

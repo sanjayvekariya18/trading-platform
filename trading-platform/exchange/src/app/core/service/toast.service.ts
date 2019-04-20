@@ -1,21 +1,22 @@
 import { Injectable } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
+import { NotifierService } from 'angular-notifier';
 
 @Injectable()
 export class ToastService {
 
-  constructor(public toast: ToastrService) {
+  constructor(public notifierService: NotifierService) {
   }
 
   success(message: any) {
-    return this.toast.success(message);
+    this.notifierService.notify("success", message);
   }
 
   warning(message: any) {
-    return this.toast.warning(message);
+    this.notifierService.notify("warning", message);
   }
 
   error(message: any) {
-    return this.toast.error(message);
+    this.notifierService.notify("error", message);
   }
 }
+

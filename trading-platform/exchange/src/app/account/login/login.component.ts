@@ -8,7 +8,8 @@ import { Login, VerifyTwoFactor } from "../../shared/model";
 
 @Component({
   selector: "app-login",
-  templateUrl: "./login.component.html"
+  templateUrl: "./login.component.html",
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   public loginForm: FormGroup;
@@ -20,7 +21,8 @@ export class LoginComponent {
   constructor(
     public authenticationService: AuthenticationService,
     public toast: ToastService,
-    public router: Router
+    public router: Router,
+
   ) {
     this.BindForm();
   }
@@ -38,7 +40,6 @@ export class LoginComponent {
     if (isValid) {
       this.isLoading = true;
       this.authenticationService.Login(obj).subscribe((res: any) => {
-        debugger;
         if (res.message !== "ERROR") {
           this.SetLogin(res.data);
         } else {

@@ -70,7 +70,7 @@ export class ExchangeComponent implements OnInit, OnChanges {
     public toast: ToastService,
     private router: Router,
     public tradeService: TradeService,
-    public common: Common
+    public common: Common,
   ) {
     this.authenticationService.isLoginChanged.subscribe((isLogin: any) => {
       setTimeout(() => (this.isLogin = isLogin), 0);
@@ -290,7 +290,7 @@ export class ExchangeComponent implements OnInit, OnChanges {
           this.getOrderFirstRow(this.pairName);
           this.isBuyLoading = false;
         } else {
-          this.toast.error(res.output);
+          // this.toast.error(res.output);
           this.isBuyLoading = false;
         }
       });
