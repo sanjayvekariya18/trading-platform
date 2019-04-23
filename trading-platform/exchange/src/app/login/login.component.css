@@ -109,3 +109,20 @@
 }
 
 /*# sourceMappingURL=styles.css.map */
+.cust-pad {
+  padding: 8px 15px 10px 6px;
+  border: 1px solid #353a4c;
+}
+
+.cust-pad i {
+  color: #353a4c;
+  padding-left: 5px;
+}
+
+label {
+  color: #ddd;
+}
+
+.form-group {
+  margin-top: 1rem;
+}

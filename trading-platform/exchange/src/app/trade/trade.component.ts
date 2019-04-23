@@ -5,7 +5,8 @@ import {
   AuthenticationService,
   ExchangeService,
   ToastService,
-  TradeService
+  TradeService,
+  PusherService
 } from "../core/service";
 import { ApiResponseStatus, Common } from "../shared/common";
 import { Response } from "../shared/model";
@@ -49,7 +50,9 @@ export class TradeComponent implements OnInit {
     public toast: ToastService,
     public router: Router,
     public common: Common,
-    public tradeService: TradeService
+    public tradeService: TradeService,
+    public _pusherService: PusherService,
+
   ) {
     this.router.events.subscribe((path: any) => {
       this.route = path.url;
@@ -62,6 +65,10 @@ export class TradeComponent implements OnInit {
   }
 
   ngOnInit() {
+    this._pusherService.ch_currency_pair.bind('App\\Events\\CurrencyPair', data => {
+      this.GetMarketList(this.selectedItem);
+    });
+
     this.router.events.subscribe((event: any) => {
       if (
         event != null &&
@@ -145,7 +152,7 @@ export class TradeComponent implements OnInit {
 
   Logout() {
     this.authenticationService.Logout();
-    this.router.navigate(["/account/login"]);
+    this.router.navigate(["/login"]);
   }
 
   changeBaseCurrency($event) {

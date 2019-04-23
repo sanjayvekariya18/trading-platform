@@ -273,5 +273,13 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
   @yield('js_content')
+
+  <script>
+    @auth
+    if (localStorage.getItem("currentUser") === null) {
+      localStorage.setItem("currentUser", JSON.stringify({!! json_encode(\Auth::user()) !!})); // Storing value with key
+    }
+    @endauth
+  </script>
   </body>
   </html>

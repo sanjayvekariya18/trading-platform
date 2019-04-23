@@ -6,7 +6,6 @@
   <base href="/" />
   <title>Home | Exchanger</title>
 
-  <link rel="stylesheet" href="./style.css" />
   <link rel="stylesheet" href="./assets/exchanger/bootstrap/css/bootstrap.min.css" />
   <link rel="stylesheet" href="./assets/exchanger/css/style.css">
   <link rel="stylesheet" href="./assets/exchanger/css/icons.css">
@@ -62,7 +61,24 @@
   <link href="https://fonts.googleapis.com/css?family=Muli:300,400,600" rel="stylesheet" />
 
   <style type="text/css">
-    /*# sourceMappingURL=styles.css.map */
+    .has-error .input-group-addon {
+      color: #e8a9a7 !important;
+      background-color: #f10b2a !important;
+      border-color: #f10b2a !important;
+    }
+
+    .has-error .form-control {
+      border-color: #f10b2a !important;
+      -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    }
+
+    .has-error label {
+      color: #f10b2a !important;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
     .loading {
       position: absolute;
       top: 0;
@@ -172,6 +188,35 @@
   <script type="text/javascript" src="./assets/js/chart/anychart-data-adapter.min.js"></script>
   <script type="text/javascript" src="./assets/js/chart/dark_blue.min.js"></script>
 
+  <!-- <script src="./assets/js/socket.io.js"></script> -->
 </body>
+<script>
+  /* var sock = io("//localhost:6001");
+  console.log("called");
+  sock.on('demo:App\\Events\\Demo', function (data) {
+    alert();
+    console.log(data);
+
+    //data.actionId and data.actionData hold the data that was broadcast
+    //process the data, add needed functionality here
+  }); */
+
+
+  /* var pusher = new Pusher("{{ env(PUSHER_KEY) }}");
+  Pusher.logToConsole = true;
+
+  window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'c91c1b7e8c6ece46053b',
+    cluster: 'ap2',
+    encrypted: true,
+    logToConsole: true
+  });
+
+  Echo.private('user.{{ $user_id }}')
+    .listen('NewMessageNotification', (e) => {
+      alert(e.message.message);
+    }); */
+</script>
 
 </html>

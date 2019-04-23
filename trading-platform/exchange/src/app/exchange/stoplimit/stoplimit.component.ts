@@ -9,7 +9,8 @@ import { Router } from "@angular/router";
 import {
   AuthenticationService,
   ExchangeService,
-  ToastService
+  ToastService,
+  PusherService
 } from "../../core/service";
 import { Common, Validator } from "../../shared/common";
 import { ApiResponseStatus } from "../../shared/common";
@@ -40,7 +41,9 @@ export class StoplimitComponent implements OnInit, OnChanges {
     public fb: FormBuilder,
     public toast: ToastService,
     public common: Common,
-    public router: Router
+    public router: Router,
+    public _pusherService: PusherService,
+
   ) {
     this.authenticationService.isLoginChanged.subscribe((isLogin: any) => {
       setTimeout(() => (this.isLogin = isLogin), 0);
@@ -64,16 +67,17 @@ export class StoplimitComponent implements OnInit, OnChanges {
         change.mainCurrency !== undefined
           ? change.mainCurrency.currentValue
           : this.mainCurrency;
-      this.GetExchange(change);
     }
   }
 
   ngOnInit() {
     this.authenticationService.CheckUserLoggedIn();
     this.BindData();
+    this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', data => {
+    });
   }
 
-  GetExchange(change): void {
+  GetWalletBalance(change): void {
     this.ResetForm();
     const obj = {
       BaseCurrency: this.baseCurrency,
@@ -193,7 +197,7 @@ export class StoplimitComponent implements OnInit, OnChanges {
         if (res !== null) {
           this.isBuySubmitted = false;
           this.ResetForm();
-          this.GetExchange(null);
+          this.GetWalletBalance(null);
           this.toast.success(res.output);
         } else {
           this.toast.error(res.output);
@@ -218,7 +222,7 @@ export class StoplimitComponent implements OnInit, OnChanges {
         if (res !== null) {
           this.isSellSubmitted = false;
           this.ResetForm();
-          this.GetExchange(null);
+          this.GetWalletBalance(null);
           this.toast.success(res.output);
         } else {
           this.isSellLoading = false;

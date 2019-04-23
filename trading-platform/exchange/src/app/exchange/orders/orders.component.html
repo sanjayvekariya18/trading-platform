@@ -27,6 +27,9 @@
                   <th class="text-center" scope="col">
                     Value <span>({{ baseCurrency }})</span>
                   </th>
+                  <th class="text-center" scope="col">
+                    Cancel Order
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -36,8 +39,12 @@
                   <td class="crypt-up" class="text-center">
                     {{ item.price * item.amount | appDynamicDigit: 8 }}
                   </td>
+                  <td class="crypt-up" class="text-center">
+                    <a href="javascript:void(0);"><i class="fa fa-times crypt-down" title="Cancel Order"
+                        (click)="CancelOrder(item.id)"></i></a>
+                  </td>
                 </tr>
-                <tr *ngIf="openOrderlist?.length == 0">
+                <tr *ngIf="openOrderlist == null">
                   <td colspan="4">No data found</td>
                 </tr>
               </tbody>
@@ -70,7 +77,7 @@
                     {{ item.price * item.amount | appDynamicDigit: 8 }}
                   </td>
                 </tr>
-                <tr *ngIf="tradeHisList?.length == 0">
+                <tr *ngIf="tradeHisList == null">
                   <td colspan="4">No data found</td>
                 </tr>
               </tbody>

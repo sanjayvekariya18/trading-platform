@@ -1,35 +1,12 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  ViewChild,
-  Output,
-  EventEmitter
-} from "@angular/core";
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators
-} from "@angular/forms";
+import { Component, Input, OnChanges, OnInit, ViewChild } from "@angular/core";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { ModalDirective } from "ngx-bootstrap/modal";
-import {
-  AuthenticationService,
-  ExchangeService,
-  ToastService,
-  TradeService
-} from "../../core/service";
-import { ApiResponseStatus, Common } from "../../shared/common";
+import { AuthenticationService, ExchangeService, PusherService, ToastService, TradeService } from "../../core/service";
+import { Common } from "../../shared/common";
 import { Validator } from "../../shared/common/common.validator";
-import {
-  DailyExchange,
-  Exchange,
-  ExchangeModal,
-  Response
-} from "../../shared/model";
-import { OrdersComponent } from "../orders/orders.component";
+import { DailyExchange, Exchange, ExchangeModal } from "../../shared/model";
+declare var Pusher: any;
 
 @Component({
   selector: "app-exchange",
@@ -70,16 +47,22 @@ export class ExchangeComponent implements OnInit, OnChanges {
     public toast: ToastService,
     private router: Router,
     public tradeService: TradeService,
+    public _pusherService: PusherService,
     public common: Common,
   ) {
+    Pusher.logToConsole = true;
     this.authenticationService.isLoginChanged.subscribe((isLogin: any) => {
       setTimeout(() => (this.isLogin = isLogin), 0);
     });
   }
 
+
   ngOnInit() {
     this.BindData();
     this.authenticationService.CheckUserLoggedIn();
+    this._pusherService.ch_wallet_amount.bind('App\\Events\\WalletAmount', data => {
+      this.GetWalletBalance(null);
+    });
   }
 
   ngOnChanges(change: any) {
@@ -101,7 +84,7 @@ export class ExchangeComponent implements OnInit, OnChanges {
           ? change.mainCurrency.currentValue
           : this.mainCurrency;
       this.pairName = `${this.mainCurrency}/${this.baseCurrency}`;
-      this.GetExchange(change);
+      this.GetWalletBalance(change);
     } else {
       this.ChangeUpdateModel(change);
     }
@@ -161,7 +144,7 @@ export class ExchangeComponent implements OnInit, OnChanges {
     }
   }
 
-  GetExchange(change): void {
+  GetWalletBalance(change): void {
     this.ResetForm();
     const obj = {
       BaseCurrency: this.baseCurrency,
@@ -268,6 +251,7 @@ export class ExchangeComponent implements OnInit, OnChanges {
   }
 
   Buy(model: Exchange, isValid: boolean) {
+
     this.isBuySubmitted = true;
     if (isValid) {
       this.isBuyLoading = true;
@@ -283,11 +267,10 @@ export class ExchangeComponent implements OnInit, OnChanges {
           console.log(res);
           this.isBuySubmitted = false;
           this.ResetForm();
-          this.GetExchange(null);
+          this.GetWalletBalance(null);
           this.buysellmsg = res.output;
-          this.RefreshMarket(this.pairId);
+          // this.RefreshMarket(this.pairId);
           this.ShowPopUp();
-          this.getOrderFirstRow(this.pairName);
           this.isBuyLoading = false;
         } else {
           // this.toast.error(res.output);
@@ -340,11 +323,10 @@ export class ExchangeComponent implements OnInit, OnChanges {
         if (res != null) {
           this.isSellSubmitted = false;
           this.ResetForm();
-          this.GetExchange(null);
+          this.GetWalletBalance(null);
           this.isSellLoading = false;
           this.buysellmsg = res.output;
-          this.RefreshMarket(this.pairId);
-          this.getOrderFirstRow(this.pairName);
+          // this.RefreshMarket(this.pairId);
           this.ShowPopUp();
         } else {
           this.isSellLoading = false;
@@ -354,14 +336,14 @@ export class ExchangeComponent implements OnInit, OnChanges {
     }
   }
 
-  RefreshMarket(pairId) {
-    const baseMarketId = localStorage.getItem("BaseMarketId");
-    this.tradeService.MarketRefresh(baseMarketId);
-    this.tradeService.ChartRefresh();
-    this.tradeService.GetDailyExchange(pairId);
-    //this.tradeService.GetOrder(pairId);
-    this.tradeService.TradeHistory(pairId);
-  }
+  // RefreshMarket(pairId) {
+  //   const baseMarketId = localStorage.getItem("BaseMarketId");
+  //   this.tradeService.MarketRefresh(baseMarketId);
+  //   this.tradeService.ChartRefresh();
+  //   this.tradeService.GetDailyExchange(pairId);
+  //   //this.tradeService.GetOrder(pairId);
+  //   this.tradeService.TradeHistory(pairId);
+  // }
 
   ClosePopUp() {
     this.modal.hide();
@@ -377,26 +359,26 @@ export class ExchangeComponent implements OnInit, OnChanges {
     this.router.navigate(["/" + route + ""]);
   }
 
-  BuyBaseValueClick() {
-    if (
-      this.common.IsNumeric(this.exchange.BaseValue) &&
-      this.common.IsNumeric(this.exchange.BuyPrice)
-    ) {
-      this.exchange.BuyTotalFees = this.exchange.BaseValue.toString();
-      this.exchange.BuyAmount = Number(
-        Number(this.exchange.BuyTotalFees) / this.exchange.BuyPrice
-      );
-    }
-  }
+  // BuyBaseValueClick() {
+  //   if (
+  //     this.common.IsNumeric(this.exchange.BaseValue) &&
+  //     this.common.IsNumeric(this.exchange.BuyPrice)
+  //   ) {
+  //     this.exchange.BuyTotalFees = this.exchange.BaseValue.toString();
+  //     this.exchange.BuyAmount = Number(
+  //       Number(this.exchange.BuyTotalFees) / this.exchange.BuyPrice
+  //     );
+  //   }
+  // }
 
-  SellBaseValueClick() {
-    if (this.common.IsNumeric(this.exchange.MainValue)) {
-      this.exchange.SellAmount = this.exchange.MainValue;
-      this.exchange.SellTotal = (
-        this.exchange.SellPrice * this.exchange.SellAmount
-      ).toFixed(8);
-    }
-  }
+  // SellBaseValueClick() {
+  //   if (this.common.IsNumeric(this.exchange.MainValue)) {
+  //     this.exchange.SellAmount = this.exchange.MainValue;
+  //     this.exchange.SellTotal = (
+  //       this.exchange.SellPrice * this.exchange.SellAmount
+  //     ).toFixed(8);
+  //   }
+  // }
 
   calcBalance(value, type) {
     for (let i = 0; i < this.arrBalPerc.length; i++) {
@@ -425,21 +407,5 @@ export class ExchangeComponent implements OnInit, OnChanges {
         }
       }
     }
-  }
-
-  getOrderFirstRow(pair: any) {
-    this.exchangeService.GetOrder(pair).subscribe((res: any) => {
-      if (res != null) {
-        const dtList = res.data;
-        this.exchange.BuyPrice = this.common.toFixedCustom(
-          dtList.sellList.first().Price,
-          8
-        );
-        this.exchange.SellPrice = this.common.toFixedCustom(
-          dtList.buyList.first().Price,
-          8
-        );
-      }
-    });
   }
 }

@@ -7,7 +7,7 @@ import {
   Output
 } from "@angular/core";
 import { environment } from "../../../environments/environment";
-import { TradeService, ExchangeService } from "../../core/service";
+import { TradeService, ExchangeService, PusherService } from "../../core/service";
 import { DailyExchange } from "../../shared/model";
 import { ApiResponseStatus } from "../../shared/common";
 
@@ -27,12 +27,17 @@ export class ChartComponent implements OnChanges, OnInit {
   isOriginal = false;
   constructor(
     public tradeService: TradeService,
-    public exchangeService: ExchangeService
+    public exchangeService: ExchangeService,
+    public _pusherService: PusherService,
+
   ) {
-    this.GetDailyExchangeObservable();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this._pusherService.ch_daily_exchange.bind('App\\Events\\DailyExchange', data => {
+      this.GetDailyExchange();
+    });
+  }
 
   ngOnChanges(change: any) {
     this.pairName = `${this.mainCurrency}/${this.baseCurrency}`;
@@ -42,16 +47,6 @@ export class ChartComponent implements OnChanges, OnInit {
     this.GetDailyExchange();
   }
 
-  GetDailyExchangeObservable() {
-    this.tradeService.dailyExchangeAll$().subscribe((data: any) => {
-      if (data.length > 0) {
-        this.dailyExchange = new DailyExchange();
-        this.dailyExchange = data[0];
-      } else {
-        this.dailyExchange = new DailyExchange();
-      }
-    });
-  }
 
   GetDailyExchange() {
     this.isDailyExchangeLoader = true;

@@ -2,9 +2,9 @@ import { Component, ViewChild } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { ReCaptchaComponent } from "angular2-recaptcha/angular2-recaptcha";
-import { environment } from "../../../environments/environment";
-import { AuthenticationService, ToastService } from "../../core/service";
-import { Login, VerifyTwoFactor } from "../../shared/model";
+import { environment } from "../../environments/environment";
+import { AuthenticationService, ToastService } from "../core/service";
+import { Login, VerifyTwoFactor } from "../shared/model";
 
 @Component({
   selector: "app-login",

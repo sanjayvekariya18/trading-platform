@@ -12,12 +12,6 @@
 
 use Illuminate\Support\Facades\Input;
 Route::get('/', 'IndexController');
-
-Route::get('/test', function(){
-  return 'hello word';
-} );
-
-
 Route::post('/register/check', 'Auth\RegisterController@ajaxValidator');
 Route::get('/trade', 'TradeController@index')->name('trade');
 

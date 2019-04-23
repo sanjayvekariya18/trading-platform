@@ -94,6 +94,13 @@ export class ExchangeService {
     );
   }
 
+  GetUserHistory(currency_pair_id: any) {
+    return this.http.get(
+      `${environment.apiUrl}trade_history/${currency_pair_id}`,
+      this.httpService.GetAuthHttpCommon()
+    );
+  }
+
   GetWalletBalance(obj: any) {
     return this.http.post(
       `${environment.apiUrl}private/walletAmount`,
@@ -125,8 +132,9 @@ export class ExchangeService {
   }
 
   CancelOrder(id: number) {
-    return this.http.get(
-      `${environment.apiUrl}Exchange/CancelOrder/${id}`,
+    return this.http.post(
+      `${environment.apiUrl}private/orders/cancel`,
+      `order_id=${id}`,
       this.httpService.GetAuthHttpCommon()
     );
   }

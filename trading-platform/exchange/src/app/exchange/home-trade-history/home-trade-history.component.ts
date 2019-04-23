@@ -1,8 +1,8 @@
-import { Component, OnChanges, Input } from "@angular/core";
+import { Component, OnChanges, Input, OnInit } from "@angular/core";
 import { ExchangeService } from "../../core/service/exchange.service";
 import { ApiResponseStatus } from "../../shared/common";
 import { PerfectScrollbarConfigInterface } from "ngx-perfect-scrollbar/dist/lib/perfect-scrollbar.interfaces";
-import { TradeService } from "../../core/service";
+import { TradeService, PusherService } from "../../core/service";
 import { ToastrService } from "ngx-toastr";
 import { Response } from "../../shared/model";
 
@@ -11,7 +11,7 @@ import { Response } from "../../shared/model";
   templateUrl: "./home-trade-history.component.html",
   styles: []
 })
-export class HomeTradeHistoryComponent implements OnChanges {
+export class HomeTradeHistoryComponent implements OnInit, OnChanges {
   tradeHisList: any;
   tradeListLoading = false;
   @Input() baseCurrency: number;
@@ -22,9 +22,17 @@ export class HomeTradeHistoryComponent implements OnChanges {
   constructor(
     private exchangeService: ExchangeService,
     public tradeService: TradeService,
-    public toast: ToastrService
+    public toast: ToastrService,
+    public _pusherService: PusherService,
+
   ) {
     this.GetTradeObservable();
+  }
+
+  ngOnInit() {
+    this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', data => {
+      this.GetUserHistory(this.pairId);
+    });
   }
 
   ngOnChanges(change: any) {
@@ -38,7 +46,7 @@ export class HomeTradeHistoryComponent implements OnChanges {
       change.mainCurrency !== undefined
         ? change.mainCurrency.currentValue
         : this.mainCurrency;
-    this.GetTrade("Confirmed", this.pairId);
+    this.GetUserHistory(this.pairId);
   }
 
   GetTradeObservable() {
@@ -47,10 +55,9 @@ export class HomeTradeHistoryComponent implements OnChanges {
     });
   }
 
-  GetTrade(orderstatus: string, id: number) {
-    const obj = { order_status: orderstatus, currency_pair_id: id };
+  GetUserHistory(id: number) {
     this.tradeListLoading = true;
-    this.exchangeService.GetUserTrade(obj).subscribe((res: any) => {
+    this.exchangeService.GetUserHistory(id).subscribe((res: any) => {
       if (res !== null) {
         this.tradeHisList = res.data;
       } else {

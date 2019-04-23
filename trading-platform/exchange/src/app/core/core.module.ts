@@ -3,10 +3,10 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { AuthGuard } from './guards';
 import { ErrorInterceptor, LoaderHttpInterceptor, LoadingIndicatorService } from './interceptor';
-import { AuthenticationService, ExchangeService, HttpService, ToastService, TradeService, UserService } from './service';
+import { AuthenticationService, ExchangeService, HttpService, ToastService, TradeService, UserService, PusherService } from './service';
 
 
-const service = [HttpService, AuthenticationService, ExchangeService, TradeService, UserService, ToastService];
+const service = [HttpService, AuthenticationService, ExchangeService, TradeService, UserService, ToastService, PusherService];
 
 @NgModule({
   imports: [CommonModule, HttpClientModule],

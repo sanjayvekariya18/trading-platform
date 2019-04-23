@@ -10,9 +10,10 @@ import { SharedModule } from "./shared";
 import { UiModule } from "./ui";
 import { TradeComponent } from './trade/trade.component';
 import { ExchangeModule } from "./exchange/exchange.module";
+import { LoginComponent } from "./login/login.component";
 
 @NgModule({
-  declarations: [AppComponent, TradeComponent],
+  declarations: [AppComponent, TradeComponent, LoginComponent],
   imports: [
     // Angular
     BrowserAnimationsModule,

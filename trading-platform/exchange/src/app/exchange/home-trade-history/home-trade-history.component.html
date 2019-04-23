@@ -21,11 +21,12 @@
             </thead>
             <tbody>
               <tr class="animated fadeInUp" *ngFor="let item of tradeHisList">
-                <td> {{ item.price | appDynamicDigit: 8 }} </td>
+                <td [ngClass]="{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}">
+                  {{ item.price | appDynamicDigit: 8 }} </td>
                 <td> {{ item.amount | appDynamicDigit: 8 }} </td>
                 <td class="text-right"> {{ item.updated_at | date:'hh:mm:ss' }}</td>
               </tr>
-              <tr *ngIf="tradeHisList?.length == 0" class="text-center">
+              <tr *ngIf="tradeHisList == null" class="text-center">
                 <td> </td>
                 <td colspan="3"> You have not made any trades yet. Once you make some trades, they will appear here
                 </td>

@@ -10,7 +10,8 @@ import {
   AuthenticationService,
   ExchangeService,
   ToastService,
-  TradeService
+  TradeService,
+  PusherService
 } from "../../core/service";
 import { ApiResponseStatus, Common } from "../../shared/common";
 import { Validator } from "../../shared/common/common.validator";
@@ -53,7 +54,9 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
     public fb: FormBuilder,
     public toast: ToastService,
     public tradeService: TradeService,
-    public common: Common
+    public common: Common,
+    public _pusherService: PusherService,
+
   ) {
     this.authenticationService.isLoginChanged.subscribe((isLogin: any) => {
       setTimeout(() => (this.isLogin = isLogin), 0);
@@ -63,6 +66,8 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.BindData();
     this.authenticationService.CheckUserLoggedIn();
+    this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', data => {
+    });
   }
 
   BindData() {
@@ -93,12 +98,10 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
           ? change.mainCurrency.currentValue
           : this.mainCurrency;
       this.pairName = `${this.mainCurrency}/${this.baseCurrency}`;
-      this.GetExchange(change);
-      this.getOrderFirstRow(this.pairName);
     }
   }
 
-  GetExchange(change): void {
+  GetWalletBalance(change): void {
     this.ResetForm();
     const obj = {
       BaseCurrency: this.baseCurrency,
@@ -130,7 +133,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
         if (res != null) {
           this.isBuySubmitted = false;
           this.ResetForm();
-          this.GetExchange(null);
+          this.GetWalletBalance(null);
           this.buysellmsg = res.output;
           this.RefreshMarket(this.pairId);
           this.ShowPopUp();
@@ -161,7 +164,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
         if (res !== null) {
           this.isSellSubmitted = false;
           this.ResetForm();
-          this.GetExchange(null);
+          this.GetWalletBalance(null);
           this.buysellmsg = res.output;
           this.RefreshMarket(this.pairId);
           this.ShowPopUp();
@@ -182,7 +185,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
   }
 
   calcBalance(value, type) {
-    this.getOrderFirstRow(this.pairName);
+    // this.getOrderFirstRow(this.pairName);
     for (let i = 0; i < this.arrBalPerc.length; i++) {
       const element = this.arrBalPerc[i];
       if (value === element) {
@@ -207,22 +210,22 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
     }
   }
 
-  getOrderFirstRow(pair: any) {
-    /* this.exchangeService.GetOrder(pair).subscribe((res: any) => {
-      if (res != null) {
-        const dtList = res.data;
+  // getOrderFirstRow(pair: any) {
+  //  this.exchangeService.GetOrder(pair).subscribe((res: any) => {
+  //     if (res != null) {
+  //       const dtList = res.data;
 
-        if (dtList.sellList.length !== 0) {
-          this.exchange.SellPrice = this.common.toFixedCustom(
-            dtList.sellList.first().Price,
-            8
-          );
-        } else {
-          this.exchange.SellPrice = 0;
-        }
-      }
-    }); */
-  }
+  //       if (dtList.sellList.length !== 0) {
+  //         this.exchange.SellPrice = this.common.toFixedCustom(
+  //           dtList.sellList.first().Price,
+  //           8
+  //         );
+  //       } else {
+  //         this.exchange.SellPrice = 0;
+  //       }
+  //     }
+  //   });
+  // }
 
   setAmtValid() {
     this.isWalletBal = false;

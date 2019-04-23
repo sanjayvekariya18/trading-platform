@@ -29,7 +29,7 @@
               <a [routerLink]="['/user/balancehistory']" routerLinkActive="active">Account</a>
             </li> -->
             <li class="crypt-box-menu menu-green" *ngIf="!isLogin">
-              <a href="javascript:void(0);">login</a>
+              <a href="javascript:void(0);" [routerLink]="['/login']">login</a>
             </li>
             <li class="btn btn-danger" *ngIf="isLogin">
               <a href="javascript:void(0);" (click)="Logout();">logout</a>
