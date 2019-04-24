@@ -73,7 +73,7 @@
             </li>
             <li role="presentation">
               <a href="#usdt" class="active" data-toggle="tab" [ngClass]="{ active: selectedItem == '3' }"
-                (click)="GetMarketList(3)">usd</a>
+                (click)="GetMarketList(3)">usdt</a>
             </li>
           </ul>
           <div class="tab-content crypt-tab-content">
@@ -90,7 +90,7 @@
                 <tbody class="crypt-table-hover">
 
                   <tr *ngFor="let item of dataList" (click)="GetRowDetail(item)" class="cr_success"
-                    style="line-height: 2.2em;" [ngClass]="{ 'bg-row': item.name === selectedRow }">
+                    style="line-height: 2.2em;" [ngClass]="{ 'bg-row': item.name == selectedRow }">
 
                     <td class="align-middle">{{ item.name }}</td>
 

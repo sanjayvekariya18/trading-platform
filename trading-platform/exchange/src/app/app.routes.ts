@@ -5,7 +5,8 @@ import { TradeComponent } from "./trade/trade.component";
 import { LoginComponent } from "./login/login.component";
 
 const routes: Routes = [
-  { path: "", redirectTo: "/trade", pathMatch: "full" },
+  // { path: "", redirectTo: "/trade/:pair", pathMatch: "full" },
+  { path: 'trade/:pair', component: TradeComponent },
   { path: 'trade', component: TradeComponent },
   { path: "login", component: LoginComponent },
   { path: "**", component: NotfoundComponent }

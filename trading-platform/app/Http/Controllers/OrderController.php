@@ -34,6 +34,7 @@ class OrderController extends Controller
                         ->where('order_status',$request->order_status)
                         ->where('currency_pair_id',$request->currency_pair_id)
                         ->orderBy('updated_at','DESC')
+                        ->limit(100)
                         ->get();
         if(count($orders) > 0){
             $response['message'] = "SUCCESS";

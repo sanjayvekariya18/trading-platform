@@ -1,6 +1,6 @@
-import { LocationStrategy } from "@angular/common";
+import { Location, LocationStrategy } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import {
   AuthenticationService,
   ExchangeService,
@@ -10,7 +10,7 @@ import {
 } from "../core/service";
 import { ApiResponseStatus, Common } from "../shared/common";
 import { Response } from "../shared/model";
-
+import { debug } from "util";
 declare var $: any;
 
 @Component({
@@ -52,8 +52,11 @@ export class TradeComponent implements OnInit {
     public common: Common,
     public tradeService: TradeService,
     public _pusherService: PusherService,
+    private activeRoute: ActivatedRoute,
+    private location: Location
 
   ) {
+
     this.router.events.subscribe((path: any) => {
       this.route = path.url;
     });
@@ -61,6 +64,11 @@ export class TradeComponent implements OnInit {
       setTimeout(() => {
         this.isLogin = isLogins;
       }, 10);
+    });
+    // const routeParams = this.activeRoute.snapshot.params;
+
+    this.activeRoute.params.subscribe(routeParams => {
+      this.GetPairDetail(routeParams.pair);
     });
   }
 
@@ -99,12 +107,14 @@ export class TradeComponent implements OnInit {
       this.mainCurrency = baseName[0];
       this.pairId = this.result.id;
       this.selectedRow = this.result.name;
+      // this.pair = this.mainCurrency + "_" + this.baseCurrency;
     } else {
       this.baseCurrency = "BTC";
       this.mainCurrency = "ETH";
       this.pairId = 1;
       this.selectedItem = "1";
       this.selectedRow = "ETH/BTC";
+      // this.pair = this.mainCurrency + "_" + this.baseCurrency;
     }
     this.GetMarketList(this.selectedItem);
 
@@ -121,6 +131,7 @@ export class TradeComponent implements OnInit {
   // }
 
   GetMarketList(paramValue) {
+
     this.loading = true;
     this.selectedItem = paramValue;
     localStorage.setItem("BaseMarketId", this.selectedItem);
@@ -131,15 +142,37 @@ export class TradeComponent implements OnInit {
     });
   }
 
+  GetPairDetail(pairName) {
+
+    this.loading = true;
+    this.exchangeService.GetMarketList(pairName).subscribe((res: any) => {
+      console.log(res.data);
+      this.dataList = res.data;
+      for (const pairList in res.data) {
+        if (res.data.hasOwnProperty(pairList)) {
+          const element = res.data[pairList];
+          this.selectedItem = element.base_currency_id;
+          localStorage.setItem("BaseMarketId", element.base_currency_id);
+          const pair = element.name.replace('/', '_');
+          if (pairName == pair) {
+            this.GetRowDetail(element);
+          }
+        }
+      }
+    });
+  }
+
   GetRowDetail(item) {
     this.selectedRow = item.name;
     this.pairId = item.id;
     const data = item.name.split("/");
     this.baseCurrency = data[1];
     this.mainCurrency = data[0];
+    // this.pair = this.mainCurrency + "_" + this.baseCurrency;
     localStorage.setItem("selectedMarket", JSON.stringify(item));
     localStorage.setItem("MarketList", JSON.stringify(this.dataList));
-    this.router.navigate(["/trade"]);
+    this.location.replaceState("/trade/" + this.mainCurrency + "_" + this.baseCurrency);
+    // this.router.navigate(["/trade"]);
   }
 
   receiveAvtar($event) {

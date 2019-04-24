@@ -22,16 +22,16 @@ export class ExchangeService {
     );
   }
 
-  GetBuyOrder() {
+  GetBuyOrder(currency_pair_id: any) {
     return this.http.get(
-      `${environment.apiUrl}Exchange/GetBuyOrder`,
+      `${environment.apiUrl}buy_orders/${currency_pair_id}`,
       this.httpService.GetAuthHttpCommon()
     );
   }
 
-  GetSellOrder() {
+  GetSellOrder(currency_pair_id: any) {
     return this.http.get(
-      `${environment.apiUrl}Exchange/GetSellOrder`,
+      `${environment.apiUrl}sell_orders/${currency_pair_id}`,
       this.httpService.GetAuthHttpCommon()
     );
   }
@@ -109,7 +109,7 @@ export class ExchangeService {
     );
   }
 
-  GetMarketList(id: number) {
+  GetMarketList(id: any) {
     return this.http.get(
       `${environment.apiUrl}currency_pair/${id}`,
       this.httpService.GetJsonHttpCommon()

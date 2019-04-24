@@ -65,7 +65,15 @@ class ExchangeController extends Controller
 
     public function getCurrencyPair($currencyId)
     {
-        $currency_pairs = Currency_pair::where('from_asset',$currencyId)->with('fromAsset')->with('toAsset')->get();
+        if(is_numeric($currencyId)){
+            $currency_pairs = Currency_pair::where('from_asset',$currencyId)->with('fromAsset')->with('toAsset')->get();
+        }else{
+            $pair = explode('_',$currencyId);
+            $fromCurency = Currency::where('asset',$pair[1])->first();
+            $currency_pairs = Currency_pair::
+                            where('from_asset',$fromCurency->id)
+                            ->with('fromAsset')->with('toAsset')->get();
+        }
         $response = array();
         $data = array();
         if(count($currency_pairs) > 0){
@@ -111,6 +119,7 @@ class ExchangeController extends Controller
 
             $data[$key]['id'] = $currency_pair->id;
             $data[$key]['name'] = $currency_pair->toAsset->asset."/".$currency_pair->fromAsset->asset;
+            $data[$key]['base_currency_id'] = $currency_pair->from_asset;
             
             if($currentTrade){
                 if($previousTrade){
@@ -240,27 +249,38 @@ class ExchangeController extends Controller
         return response()->json($response, 200);
     }
 
-    public function getChartData($curPairId)
+    public function getChartData($curPairId,$interval)
     {
+        $formatted_date = Carbon::now()->subMinutes($interval)->toDateTimeString();
+
         $chart = \DB::select("SELECT 	
                     MAX(price) AS high, MIN(price) AS low,
                     COALESCE(        
                     (        
                         SELECT price        
                         FROM orders       
-                        WHERE order_status = 'Confirmed' ORDER BY created_at ASC LIMIT 1
+                        WHERE order_status = 'Confirmed' AND 
+                              currency_pair_id = $curPairId AND 
+                              updated_at < $formatted_date
+                        ORDER BY updated_at ASC LIMIT 1
                     ),0) as open,
                     COALESCE( 
                     (
                         SELECT price FROM orders 
-                        WHERE order_status = 'Confirmed' ORDER BY created_at DESC LIMIT 1 
+                        WHERE order_status = 'Confirmed' AND 
+                              currency_pair_id = $curPairId AND 
+                              updated_at < $formatted_date
+                        ORDER BY updated_at DESC LIMIT 1 
                     ),0) as close		
                     FROM 
                         orders U       
-                    WHERE 
-                        order_status = 'Confirmed' 
-                        AND currency_pair_id = ".$curPairId
-                );
+                    WHERE order_status = 'Confirmed' AND 
+                              currency_pair_id = $curPairId AND 
+                              updated_at < $formatted_date
+                ")->get();
+        echo "<pre>";
+        print_r($chart->toarray());
+        die;
         return response()->json(['data' => $chart], 200);
     }
 }
