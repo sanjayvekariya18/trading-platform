@@ -1572,7 +1572,7 @@ scrollbar[orient="vertical"] {
     box-shadow: none;
 }
 .mx-height{
-    max-height: 855px;
+    max-height: 765px;
     overflow-x: hidden;
 }
 

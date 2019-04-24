@@ -24,6 +24,8 @@ import Swal from 'sweetalert2';
 })
 export class OrdersComponent implements OnInit, OnChanges {
   tradeHisList: any;
+  sellOrderList: any;
+  buyOrderList: any;
   openOrderlist: any;
   buyData = [];
   sellData = [];
@@ -57,7 +59,11 @@ export class OrdersComponent implements OnInit, OnChanges {
   ngOnInit() {
     this._pusherService.ch_pending_order.bind('App\\Events\\PendingOrder', data => {
       this.GetUserPendingOrders("Pending", this.pairId);
+      this.GetSellOrder(this.pairId);
+      this.GetBuyOrder(this.pairId);
     });
+    /* this.GetSellOrder(this.pairId);
+    this.GetBuyOrder(this.pairId); */
 
   }
 
@@ -74,7 +80,8 @@ export class OrdersComponent implements OnInit, OnChanges {
         : this.mainCurrency;
 
     this.GetUserPendingOrders("Pending", this.pairId);
-    // this.GetUserConfirmOrders("Confirmed", this.pairId);
+    this.GetSellOrder(this.pairId);
+    this.GetBuyOrder(this.pairId);
   }
 
   GetUserPendingOrders(orderstatus: string, id: number) {
@@ -96,6 +103,30 @@ export class OrdersComponent implements OnInit, OnChanges {
     this.exchangeService.GetUserTrade(obj).subscribe((res: any) => {
       if (res !== null) {
         this.tradeHisList = res.data;
+      } else {
+        this.toast.error(res.message);
+      }
+      this.hisloading = false;
+    });
+  }
+
+  GetSellOrder(id: any) {
+    this.hisloading = true;
+    this.exchangeService.GetSellOrder(id).subscribe((res: any) => {
+      if (res !== null) {
+        this.sellOrderList = res.data;
+      } else {
+        this.toast.error(res.message);
+      }
+      this.hisloading = false;
+    });
+  }
+
+  GetBuyOrder(id: any) {
+    this.hisloading = true;
+    this.exchangeService.GetBuyOrder(id).subscribe((res: any) => {
+      if (res !== null) {
+        this.buyOrderList = res.data;
       } else {
         this.toast.error(res.message);
       }
