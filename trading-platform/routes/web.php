@@ -13,7 +13,7 @@
 use Illuminate\Support\Facades\Input;
 Route::get('/', 'IndexController');
 Route::post('/register/check', 'Auth\RegisterController@ajaxValidator');
-Route::get('/trade', 'TradeController@index')->name('trade');
+Route::get('/trading', 'TradeController@index')->name('trade');
 
 Route::group( ['middleware' => 'auth' ], function()
 {

@@ -2,6 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" ng-app="Rentomoon">
     <head>
         <meta charset="utf-8">
+        <base href="http://localhost:8000/trade" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -276,9 +277,9 @@
 
   <script>
     @auth
-    if (localStorage.getItem("currentUser") === null) {
-      localStorage.setItem("currentUser", JSON.stringify({!! json_encode(\Auth::user()) !!})); // Storing value with key
-    }
+      if (localStorage.getItem("currentUser") === null) {
+        localStorage.setItem("currentUser", JSON.stringify({!! json_encode(\Auth::user()) !!})); // Storing value with key
+      }
     @endauth
   </script>
   </body>
