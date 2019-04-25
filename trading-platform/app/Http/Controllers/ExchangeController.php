@@ -68,11 +68,17 @@ class ExchangeController extends Controller
         if(is_numeric($currencyId)){
             $currency_pairs = Currency_pair::where('from_asset',$currencyId)->with('fromAsset')->with('toAsset')->get();
         }else{
-            $pair = explode('_',$currencyId);
-            $fromCurency = Currency::where('asset',$pair[1])->first();
-            $currency_pairs = Currency_pair::
-                            where('from_asset',$fromCurency->id)
-                            ->with('fromAsset')->with('toAsset')->get();
+            if($currencyId != "undefined"){
+                $pair = explode('_',$currencyId);
+                $fromCurency = Currency::where('asset',$pair[1])->first();
+                $currency_pairs = Currency_pair::
+                                where('from_asset',$fromCurency->id)
+                                ->with('fromAsset')->with('toAsset')->get();
+            }else{
+                $currency_pairs = Currency_pair::
+                    where('from_asset',1)
+                    ->with('fromAsset')->with('toAsset')->get();
+            }
         }
         $response = array();
         $data = array();
@@ -251,36 +257,19 @@ class ExchangeController extends Controller
 
     public function getChartData($curPairId,$interval)
     {
-        $formatted_date = Carbon::now()->subMinutes($interval)->toDateTimeString();
-
-        $chart = \DB::select("SELECT 	
-                    MAX(price) AS high, MIN(price) AS low,
-                    COALESCE(        
-                    (        
-                        SELECT price        
-                        FROM orders       
-                        WHERE order_status = 'Confirmed' AND 
-                              currency_pair_id = $curPairId AND 
-                              updated_at < $formatted_date
-                        ORDER BY updated_at ASC LIMIT 1
-                    ),0) as open,
-                    COALESCE( 
-                    (
-                        SELECT price FROM orders 
-                        WHERE order_status = 'Confirmed' AND 
-                              currency_pair_id = $curPairId AND 
-                              updated_at < $formatted_date
-                        ORDER BY updated_at DESC LIMIT 1 
-                    ),0) as close		
-                    FROM 
-                        orders U       
-                    WHERE order_status = 'Confirmed' AND 
-                              currency_pair_id = $curPairId AND 
-                              updated_at < $formatted_date
-                ")->get();
-        echo "<pre>";
-        print_r($chart->toarray());
-        die;
+        $chart = \DB::select("SELECT  
+                        to_timestamp(floor((extract('epoch' from created_at) / $interval )) * $interval) 
+                        AT TIME ZONE 'UTC' as time_interval,
+                        (array_agg(price ORDER BY created_at ASC))[1] o,
+                        (array_agg(price ORDER BY created_at DESC))[1] c,
+                        MAX(price) h,
+                        MIN(price) l,
+                        SUM(amount) vol
+                    FROM orders  
+                    where currency_pair_id = $curPairId AND
+                    order_status = 'Confirmed'
+                    GROUP BY time_interval
+                    ORDER BY time_interval");
         return response()->json(['data' => $chart], 200);
     }
 }

@@ -35,27 +35,7 @@ export class OriginalChartComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
-    $('.ft-btn').click(function (event) {
-      event.stopPropagation();
-      $('.ft-list1').removeClass('show');
-      $('.ft-list').toggleClass('show');
 
-    });
-    $('.ft-btn1').click(function (event) {
-      event.stopPropagation();
-      $('.ft-list').removeClass('show');
-      $('.ft-list1').toggleClass('show');
-    });
-    $('.ft-list1').click(function () {
-      $('.ft-list1').removeClass('show');
-    });
-    $('.ft-list').click(function () {
-      $('.ft-list').removeClass('show');
-    });
-    $(document).click(function () {
-      $('.ft-list').removeClass('show');
-      $('.ft-list1').removeClass('show');
-    });
   }
 
 
@@ -72,26 +52,26 @@ export class OriginalChartComponent implements OnChanges, OnInit {
         ? change.mainCurrency.currentValue
         : this.mainCurrency;
     this.pairName = `${this.mainCurrency}/${this.baseCurrency}`;
-    this.chartData(1440);
+    this.chartData(180);
   }
 
   chartData(minite: any) {
     this.loading = true;
     const that = this;
     anychart.data.loadJsonFile(
-      //`${environment.apiUrl}Market/GetChartData/${this.pairId}/${minite}`,
-      'https://webapi.listerexchange.com/api/Market/GetChartData/2/1440',
-      function (data) {
+      `${environment.apiUrl}chartData/${this.pairId}/${minite}`,
+      function (res) {
         $('#chartdiv').html('');
         const result = [];
-        for (let i = 0; i < data.Data.length; i++) {
+        for (let i = 0; i < res.data.length; i++) {
           const tarray = [];
           tarray.push(
-            data.Data[i].date,
-            data.Data[i].open,
-            data.Data[i].high,
-            data.Data[i].low,
-            data.Data[i].close
+            res.data[i].time_interval,
+            res.data[i].o,
+            res.data[i].h,
+            res.data[i].l,
+            res.data[i].c,
+            res.data[i].vol
           );
           result.push(tarray);
         }
@@ -100,7 +80,7 @@ export class OriginalChartComponent implements OnChanges, OnInit {
         const dataTable = anychart.data.table();
         dataTable.addData(result);
 
-        const mapping = dataTable.mapAs({ 'open': 1, 'high': 2, 'low': 3, 'close': 4, 'value': 4 });
+        const mapping = dataTable.mapAs({ 'open': 1, 'high': 2, 'low': 3, 'close': 4, 'value': 5 });
 
         const chart = anychart.stock();
         chart.tooltip(true);
