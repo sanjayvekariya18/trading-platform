@@ -55,12 +55,12 @@ export class Exchange {
 }
 
 export class DailyExchange {
-  LastPrice: string;
-  TodayOpen: number;
-  Volume: number;
-  DailyChange: number;
-  Highest24Hours: number;
-  Lowest24Hours: number;
+  lastPrice: string;
+  // TodayOpen: number;
+  volume24hours: number;
+  dailyChange: number;
+  highest24hours: number;
+  lowest24hours: number;
 }
 
 export class ExchangePriceModel {

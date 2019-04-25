@@ -29,35 +29,29 @@
             </p>
             <div class="crypt-buy">
               <form novalidate [formGroup]="buyForm" (ngSubmit)="Buy(buyForm.value, buyForm.valid)">
-                <div class="input-group mb-2">
+                <div class="input-group mb-2"
+                  [ngClass]="{'has-error': isBuySubmitted && buyForm.get('price').hasError('required')}">
                   <div class="input-group-prepend">
                     <span class="input-group-text">Price</span>
                   </div>
-                  <input type="text" class="form-control" placeholder="0.00" formControlName="price"
+                  <input type="text" class="form-control" placeholder="Enter Price" formControlName="price"
                     [(ngModel)]="exchange.BuyPrice" (keyup)="SetBuytotal('price')" appEightDigit />
                   <div class="input-group-append">
                     <span class="input-group-text">
                       {{ exchange.BaseCurrency }}</span>
                   </div>
-                  <span class="error-msg" *ngIf="isBuySubmitted &&
-                    buyForm.get('price').hasError('required')">
-                    Price is required.
-                  </span>
                 </div>
-                <div class="input-group mb-2">
+                <div class="input-group mb-2"
+                  [ngClass]="{'has-error': isBuySubmitted && buyForm.get('amount').hasError('required')}">
                   <div class="input-group-prepend">
                     <span class="input-group-text">Amount</span>
                   </div>
-                  <input type="number" class="form-control" placeholder="0.00" formControlName="amount"
+                  <input type="number" class="form-control" placeholder="Enter Amount" formControlName="amount"
                     (keyup)="SetBuytotal('amount')" [(ngModel)]="exchange.BuyAmount" appEightDigit />
                   <div class="input-group-append">
                     <span class="input-group-text">
                       {{ exchange.MainCurrency }}</span>
                   </div>
-                  <span class="error-msg" *ngIf="isBuySubmitted &&
-                    buyForm.get('amount').hasError('required')">
-                    Amount is required.
-                  </span>
                 </div>
                 <div class="input-group mb-2 rate-per">
                   <div class="btn-group-add btn-group">
@@ -104,7 +98,7 @@
                 </div>
                 <div *ngIf="isLogin">
                   <div class="col-md-12">
-                    <button type="submit" class="btn crypt-button-green-full">
+                    <button type="submit" class="btn crypt-button-green-full" [ladda]="isBuyLoading">
                       <span>Buy {{ exchange.MainCurrency }}</span>
                     </button>
                   </div>
@@ -124,7 +118,8 @@
             </p>
             <div class="crypt-sell">
               <form novalidate [formGroup]="sellForm" (ngSubmit)="Sell(sellForm.value, sellForm.valid)">
-                <div class="input-group mb-2">
+                <div class="input-group mb-2"
+                  [ngClass]="{'has-error': isSellSubmitted && sellForm.get('price').hasError('required')}">
                   <div class="input-group-prepend">
                     <span class="input-group-text">Price</span>
                   </div>
@@ -136,12 +131,9 @@
                       exchange.BaseCurrency
                       }}</span>
                   </div>
-                  <span class="error-msg" *ngIf="isSellSubmitted &&
-                    sellForm.get('price').hasError('required')">
-                    Price is required.
-                  </span>
                 </div>
-                <div class="input-group mb-2">
+                <div class="input-group mb-2"
+                  [ngClass]="{'has-error': isSellSubmitted && sellForm.get('amount').hasError('required')}">
                   <div class="input-group-prepend">
                     <span class="input-group-text">Amount</span>
                   </div>
@@ -153,10 +145,6 @@
                       exchange.MainCurrency
                       }}</span>
                   </div>
-                  <span class="error-msg" *ngIf="isSellSubmitted &&
-                    sellForm.get('amount').hasError('required')">
-                    Amount is required.
-                  </span>
                 </div>
                 <div class="input-group mb-2 rate-per">
                   <div class="btn-group-add btn-group">
@@ -199,7 +187,7 @@
                   </button>
                 </div>
                 <div *ngIf="isLogin">
-                  <button type="submit" class="btn crypt-button-red-full">
+                  <button type="submit" class="btn crypt-button-red-full" [ladda]="isSellLoading">
                     <span>Sell {{ exchange.MainCurrency }}</span>
                   </button>
                 </div>

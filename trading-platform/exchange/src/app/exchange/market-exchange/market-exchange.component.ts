@@ -68,6 +68,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
     this.authenticationService.CheckUserLoggedIn();
     this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', data => {
     });
+    this.GetWalletBalance(null);
   }
 
   BindData() {

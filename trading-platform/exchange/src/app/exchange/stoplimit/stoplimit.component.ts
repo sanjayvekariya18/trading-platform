@@ -75,6 +75,7 @@ export class StoplimitComponent implements OnInit, OnChanges {
     this.BindData();
     this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', data => {
     });
+    this.GetWalletBalance(null);
   }
 
   GetWalletBalance(change): void {

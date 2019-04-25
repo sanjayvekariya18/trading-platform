@@ -67,12 +67,11 @@ export class TradeComponent implements OnInit {
     });
     // const routeParams = this.activeRoute.snapshot.params;
 
-    this.activeRoute.params.subscribe(routeParams => {
-      this.GetPairDetail(routeParams.pair);
-    });
+
   }
 
   ngOnInit() {
+
     this._pusherService.ch_currency_pair.bind('App\\Events\\CurrencyPair', data => {
       this.GetMarketList(this.selectedItem);
     });
@@ -85,11 +84,9 @@ export class TradeComponent implements OnInit {
         event.url.split("/")[2]
       ) {
         const data = event.url.split("/")[2];
-        // this.displayMarket(data);
       }
     });
 
-    // this.GetBaseCurrency();
     if (
       localStorage.getItem("MarketList") &&
       localStorage.getItem("BaseMarketId")
@@ -107,28 +104,22 @@ export class TradeComponent implements OnInit {
       this.mainCurrency = baseName[0];
       this.pairId = this.result.id;
       this.selectedRow = this.result.name;
-      // this.pair = this.mainCurrency + "_" + this.baseCurrency;
     } else {
       this.baseCurrency = "BTC";
       this.mainCurrency = "ETH";
       this.pairId = 1;
       this.selectedItem = "1";
       this.selectedRow = "ETH/BTC";
-      // this.pair = this.mainCurrency + "_" + this.baseCurrency;
     }
     this.GetMarketList(this.selectedItem);
+
+    this.activeRoute.params.subscribe(routeParams => {
+      this.GetPairDetail(routeParams.pair);
+    });
 
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     if (currentUser) this.email = currentUser.email;
   }
-
-  // GetBaseCurrency() {
-  //   this.exchangeService.GetBaseCurrency().subscribe((data: Response) => {
-  //     if (data.ResponseStatus === ApiResponseStatus.Ok) {
-  //       this.baseCurrencyData = data.Data;
-  //     }
-  //   });
-  // }
 
   GetMarketList(paramValue) {
 
@@ -143,7 +134,6 @@ export class TradeComponent implements OnInit {
   }
 
   GetPairDetail(pairName) {
-
     this.loading = true;
     this.exchangeService.GetMarketList(pairName).subscribe((res: any) => {
       console.log(res.data);

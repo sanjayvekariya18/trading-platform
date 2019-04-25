@@ -4,7 +4,7 @@
       <div class="crypt-buy-sell-form">
         <p>
           Buy <span class="crypt-up">{{ exchange.MainCurrency }}</span>
-          <span class="fright" (click)="BuyBaseValueClick()">
+          <span class="fright">
             Available:
             <b class="crypt-up">
               {{ exchange.BaseValue | appDynamicDigit: 8 }} {{ exchange.BaseCurrency }}
@@ -54,7 +54,7 @@
         <div class="crypt-buy-sell-form">
           <p>
             Sell <span class="crypt-down">{{exchange.MainCurrency}}</span>
-            <span class="fright" (click)="SellBaseValueClick()">
+            <span class="fright">
               Available:
               <b class="crypt-down">
                 {{ exchange.MainValue | appDynamicDigit: 8 }} {{exchange.MainCurrency}}
@@ -110,17 +110,21 @@
   <div class="modal-dialog">
     <div class="modal-content user-balance-box">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="bs-modal" (click)="ClosePopUp()">&times;</button>
         <h4 class="modal-title pull-left">Order Details</h4>
+        <button type="button" class="close" data-dismiss="bs-modal" (click)="ClosePopUp()">&times;</button>
       </div>
       <div class="modal-body xs-p-30" *ngIf="isOpen">
         <div class="row">
           <div class="col-md-12">
-            <div class="text-primary" [innerHTML]="buysellmsg"></div>
+            <div class="text-info" [innerHTML]="buysellmsg"></div>
           </div>
-          <div class="col-md-12 text-right xs-mt-20">
-            <button type="button" class="btn btn-info" data-dismiss="bs-modal" (click)="ClosePopUp()">Close</button>
-          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="col-md-12 text-right xs-mt-20">
+          <button type="button" class="btn btn-sm btn-primary" data-dismiss="bs-modal" (click)="ClosePopUp()">
+            Close
+          </button>
         </div>
       </div>
     </div>

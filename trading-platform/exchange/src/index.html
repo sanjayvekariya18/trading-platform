@@ -59,103 +59,6 @@
 
   <!-- Style Sheet -->
   <link href="https://fonts.googleapis.com/css?family=Muli:300,400,600" rel="stylesheet" />
-
-  <style type="text/css">
-    .has-error .input-group-addon {
-      color: #e8a9a7 !important;
-      background-color: #f10b2a !important;
-      border-color: #f10b2a !important;
-    }
-
-    .has-error .form-control {
-      border-color: #f10b2a !important;
-      -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    }
-
-    .has-error label {
-      color: #f10b2a !important;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .loading {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      z-index: 1;
-    }
-
-    .loading i {
-      color: #fff;
-      position: absolute;
-      top: 50%;
-      margin-top: -34px;
-      left: 50%;
-      margin-left: -34px;
-    }
-
-    .app-loading {
-      position: fixed;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1111;
-    }
-
-    .app-loading .spinner {
-      height: 200px;
-      width: 200px;
-      animation: rotate 2s linear infinite;
-      transform-origin: center center;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      margin: auto;
-      z-index: 9999;
-    }
-
-    .app-loading .spinner .path {
-      stroke-dasharray: 1, 200;
-      stroke-dashoffset: 0;
-      animation: dash 1.5s ease-in-out infinite;
-      stroke-linecap: round;
-      stroke: #ddd;
-    }
-
-    @keyframes rotate {
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes dash {
-      0% {
-        stroke-dasharray: 1, 200;
-        stroke-dashoffset: 0;
-      }
-
-      50% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -35px;
-      }
-
-      100% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -124px;
-      }
-    }
-  </style>
 </head>
 
 <body class="crypt-dark">
@@ -170,9 +73,6 @@
       </svg>
     </div>
   </app-root>
-  <!-- <script src="./assets/exchanger/amc/core.js"></script>
-    <script src="./assets/exchanger/amc/charts.js"></script>
-    <script src="./assets/exchanger/amc/animated.js"></script> -->
   <script src="./assets/exchanger/js/jquery.js"></script>
   <script src="./assets/exchanger/js/popper.min.js"></script>
   <script src="./assets/exchanger/bootstrap/js/bootstrap.bundle.js"></script>
@@ -187,36 +87,6 @@
   <script type="text/javascript" src="./assets/js/chart/anychart-stock.min.js"></script>
   <script type="text/javascript" src="./assets/js/chart/anychart-data-adapter.min.js"></script>
   <script type="text/javascript" src="./assets/js/chart/dark_blue.min.js"></script>
-
-  <!-- <script src="./assets/js/socket.io.js"></script> -->
 </body>
-<script>
-  /* var sock = io("//localhost:6001");
-  console.log("called");
-  sock.on('demo:App\\Events\\Demo', function (data) {
-    alert();
-    console.log(data);
-
-    //data.actionId and data.actionData hold the data that was broadcast
-    //process the data, add needed functionality here
-  }); */
-
-
-  /* var pusher = new Pusher("{{ env(PUSHER_KEY) }}");
-  Pusher.logToConsole = true;
-
-  window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: 'c91c1b7e8c6ece46053b',
-    cluster: 'ap2',
-    encrypted: true,
-    logToConsole: true
-  });
-
-  Echo.private('user.{{ $user_id }}')
-    .listen('NewMessageNotification', (e) => {
-      alert(e.message.message);
-    }); */
-</script>
 
 </html>
