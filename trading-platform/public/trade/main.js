@@ -909,6 +909,7 @@ var PusherService = /** @class */ (function () {
         this.ch_trade_history = this.pusher.subscribe('trade_history');
         this.ch_daily_exchange = this.pusher.subscribe('daily_exchange');
         this.ch_wallet_amount = this.pusher.subscribe('wallet_amount');
+        this.ch_order_cancel = this.pusher.subscribe('order_cancel');
     }
     PusherService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
@@ -1317,7 +1318,7 @@ var ExchangeModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<!-- new theme -->\n<div class=\"crypt-boxed-area\">\n  <ul class=\"nav nav-tabs\">\n    <li role=\"presentation\">\n      <a href=\"#limit\" class=\"active\" data-toggle=\"tab\">Limit</a>\n    </li>\n    <li role=\"presentation\">\n      <a href=\"#market\" data-toggle=\"tab\">market </a>\n    </li>\n    <li role=\"presentation\">\n      <a href=\"#stop-limit\" data-toggle=\"tab\">Stop Limit</a>\n    </li>\n  </ul>\n  <div class=\"tab-content\">\n    <div role=\"tabpanel\" class=\"tab-pane active\" id=\"limit\">\n      <div class=\"row no-gutters\">\n        <app-loader [IsLoading]=\"isBuyLoading\"></app-loader>\n        <div class=\"col-md-6\">\n          <div class=\"crypt-buy-sell-form\">\n            <p>\n              Buy <span class=\"crypt-up\">{{ exchange.MainCurrency }}</span>\n              <span class=\"fright\" *ngIf=\"exchange.BaseValue != null\">\n                Available:\n                <b class=\"crypt-up\">\n                  {{ exchange.BaseValue | appDynamicDigit: 8 }}\n                  {{ exchange.BaseCurrency }}\n                </b>\n              </span>\n            </p>\n            <div class=\"crypt-buy\">\n              <form novalidate [formGroup]=\"buyForm\" (ngSubmit)=\"Buy(buyForm.value, buyForm.valid)\">\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isBuySubmitted && buyForm.get('price').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Price</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" placeholder=\"Enter Price\" formControlName=\"price\"\n                    [(ngModel)]=\"exchange.BuyPrice\" (keyup)=\"SetBuytotal('price')\" appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">\n                      {{ exchange.BaseCurrency }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isBuySubmitted && buyForm.get('amount').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Amount</span>\n                  </div>\n                  <input type=\"number\" class=\"form-control\" placeholder=\"Enter Amount\" formControlName=\"amount\"\n                    (keyup)=\"SetBuytotal('amount')\" [(ngModel)]=\"exchange.BuyAmount\" appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">\n                      {{ exchange.MainCurrency }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2 rate-per\">\n                  <div class=\"btn-group-add btn-group\">\n                    <button type=\"button\" class=\"btn btn-sm\" *ngFor=\"let item of arrBalPerc\"\n                      (click)=\"calcBalance(item, 'buy')\">\n                      {{ item }}%\n                    </button>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Total</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" placeholder=\"0.00\" formControlName=\"total\"\n                    [(ngModel)]=\"exchange.BuyTotalFees\" (keyup)=\"SetBuytotal('total')\" appEightDigt />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">\n                      {{ exchange.BaseCurrency }}\n                    </span>\n                  </div>\n                  <span class=\"error-msg\" *ngIf=\"isBuySubmitted &&\n                    buyForm.get('total').hasError('rangeValidation')\">\n                    You have only {{ exchange.BaseValue }}\n                    {{ exchange.BaseCurrency }}\n                  </span>\n                  <span class=\"error-msg\" *ngIf=\"isBuySubmitted &&\n                    buyForm.get('total').hasError('minimumValidation')\">\n                    Minimum {{ exchange.BuyMinimum }}\n                    {{ exchange.BaseCurrency }} for Buy Trade\n                  </span>\n                </div>\n                <div>\n                  <p>\n                    Fee: <span class=\"fright\">{{ exchange.BuyFees }}</span>\n                  </p>\n                </div>\n                <div *ngIf=\"!isLogin\">\n                  <div class=\"col-md-12\">\n                    <button type=\"button\" class=\"btn crypt-button-green-full\">\n                      <span (click)=\"GoToUrl('/login')\">Login</span> to\n                      Trade\n                    </button>\n                  </div>\n                </div>\n                <div *ngIf=\"isLogin\">\n                  <div class=\"col-md-12\">\n                    <button type=\"submit\" class=\"btn crypt-button-green-full\" [ladda]=\"isBuyLoading\">\n                      <span>Buy {{ exchange.MainCurrency }}</span>\n                    </button>\n                  </div>\n                </div>\n              </form>\n            </div>\n          </div>\n        </div>\n        <div class=\"col-md-6\">\n          <div class=\"crypt-buy-sell-form\">\n            <p>\n              Sell <span class=\"crypt-down\">{{ exchange.MainCurrency }}</span>\n              <span class=\"fright\">Available:\n                <b class=\"crypt-down\">{{ exchange.MainValue | appDynamicDigit: 8\n                  }}\n                  {{ exchange.MainCurrency }}</b></span>\n            </p>\n            <div class=\"crypt-sell\">\n              <form novalidate [formGroup]=\"sellForm\" (ngSubmit)=\"Sell(sellForm.value, sellForm.valid)\">\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isSellSubmitted && sellForm.get('price').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Price</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" formControlName=\"price\" placeholder=\"0.00\"\n                    (keyup)=\"SetSelltotal('PRICE')\" [(ngModel)]=\"exchange.SellPrice\" placeholder=\"Enter Price\"\n                    appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">{{\n                      exchange.BaseCurrency\n                      }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isSellSubmitted && sellForm.get('amount').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Amount</span>\n                  </div>\n                  <input type=\"number\" class=\"form-control\" formControlName=\"amount\" placeholder=\"0.00\"\n                    (keyup)=\"SetSelltotal('AMOUNT')\" [(ngModel)]=\"exchange.SellAmount\" placeholder=\"Enter Amount\"\n                    appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">{{\n                      exchange.MainCurrency\n                      }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2 rate-per\">\n                  <div class=\"btn-group-add btn-group\">\n                    <button type=\"button\" class=\"btn btn-sm\" *ngFor=\"let item of arrBalPerc\"\n                      (click)=\"calcBalance(item, 'sell')\">\n                      {{ item }}%\n                    </button>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Total</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" formControlName=\"total\" placeholder=\"0.00\"\n                    (keyup)=\"SetSelltotal('TOTAL')\" [(ngModel)]=\"exchange.SellTotal\" placeholder=\"0.000000000\"\n                    appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">{{\n                      exchange.BaseCurrency\n                      }}</span>\n                  </div>\n                  <span class=\"error-msg\" *ngIf=\"isSellSubmitted &&\n                    sellForm.get('total').hasError('rangeValidation')\">\n                    You have only {{ exchange.MainValue }}\n                    {{ exchange.MainCurrency }}\n                  </span>\n                  <span class=\"error-msg\" *ngIf=\"isSellSubmitted &&\n                    sellForm.get('total').hasError('minimumValidation')\">Minimum\n                    {{ exchange.SellMinimum }}\n                    {{ exchange.BaseCurrency }} for Sell Trade</span>\n                </div>\n                <div>\n                  <p>\n                    Fee: <span class=\"fright\">{{ exchange.SellFees }}%</span>\n                  </p>\n                </div>\n                <div class=\"mt-1\" *ngIf=\"!isLogin\">\n                  <button type=\"button\" class=\"btn crypt-button-green-full\">\n                    <span (click)=\"GoToUrl('/login')\">Login</span> to Trade\n                  </button>\n                </div>\n                <div *ngIf=\"isLogin\">\n                  <button type=\"submit\" class=\"btn crypt-button-red-full\" [ladda]=\"isSellLoading\">\n                    <span>Sell {{ exchange.MainCurrency }}</span>\n                  </button>\n                </div>\n              </form>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div role=\"tabpanel\" class=\"tab-pane\" id=\"market\">\n      <app-market-exchange [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\">\n      </app-market-exchange>\n    </div>\n    <div role=\"tabpanel\" class=\"tab-pane\" id=\"stop-limit\">\n      <app-stoplimit [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\"></app-stoplimit>\n    </div>\n  </div>\n</div>\n\n<div class=\"modal fade modal-order cs-modal\" bsModal #modal=\"bs-modal\" tabindex=\"-1\" role=\"dialog\"\n  aria-labelledby=\"mySmallModalLabel\" [config]=\"{ backdrop: 'static' }\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h4 class=\"modal-title pull-left\">Order Details</h4>\n        <button type=\"button\" class=\"close\" data-dismiss=\"bs-modal\" (click)=\"ClosePopUp()\">\n          &times;\n        </button>\n      </div>\n      <div class=\"modal-body xs-p-30\" *ngIf=\"isOpen\">\n        <div class=\"row\">\n          <div class=\"col-md-12\">\n            <div class=\"text-info\" [innerHTML]=\"buysellmsg\"></div>\n          </div>\n        </div>\n      </div>\n      <div class=\"modal-footer\">\n        <div class=\"col-md-12 text-right xs-mt-20\">\n          <button type=\"button\" class=\"btn btn-sm btn-primary\" data-dismiss=\"bs-modal\" (click)=\"ClosePopUp()\">\n            Close\n          </button>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
+module.exports = "<!-- new theme -->\n<div class=\"crypt-boxed-area\">\n  <ul class=\"nav nav-tabs\">\n    <li role=\"presentation\">\n      <a href=\"#limit\" class=\"active\" data-toggle=\"tab\">Limit</a>\n    </li>\n    <li role=\"presentation\">\n      <a href=\"#market\" data-toggle=\"tab\">market </a>\n    </li>\n    <li role=\"presentation\">\n      <a href=\"#stop-limit\" data-toggle=\"tab\">Stop Limit</a>\n    </li>\n  </ul>\n  <div class=\"tab-content\">\n    <div role=\"tabpanel\" class=\"tab-pane active\" id=\"limit\">\n      <div class=\"row no-gutters\">\n        <app-loader [IsLoading]=\"isBuyLoading\"></app-loader>\n        <div class=\"col-md-6\">\n          <div class=\"crypt-buy-sell-form\">\n            <p>\n              Buy <span class=\"crypt-up\">{{ exchange.MainCurrency }}</span>\n              <span class=\"fright\" *ngIf=\"exchange.BaseValue != null\">\n                Available:\n                <b class=\"crypt-up\" (click)=\"BuyBaseValueClick()\" style=\"cursor: pointer;\">\n                  {{ exchange.BaseValue | appDynamicDigit: 8 }}\n                  {{ exchange.BaseCurrency }}\n                </b>\n              </span>\n            </p>\n            <div class=\"crypt-buy\">\n              <form novalidate [formGroup]=\"buyForm\" (ngSubmit)=\"Buy(buyForm.value, buyForm.valid)\">\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isBuySubmitted && buyForm.get('price').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Price</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" placeholder=\"Enter Price\" formControlName=\"price\"\n                    [(ngModel)]=\"exchange.BuyPrice\" (keyup)=\"SetBuytotal('price')\" appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">\n                      {{ exchange.BaseCurrency }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isBuySubmitted && buyForm.get('amount').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Amount</span>\n                  </div>\n                  <input type=\"number\" class=\"form-control\" placeholder=\"Enter Amount\" formControlName=\"amount\"\n                    (keyup)=\"SetBuytotal('amount')\" [(ngModel)]=\"exchange.BuyAmount\" appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">\n                      {{ exchange.MainCurrency }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2 rate-per\">\n                  <div class=\"btn-group-add btn-group\">\n                    <button type=\"button\" class=\"btn btn-sm\" *ngFor=\"let item of arrBalPerc\"\n                      (click)=\"calcBalance(item, 'buy')\">\n                      {{ item }}%\n                    </button>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Total</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" placeholder=\"0.00\" formControlName=\"total\"\n                    [(ngModel)]=\"exchange.BuyTotalFees\" (keyup)=\"SetBuytotal('total')\" appEightDigt />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">\n                      {{ exchange.BaseCurrency }}\n                    </span>\n                  </div>\n                  <span class=\"error-msg\" *ngIf=\"isBuySubmitted &&\n                    buyForm.get('total').hasError('rangeValidation')\">\n                    You have only {{ exchange.BaseValue }}\n                    {{ exchange.BaseCurrency }}\n                  </span>\n                  <span class=\"error-msg\" *ngIf=\"isBuySubmitted &&\n                    buyForm.get('total').hasError('minimumValidation')\">\n                    Minimum {{ exchange.BuyMinimum }}\n                    {{ exchange.BaseCurrency }} for Buy Trade\n                  </span>\n                </div>\n                <div>\n                  <p>\n                    Fee: <span class=\"fright\">{{ exchange.BuyFees }}</span>\n                  </p>\n                </div>\n                <div *ngIf=\"!isLogin\">\n                  <div class=\"col-md-12\">\n                    <button type=\"button\" class=\"btn crypt-button-green-full\">\n                      <span (click)=\"GoToUrl('/login')\">Login</span> to\n                      Trade\n                    </button>\n                  </div>\n                </div>\n                <div *ngIf=\"isLogin\">\n                  <div class=\"col-md-12\">\n                    <button type=\"submit\" class=\"btn crypt-button-green-full\" [ladda]=\"isBuyLoading\">\n                      <span>Buy {{ exchange.MainCurrency }}</span>\n                    </button>\n                  </div>\n                </div>\n              </form>\n            </div>\n          </div>\n        </div>\n        <div class=\"col-md-6\">\n          <div class=\"crypt-buy-sell-form\">\n            <p>\n              Sell <span class=\"crypt-down\">{{ exchange.MainCurrency }}</span>\n              <span class=\"fright\">Available:\n                <b class=\"crypt-down\" (click)=\"SellBaseValueClick()\" style=\"cursor: pointer;\">{{ exchange.MainValue | appDynamicDigit: 8\n                  }}\n                  {{ exchange.MainCurrency }}</b></span>\n            </p>\n            <div class=\"crypt-sell\">\n              <form novalidate [formGroup]=\"sellForm\" (ngSubmit)=\"Sell(sellForm.value, sellForm.valid)\">\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isSellSubmitted && sellForm.get('price').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Price</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" formControlName=\"price\" placeholder=\"0.00\"\n                    (keyup)=\"SetSelltotal('PRICE')\" [(ngModel)]=\"exchange.SellPrice\" placeholder=\"Enter Price\"\n                    appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">{{\n                      exchange.BaseCurrency\n                      }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isSellSubmitted && sellForm.get('amount').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Amount</span>\n                  </div>\n                  <input type=\"number\" class=\"form-control\" formControlName=\"amount\" placeholder=\"0.00\"\n                    (keyup)=\"SetSelltotal('AMOUNT')\" [(ngModel)]=\"exchange.SellAmount\" placeholder=\"Enter Amount\"\n                    appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">{{\n                      exchange.MainCurrency\n                      }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2 rate-per\">\n                  <div class=\"btn-group-add btn-group\">\n                    <button type=\"button\" class=\"btn btn-sm\" *ngFor=\"let item of arrBalPerc\"\n                      (click)=\"calcBalance(item, 'sell')\">\n                      {{ item }}%\n                    </button>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Total</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" formControlName=\"total\" placeholder=\"0.00\"\n                    (keyup)=\"SetSelltotal('TOTAL')\" [(ngModel)]=\"exchange.SellTotal\" placeholder=\"0.000000000\"\n                    appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">{{\n                      exchange.BaseCurrency\n                      }}</span>\n                  </div>\n                  <span class=\"error-msg\" *ngIf=\"isSellSubmitted &&\n                    sellForm.get('total').hasError('rangeValidation')\">\n                    You have only {{ exchange.MainValue }}\n                    {{ exchange.MainCurrency }}\n                  </span>\n                  <span class=\"error-msg\" *ngIf=\"isSellSubmitted &&\n                    sellForm.get('total').hasError('minimumValidation')\">Minimum\n                    {{ exchange.SellMinimum }}\n                    {{ exchange.BaseCurrency }} for Sell Trade</span>\n                </div>\n                <div>\n                  <p>\n                    Fee: <span class=\"fright\">{{ exchange.SellFees }}%</span>\n                  </p>\n                </div>\n                <div class=\"mt-1\" *ngIf=\"!isLogin\">\n                  <button type=\"button\" class=\"btn crypt-button-green-full\">\n                    <span (click)=\"GoToUrl('/login')\">Login</span> to Trade\n                  </button>\n                </div>\n                <div *ngIf=\"isLogin\">\n                  <button type=\"submit\" class=\"btn crypt-button-red-full\" [ladda]=\"isSellLoading\">\n                    <span>Sell {{ exchange.MainCurrency }}</span>\n                  </button>\n                </div>\n              </form>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div role=\"tabpanel\" class=\"tab-pane\" id=\"market\">\n      <app-market-exchange [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\">\n      </app-market-exchange>\n    </div>\n    <div role=\"tabpanel\" class=\"tab-pane\" id=\"stop-limit\">\n      <app-stoplimit [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\"></app-stoplimit>\n    </div>\n  </div>\n</div>\n\n<div class=\"modal fade modal-order cs-modal\" bsModal #modal=\"bs-modal\" tabindex=\"-1\" role=\"dialog\"\n  aria-labelledby=\"mySmallModalLabel\" [config]=\"{ backdrop: 'static' }\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h4 class=\"modal-title pull-left\">Order Details</h4>\n        <button type=\"button\" class=\"close\" data-dismiss=\"bs-modal\" (click)=\"ClosePopUp()\">\n          &times;\n        </button>\n      </div>\n      <div class=\"modal-body xs-p-30\" *ngIf=\"isOpen\">\n        <div class=\"row\">\n          <div class=\"col-md-12\">\n            <div class=\"text-info\" [innerHTML]=\"buysellmsg\"></div>\n          </div>\n        </div>\n      </div>\n      <div class=\"modal-footer\">\n        <div class=\"col-md-12 text-right xs-mt-20\">\n          <button type=\"button\" class=\"btn btn-sm btn-primary\" data-dismiss=\"bs-modal\" (click)=\"ClosePopUp()\">\n            Close\n          </button>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -1409,31 +1410,27 @@ var ExchangeComponent = /** @class */ (function () {
             this.GetWalletBalance(change);
         }
         else {
-            this.ChangeUpdateModel(change);
+            var type = change.hasOwnProperty('sellModel') ? 'sellModel' : change.hasOwnProperty('buyModel') ? 'buyModel' : '';
+            if (type === 'sellModel') {
+                this.ChangeUpdateModel(change.sellModel.currentValue);
+            }
+            if (type === 'buyModel') {
+                this.ChangeUpdateModel(change.buyModel.currentValue);
+            }
         }
     };
     ExchangeComponent.prototype.ChangeUpdateModel = function (change) {
-        if (change.price !== undefined ||
-            change.amount !== undefined ||
-            change.total !== undefined) {
-            if (this.price != null && this.price !== undefined) {
-                if (change.price === undefined ||
-                    (this.price !== change.price.previousValue && this.orderType === 1)) {
-                    this.ResetForm();
-                    // this.exchange.BuyPrice = this.common.toFixedCustom(this.price, 8);
-                    this.exchange.SellPrice = this.common.toFixedCustom(this.price, 8);
-                    this.exchange.SellAmount = this.common.toFixedCustom(this.amount, 8);
-                    this.exchange.SellTotal = parseFloat(this.total.toString()).toFixed(8);
-                }
-                if (change.price === undefined ||
-                    (this.price !== change.price.previousValue && this.orderType === 2)) {
-                    this.ResetForm();
-                    this.exchange.BuyPrice = this.common.toFixedCustom(this.price, 8);
-                    // this.exchange.SellPrice = this.common.toFixedCustom(this.price, 8);
-                    this.exchange.BuyAmount = this.common.toFixedCustom(this.amount, 8);
-                    this.exchange.BuyTotalFees = parseFloat(this.total.toString()).toFixed(8);
-                }
-            }
+        if ((change.price !== undefined || change.amount !== undefined) && change.side === 'SELL') {
+            this.exchange.BuyPrice = change.price;
+            this.exchange.BuyAmount = change.amount;
+            this.total = change.price * change.amount;
+            this.exchange.BuyTotalFees = parseFloat(this.total.toString()).toFixed(8);
+        }
+        if ((change.price !== undefined || change.amount !== undefined) && change.side === 'BUY') {
+            this.exchange.SellPrice = change.price;
+            this.exchange.SellAmount = change.amount;
+            this.total = change.price * change.amount;
+            this.exchange.SellTotal = parseFloat(this.total.toString()).toFixed(8);
         }
         if (change.sellModel !== undefined) {
             if (this.sellModel != null) {
@@ -1549,17 +1546,17 @@ var ExchangeComponent = /** @class */ (function () {
             };
             this.exchangeService.BuyTrade(obj).subscribe(function (res) {
                 if (res != null) {
-                    console.log(res);
                     _this.isBuySubmitted = false;
                     _this.ResetForm();
                     _this.GetWalletBalance(null);
-                    _this.buysellmsg = res.output;
+                    // this.buysellmsg = res.output;
                     // this.RefreshMarket(this.pairId);
-                    _this.ShowPopUp();
+                    // this.ShowPopUp();
+                    _this.toast.success(res.output);
                     _this.isBuyLoading = false;
                 }
                 else {
-                    // this.toast.error(res.output);
+                    _this.toast.error(res.output);
                     _this.isBuyLoading = false;
                 }
             });
@@ -1603,9 +1600,10 @@ var ExchangeComponent = /** @class */ (function () {
                     _this.ResetForm();
                     _this.GetWalletBalance(null);
                     _this.isSellLoading = false;
-                    _this.buysellmsg = res.output;
+                    _this.toast.success(res.output);
+                    // this.buysellmsg = res.output;
                     // this.RefreshMarket(this.pairId);
-                    _this.ShowPopUp();
+                    // this.ShowPopUp();
                 }
                 else {
                     _this.isSellLoading = false;
@@ -1614,14 +1612,14 @@ var ExchangeComponent = /** @class */ (function () {
             });
         }
     };
-    // RefreshMarket(pairId) {
-    //   const baseMarketId = localStorage.getItem("BaseMarketId");
-    //   this.tradeService.MarketRefresh(baseMarketId);
-    //   this.tradeService.ChartRefresh();
-    //   this.tradeService.GetDailyExchange(pairId);
-    //   //this.tradeService.GetOrder(pairId);
-    //   this.tradeService.TradeHistory(pairId);
-    // }
+    /* RefreshMarket(pairId) {
+      const baseMarketId = localStorage.getItem("BaseMarketId");
+      // this.tradeService.MarketRefresh(baseMarketId);
+      // this.tradeService.ChartRefresh();
+      // this.tradeService.GetDailyExchange(pairId);
+      //this.tradeService.GetOrder(pairId);
+      // this.tradeService.TradeHistory(pairId);
+    } */
     ExchangeComponent.prototype.ClosePopUp = function () {
         this.modal.hide();
         this.isOpen = false;
@@ -1633,25 +1631,19 @@ var ExchangeComponent = /** @class */ (function () {
     ExchangeComponent.prototype.GoToUrl = function (route) {
         this.router.navigate(["/" + route + ""]);
     };
-    // BuyBaseValueClick() {
-    //   if (
-    //     this.common.IsNumeric(this.exchange.BaseValue) &&
-    //     this.common.IsNumeric(this.exchange.BuyPrice)
-    //   ) {
-    //     this.exchange.BuyTotalFees = this.exchange.BaseValue.toString();
-    //     this.exchange.BuyAmount = Number(
-    //       Number(this.exchange.BuyTotalFees) / this.exchange.BuyPrice
-    //     );
-    //   }
-    // }
-    // SellBaseValueClick() {
-    //   if (this.common.IsNumeric(this.exchange.MainValue)) {
-    //     this.exchange.SellAmount = this.exchange.MainValue;
-    //     this.exchange.SellTotal = (
-    //       this.exchange.SellPrice * this.exchange.SellAmount
-    //     ).toFixed(8);
-    //   }
-    // }
+    ExchangeComponent.prototype.BuyBaseValueClick = function () {
+        if (this.common.IsNumeric(this.exchange.BaseValue) &&
+            this.common.IsNumeric(this.exchange.BuyPrice)) {
+            this.exchange.BuyTotalFees = this.exchange.BaseValue.toString();
+            this.exchange.BuyAmount = Number(Number(this.exchange.BuyTotalFees) / this.exchange.BuyPrice);
+        }
+    };
+    ExchangeComponent.prototype.SellBaseValueClick = function () {
+        if (this.common.IsNumeric(this.exchange.MainValue)) {
+            this.exchange.SellAmount = this.exchange.MainValue;
+            this.exchange.SellTotal = (this.exchange.SellPrice * this.exchange.SellAmount).toFixed(8);
+        }
+    };
     ExchangeComponent.prototype.calcBalance = function (value, type) {
         for (var i = 0; i < this.arrBalPerc.length; i++) {
             var element = this.arrBalPerc[i];
@@ -1692,8 +1684,8 @@ var ExchangeComponent = /** @class */ (function () {
     ], ExchangeComponent.prototype, "pairId", void 0);
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
-        __metadata("design:type", Number)
-    ], ExchangeComponent.prototype, "orderType", void 0);
+        __metadata("design:type", String)
+    ], ExchangeComponent.prototype, "side", void 0);
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
         __metadata("design:type", Number)
@@ -2208,6 +2200,16 @@ var OrdersComponent = /** @class */ (function () {
             _this.GetSellOrder(_this.pairId);
             _this.GetBuyOrder(_this.pairId);
         });
+        this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', function (data) {
+            _this.GetUserConfirmOrders("Confirmed", _this.pairId);
+            _this.GetSellOrder(_this.pairId);
+            _this.GetBuyOrder(_this.pairId);
+        });
+        this._pusherService.ch_order_cancel.bind('App\\Events\\OrderCancel', function (data) {
+            _this.GetUserPendingOrders("Confirmed", _this.pairId);
+            _this.GetSellOrder(_this.pairId);
+            _this.GetBuyOrder(_this.pairId);
+        });
         /* this.GetSellOrder(this.pairId);
         this.GetBuyOrder(this.pairId); */
     };
@@ -2259,6 +2261,9 @@ var OrdersComponent = /** @class */ (function () {
         this.hisloading = true;
         this.exchangeService.GetSellOrder(id).subscribe(function (res) {
             if (res !== null) {
+                if (res.data !== null && res.data.length > 0) {
+                    _this.sellModelChange.emit(res.data[0]);
+                }
                 _this.sellOrderList = res.data;
             }
             else {
@@ -2272,6 +2277,9 @@ var OrdersComponent = /** @class */ (function () {
         this.hisloading = true;
         this.exchangeService.GetBuyOrder(id).subscribe(function (res) {
             if (res !== null) {
+                if (res.data !== null && res.data.length > 0) {
+                    _this.buyModelChange.emit(res.data[0]);
+                }
                 _this.buyOrderList = res.data;
             }
             else {
@@ -4187,7 +4195,7 @@ var SharedModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header>\n  <div class=\"container-full-width\">\n    <div class=\"crypt-header\">\n      <div class=\"row\">\n        <div class=\"col-xl-4 col-lg-4 col-md-4 col-sm-5\">\n          <div class=\"row\">\n            <div class=\"col-xs-2\">\n              <div class=\"crypt-logo\">\n                <img src=\"../../../assets/exchanger/images/logo.png\" alt=\"\" />\n              </div>\n            </div>\n          </div>\n        </div>\n        <div class=\"col-xl-8 col-lg-8 col-md-8 d-none d-md-block d-lg-block\">\n          <ul class=\"crypt-heading-menu fright\">\n            <!-- <li>\n              <a [routerLink]=\"['/user/balance']\" routerLinkActive=\"active\">Exchange</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistory']\" routerLinkActive=\"active\">Overview</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistory']\" routerLinkActive=\"active\">Market Cap</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistoory']\" routerLinkActive=\"active\">Trading</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistory']\" routerLinkActive=\"active\">Account</a>\n            </li> -->\n            <li class=\"crypt-box-menu menu-green\" *ngIf=\"!isLogin\">\n              <a href=\"javascript:void(0);\" [routerLink]=\"['/login']\">login</a>\n            </li>\n            <li class=\"btn btn-danger\" *ngIf=\"isLogin\">\n              <a href=\"javascript:void(0);\" (click)=\"Logout();\">logout</a>\n            </li>\n          </ul>\n        </div>\n        <i class=\"menu-toggle pe-7s-menu d-xs-block d-sm-block d-md-none\n          d-sm-none\"></i>\n      </div>\n    </div>\n  </div>\n  <div class=\"crypt-mobile-menu\">\n    <ul class=\"crypt-heading-menu\">\n      <li class=\"active\"><a href=\"#\">Exchange</a></li>\n      <li><a href=\"#\">Market Cap</a></li>\n      <li><a href=\"#\">Treanding</a></li>\n      <li><a href=\"#\">Tools</a></li>\n      <li class=\"crypt-box-menu menu-red\"><a href=\"#\">register</a></li>\n      <li class=\"crypt-box-menu menu-green\"><a href=\"#\">login</a></li>\n    </ul>\n    <div class=\"crypt-gross-market-cap\">\n      <h5>$34.795.90 <span class=\"crypt-up pl-2\">+3.435 %</span></h5>\n      <h6>0.7925.90 BTC <span class=\"crypt-down pl-2\">+7.435 %</span></h6>\n    </div>\n  </div>\n</header>\n<div class=\"container-fluid\">\n  <div class=\"row sm-gutters\">\n    <div class=\"col-md-3 col-lg-3 col-xl-3 col-xxl-2\">\n      <div class=\"crypt-market-status mt-3\">\n        <div>\n          <ul class=\"nav nav-tabs\" id=\"crypt-tab\">\n            <li role=\"presentation\">\n              <a href=\"#btc\" data-toggle=\"tab\" [ngClass]=\"{ active: selectedItem == '1' }\"\n                (click)=\"GetMarketList(1)\">btc</a>\n            </li>\n\n            <li role=\"presentation\">\n              <a href=\"#eth\" data-toggle=\"tab\" [ngClass]=\"{ active: selectedItem == '2' }\"\n                (click)=\"GetMarketList(2)\">eth</a>\n            </li>\n            <li role=\"presentation\">\n              <a href=\"#usdt\" class=\"active\" data-toggle=\"tab\" [ngClass]=\"{ active: selectedItem == '3' }\"\n                (click)=\"GetMarketList(3)\">usdt</a>\n            </li>\n          </ul>\n          <div class=\"tab-content crypt-tab-content\">\n            <div role=\"tabpanel\" class=\" active\" id=\"usd\">\n              <app-loader [IsLoading]=\"loading\"></app-loader>\n              <table class=\"table table-striped\">\n                <thead>\n                  <tr class=\"table-head\">\n                    <th scope=\"col\">Pair</th>\n                    <th scope=\"col\">Price</th>\n                    <th scope=\"col\">Change</th>\n                  </tr>\n                </thead>\n                <tbody class=\"crypt-table-hover\">\n\n                  <tr *ngFor=\"let item of dataList\" (click)=\"GetRowDetail(item)\" class=\"cr_success\"\n                    style=\"line-height: 2.2em;\" [ngClass]=\"{ 'bg-row': item.name == selectedRow }\">\n\n                    <td class=\"align-middle\">{{ item.name }}</td>\n\n                    <td class=\"crypt-down align-middle\">\n                      <span class=\"pr-2 text-center\" data-toggle=\"tooltip\" data-placement=\"right\"\n                        data-original-title=\"$ 0.05\">{{ item.price | appDynamicDigit: 8 }}</span>\n                    </td>\n\n                    <td appColor [attr.value]=\"item.change\">\n                      <span class=\"d-block\">{{ item.change | appDynamicDigit: 2 }}%</span>\n                    </td>\n\n                  </tr>\n                  <tr *ngIf=\"dataList?.length == 0\">\n                    <td colspan=\"3\">No data found</td>\n                  </tr>\n                </tbody>\n              </table>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-6 col-lg-6 col-xl-6 col-xxl-8\">\n      <app-chart [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\"></app-chart>\n      <app-exchange [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\"\n        [orderType]=\"orderType\" [price]=\"price\" [amount]=\"amount\" [total]=\"total\" [buyModel]=\"buyModel\"\n        [sellModel]=\"sellModel\"></app-exchange>\n\n      <!-- <div id=\"depthchart\" class=\"depthchart h-40 crypt-dark-segment\"></div> -->\n    </div>\n    <div class=\"col-md-4 col-lg-3 col-xl-3 col-xxl-2\">\n      <app-home-trade-history [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\" [pairId]=\"pairId\">\n      </app-home-trade-history>\n    </div>\n  </div>\n</div>\n<div class=\"container-fluid\">\n  <app-orders [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\" [pairId]=\"pairId\"\n    (orederTypeChange)=\"changeOrderType($event)\" (priceChange)=\"changePrice($event)\"\n    (amountChange)=\"changeAmount($event)\" (totalChange)=\"changeTotal($event)\" (buyModelChange)=\"changeBuyModel($event)\"\n    (sellModelChange)=\"changeSellModel($event)\"></app-orders>\n</div>\n<footer></footer>"
+module.exports = "<header>\n  <div class=\"container-full-width\">\n    <div class=\"crypt-header\">\n      <div class=\"row\">\n        <div class=\"col-xl-4 col-lg-4 col-md-4 col-sm-5\">\n          <div class=\"row\">\n            <div class=\"col-xs-2\">\n              <div class=\"crypt-logo\">\n                <img src=\"../../../assets/exchanger/images/logo.png\" alt=\"\" />\n              </div>\n            </div>\n          </div>\n        </div>\n        <div class=\"col-xl-8 col-lg-8 col-md-8 d-none d-md-block d-lg-block\">\n          <ul class=\"crypt-heading-menu fright\">\n            <!-- <li>\n              <a [routerLink]=\"['/user/balance']\" routerLinkActive=\"active\">Exchange</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistory']\" routerLinkActive=\"active\">Overview</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistory']\" routerLinkActive=\"active\">Market Cap</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistoory']\" routerLinkActive=\"active\">Trading</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistory']\" routerLinkActive=\"active\">Account</a>\n            </li> -->\n            <li class=\"crypt-box-menu menu-green\" *ngIf=\"!isLogin\">\n              <a href=\"javascript:void(0);\" [routerLink]=\"['/login']\">login</a>\n            </li>\n            <li class=\"btn btn-danger\" *ngIf=\"isLogin\">\n              <a href=\"javascript:void(0);\" (click)=\"Logout();\">logout</a>\n            </li>\n          </ul>\n        </div>\n        <i class=\"menu-toggle pe-7s-menu d-xs-block d-sm-block d-md-none\n          d-sm-none\"></i>\n      </div>\n    </div>\n  </div>\n  <div class=\"crypt-mobile-menu\">\n    <ul class=\"crypt-heading-menu\">\n      <li class=\"active\"><a href=\"#\">Exchange</a></li>\n      <li><a href=\"#\">Market Cap</a></li>\n      <li><a href=\"#\">Treanding</a></li>\n      <li><a href=\"#\">Tools</a></li>\n      <li class=\"crypt-box-menu menu-red\"><a href=\"#\">register</a></li>\n      <li class=\"crypt-box-menu menu-green\"><a href=\"#\">login</a></li>\n    </ul>\n    <div class=\"crypt-gross-market-cap\">\n      <h5>$34.795.90 <span class=\"crypt-up pl-2\">+3.435 %</span></h5>\n      <h6>0.7925.90 BTC <span class=\"crypt-down pl-2\">+7.435 %</span></h6>\n    </div>\n  </div>\n</header>\n<div class=\"container-fluid\">\n  <div class=\"row sm-gutters\">\n    <div class=\"col-md-3 col-lg-3 col-xl-3 col-xxl-2\">\n      <div class=\"crypt-market-status mt-3\">\n        <div>\n          <ul class=\"nav nav-tabs\" id=\"crypt-tab\">\n            <li role=\"presentation\">\n              <a href=\"#btc\" data-toggle=\"tab\" [ngClass]=\"{ active: selectedItem == '1' }\"\n                (click)=\"GetMarketList(1)\">btc</a>\n            </li>\n\n            <li role=\"presentation\">\n              <a href=\"#eth\" data-toggle=\"tab\" [ngClass]=\"{ active: selectedItem == '2' }\"\n                (click)=\"GetMarketList(2)\">eth</a>\n            </li>\n            <li role=\"presentation\">\n              <a href=\"#usdt\" class=\"active\" data-toggle=\"tab\" [ngClass]=\"{ active: selectedItem == '3' }\"\n                (click)=\"GetMarketList(3)\">usdt</a>\n            </li>\n          </ul>\n          <div class=\"tab-content crypt-tab-content\">\n            <div role=\"tabpanel\" class=\" active\" id=\"usd\">\n              <app-loader [IsLoading]=\"loading\"></app-loader>\n              <table class=\"table table-striped\">\n                <thead>\n                  <tr class=\"table-head\">\n                    <th scope=\"col\">Pair</th>\n                    <th scope=\"col\">Price</th>\n                    <th scope=\"col\">Change</th>\n                  </tr>\n                </thead>\n                <tbody class=\"crypt-table-hover\">\n\n                  <tr *ngFor=\"let item of dataList\" (click)=\"GetRowDetail(item)\" class=\"cr_success\"\n                    style=\"line-height: 2.2em;\" [ngClass]=\"{ 'bg-row': item.name == selectedRow }\">\n\n                    <td class=\"align-middle\">{{ item.name }}</td>\n\n                    <td class=\"crypt-down align-middle\">\n                      <span class=\"pr-2 text-center\" data-toggle=\"tooltip\" data-placement=\"right\"\n                        data-original-title=\"$ 0.05\">{{ item.price | appDynamicDigit: 8 }}</span>\n                    </td>\n\n                    <td appColor [attr.value]=\"item.change\">\n                      <span class=\"d-block\">{{ item.change | appDynamicDigit: 2 }}%</span>\n                    </td>\n\n                  </tr>\n                  <tr *ngIf=\"dataList?.length == 0\">\n                    <td colspan=\"3\">No data found</td>\n                  </tr>\n                </tbody>\n              </table>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-6 col-lg-6 col-xl-6 col-xxl-8\">\n      <app-chart [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\"></app-chart>\n      <app-exchange [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\" [side]=\"side\"\n        [price]=\"price\" [amount]=\"amount\" [total]=\"total\" [buyModel]=\"buyModel\" [sellModel]=\"sellModel\"></app-exchange>\n\n      <!-- <div id=\"depthchart\" class=\"depthchart h-40 crypt-dark-segment\"></div> -->\n    </div>\n    <div class=\"col-md-4 col-lg-3 col-xl-3 col-xxl-2\">\n      <app-home-trade-history [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\" [pairId]=\"pairId\">\n      </app-home-trade-history>\n    </div>\n  </div>\n</div>\n<div class=\"container-fluid\">\n  <app-orders [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\" [pairId]=\"pairId\"\n    (orederTypeChange)=\"changeOrderType($event)\" (priceChange)=\"changePrice($event)\"\n    (amountChange)=\"changeAmount($event)\" (totalChange)=\"changeTotal($event)\" (buyModelChange)=\"changeBuyModel($event)\"\n    (sellModelChange)=\"changeSellModel($event)\"></app-orders>\n</div>\n<footer></footer>"
 
 /***/ }),
 
@@ -4305,7 +4313,6 @@ var TradeComponent = /** @class */ (function () {
         var _this = this;
         this.loading = true;
         this.exchangeService.GetMarketList(pairName).subscribe(function (res) {
-            console.log(res.data);
             _this.dataList = res.data;
             for (var pairList in res.data) {
                 if (res.data.hasOwnProperty(pairList)) {
@@ -4692,7 +4699,7 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_1__["platformB
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! c:\xampp\htdocs\laravel-trading-platform\trading-platform\exchange\src\main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\laravel-trading-platform\trading-platform\exchange\src\main.ts */"./src/main.ts");
 
 
 /***/ })
