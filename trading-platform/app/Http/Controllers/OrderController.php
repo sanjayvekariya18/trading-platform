@@ -20,7 +20,8 @@ use App\Events\DailyExchange;
 use App\Events\TradeHistory;
 use App\Events\WalletAmount;
 use App\Events\OrderCancel;
-
+use Validator;
+use Illuminate\Validation\Rule;
 class OrderController extends Controller
 {
 
@@ -38,10 +39,10 @@ class OrderController extends Controller
                         ->limit(100)
                         ->get();
         if(count($orders) > 0){
-            $response['message'] = "SUCCESS";
+            $response['success'] = true;
             $response['data'] = $orders;
         }else{
-            $response['message'] = "EMPTY";
+            $response['success'] = false;
             $response['data'] = null;
         }
         return response()->json($response, 200);
@@ -55,6 +56,47 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+            
+        $regex = "/^(?=.+)(?:[1-9]\d*|0)?(?:\.\d+)?$/";
+
+        if($request->has('price') && $request->order_type != "MARKET"){
+            $validator = Validator::make($request->all(), 
+            [
+                'currency_pair_id' => ['numeric','min:1'],
+                'amount' => ['regex:'.$regex],
+                'price' => ['regex:'.$regex],
+                'order_type' => ['alpha',Rule::in(['LIMIT','MARKET','STOP-LIMIT'])],
+                'side' => ['alpha',Rule::in(['BUY','SELL'])],
+            ],
+            [
+                'currency_pair_id.numeric' => 'Currency Pair Must be an Ineteger.',
+                'currency_pair_id.min' => 'Currency Pair Must be Greate Then 0.',
+                'amount.regex' => 'Amount Must be an Ineteger.',
+                'price.regex' => 'Price Must be an Ineteger.',
+                'order_type.alpha' => 'Invalid Order Name.',
+                'side.alpha' => 'Invalid Order Type.'
+            ]);
+        }else{
+            $validator = Validator::make($request->all(), 
+            [
+                'currency_pair_id' => ['numeric','min:1'],
+                'amount' => ['regex:'.$regex],
+                'order_type' => ['alpha',Rule::in(['LIMIT','MARKET','STOP-LIMIT'])],
+                'side' => ['alpha',Rule::in(['BUY','SELL'])],
+            ],
+            [
+                'currency_pair_id.numeric' => 'Currency Pair Must be an Ineteger.',
+                'currency_pair_id.min' => 'Currency Pair Must be Greate Then 0.',
+                'amount.regex' => 'Amount Must be an Ineteger.',
+                'order_type.alpha' => 'Invalid Order Name',
+                'side.alpha' => 'Invalid Order Type.'
+            ]);
+        }
+        if ($validator->fails()) {
+            $response = array('success'=> false,'output'=>$validator->errors(),'data'=>null);
+            return response()->json($response, 200);
+        }
+
         $output = "";
         
         DB::beginTransaction();
@@ -83,34 +125,38 @@ class OrderController extends Controller
 
              // Check User Wallet is Exist or Not
             if(!$walletAmount){
-                $output .= "Wallet Not Found For Currency[".$currencyPair->fromAsset->asset."]";
-                return response()->json(['output' => $output], 200);
+                $output = "Wallet Not Found For Currency[".$currencyPair->fromAsset->asset."]";
+                $response = array('success'=> false,'output'=>$output,'data'=>null);
+                return response()->json($response, 200);
             } 
 
             // Check Request Quantity and Price is Greater Then 0
             if($request->has('price') && $request->order_type != "MARKET"){
                 if($request->price <= 0 || $request->amount <= 0){
-                    $output .= "Please enter valid amount.";
-                    return response()->json(['output' => $output], 200);
+                    $output = "Please enter valid amount.";
+                    $response = array('success'=> false,'output'=>$output,'data'=>null);
+                    return response()->json($response, 200);
                 }
 
                 // Check Trade Value is Greater or Equal Min. Trade
                 if(($request->price * $request->amount) < $minTrade){
-                    $output .= 'Please enter mininum price :'.$minTrade;
-                    return response()->json(['output' => $output], 200);
+                    $output = 'Please enter mininum price :'.$minTrade;
+                    $response = array('success'=> false,'output'=>$output,'data'=>null);
+                    return response()->json($response, 200);
                 }
 
                 // Check User Wallet Balance is Greater Then Trade Value For Buyer and Seller
                 if(($request->side == "BUY" && $walletAmount->balance < ($request->price * $request->amount)) || 
                     ($request->side == "SELL" && $walletAmount->balance < $request->amount)){
-
-                        $output .= 'You have not sufficient fund to do this trade.';
-                        return response()->json(['output' => $output], 200);
+                        $output = 'You have not sufficient fund to do this trade.';
+                        $response = array('success'=> false,'output'=>$output,'data'=>null);
+                        return response()->json($response, 200);
                 }
             }else{
                 if($request->amount <= 0){
-                    $output .= "Please enter valid amount.";
-                    return response()->json(['output' => $output], 200);
+                    $output = "Please enter valid amount.";
+                    $response = array('success'=> false,'output'=>$output,'data'=>null);
+                    return response()->json($response, 200);
                 }
             }
 
@@ -483,7 +529,8 @@ class OrderController extends Controller
             if($request->has('price') && $request->order_type != "MARKET"){
                 $output .= $this->createOrderStopLimitConvert();
             }
-        return response()->json(['output' => $output], 201);
+        $response = array('success'=> true,'output'=>$output,'data'=>null);
+        return response()->json($response, 200);
     }
 
     public function manageWallet($walletParam)
@@ -530,6 +577,29 @@ class OrderController extends Controller
         DB::beginTransaction();
         DB::enableQueryLog();
 
+        $regex = "/^(?=.+)(?:[1-9]\d*|0)?(?:\.\d+)?$/";
+
+        $validator = Validator::make($request->all(), 
+        [
+            'currency_pair_id' => ['numeric','min:1'],
+            'amount' => ['regex:'.$regex],
+            'stop' => ['regex:'.$regex],
+            'limit' => ['regex:'.$regex],
+            'side' => ['alpha',Rule::in(['BUY','SELL'])],
+        ],
+        [
+            'currency_pair_id.numeric' => 'Currency Pair Must be an Ineteger.',
+            'currency_pair_id.min' => 'Currency Pair Must be Greate Then 0.',
+            'amount.regex' => 'Amount Must be an Ineteger.',
+            'stop.regex' => 'Price Must be an Ineteger.',
+            'limit.regex' => 'Price Must be an Ineteger.',
+            'side.alpha' => 'Invalid Order Type.'
+        ]);
+        if ($validator->fails()) {
+            $response = array('success'=> false,'output'=>$validator->errors(),'data'=>null);
+            return response()->json($response, 200);
+        }
+
         $total = 0.00000000;
         $remark = "";
 
@@ -545,7 +615,8 @@ class OrderController extends Controller
 
         if($request->stop < 0 || $request->limit < 0 || $request->amount < 0){
             $output = 'Please enter valid amount.';
-            return response()->json(['output' => $output], 200);
+            $response = array('success'=> false,'output'=>$output,'data'=>null);
+            return response()->json($response, 200);
         }
 
         if($request->side == "BUY"){
@@ -597,7 +668,8 @@ class OrderController extends Controller
         }
         $output = $remark;
         DB::commit();
-        return response()->json(['output' => $output], 201);
+        $response = array('success'=> true,'output'=>$output,'data'=>null);
+        return response()->json($response, 200);
     }
 
     public function createOrderStopLimitConvert()
@@ -633,7 +705,7 @@ class OrderController extends Controller
                             'currency_id' => $orderStopLimit->currencyPair->from_asset,
                             'user_id' => $orderStopLimit->user_id,
                             'context_id' => $orderStopLimit->id,
-                            'source' => "Stop-Limit",
+                            'source' => "STOP-LIMIT",
                             'transaction_type' => "ADD",
                             'amount' => $total,
                             'remark' => $remark
@@ -649,7 +721,7 @@ class OrderController extends Controller
                             'currency_pair_id'=> $orderStopLimit->currency_pair_id,
                             'amount' => $orderStopLimit->amount,
                             'price' => $orderStopLimit->limit,
-                            'order_type' => "Stop-Limit",
+                            'order_type' => "STOP-LIMIT",
                             'side' => $orderStopLimit->side,
                         ]);
                         /* echo "<pre>";
@@ -665,7 +737,7 @@ class OrderController extends Controller
                             'currency_id' => $orderStopLimit->currencyPair->from_asset,
                             'user_id' => $orderStopLimit->user_id,
                             'context_id' => $orderStopLimit->id,
-                            'source' => "Stop-Limit",
+                            'source' => "STOP-LIMIT",
                             'transaction_type' => "ADD",
                             'amount' => $total,
                             'remark' => $remark
@@ -681,7 +753,7 @@ class OrderController extends Controller
                             'currency_pair_id'=> $orderStopLimit->currency_pair_id,
                             'amount' => $orderStopLimit->amount,
                             'price' => $orderStopLimit->limit,
-                            'order_type' => "Stop-Limit",
+                            'order_type' => "STOP-LIMIT",
                             'side' => $orderStopLimit->side,
                         ]);
                         /* echo "<pre>";
@@ -709,11 +781,10 @@ class OrderController extends Controller
                 ->where('order_status','Pending')
                 ->get()->first();
 
-        
-        
         if(!$order){
             $output = 'Order Not Found..!';
-            return response()->json(['output' => $output], 200);
+            $response = array('success'=> true,'output'=>$output,'data'=>null);
+            return response()->json($response, 200);
         }
         DB::table("orders")->where('id',$order->id)->update(['order_status' => "Canceled"]);
         event(new OrderCancel($order));
@@ -749,7 +820,8 @@ class OrderController extends Controller
 
         event(new WalletAmount($fromCurSym,$toCurSym));
         DB::commit();
-        return response()->json(['output' => $output], 200);
+        $response = array('success'=> true,'output'=>$output,'data'=>null);
+        return response()->json($response, 200);
     }
 
     public function getWalletAmount(Request $request)
@@ -778,10 +850,11 @@ class OrderController extends Controller
         $data['TradeFees'] = Config::where('name','trade_fee')->get()->first()->value;
         $data['MinTrade'] = Config::where('name','min_trade')->get()->first()->value;
 
-        return response()->json(['message' => "SUCCESS",'data' => $data], 200);
+        $response = array('success'=> true,'data'=>$data);
+        return response()->json($response, 200);
     }
 
-    public function getOrder($currPairId)
+    /* public function getOrder($currPairId)
     {
         $orders = Order::where('user_id',\Auth::user()->id)
                         ->where('order_status',$request->order_status)
@@ -789,12 +862,14 @@ class OrderController extends Controller
                         ->orderBy('updated_at','DESC')
                         ->get();
         if(count($orders) > 0){
-            $response['message'] = "SUCCESS";
+            $response['success'] = true;
+            $response['output'] = "";
             $response['data'] = $orders;
         }else{
-            $response['message'] = "EMPTY";
+            $response['success'] = false;
+            $response['output'] = "Getting Trade Orders Failed";
             $response['data'] = null;
         }
         return response()->json($response, 200);
-    }
+    } */
 }

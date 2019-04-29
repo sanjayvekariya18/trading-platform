@@ -59,7 +59,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
 
   ) {
     this.authenticationService.isLoginChanged.subscribe((isLogin: any) => {
-      setTimeout(() => (this.isLogin = isLogin), 0);
+      setTimeout(() => (this.isLogin = isLogin), 10);
     });
   }
 
@@ -109,7 +109,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
       MainCurrency: this.mainCurrency
     };
     this.exchangeService.GetWalletBalance(obj).subscribe((res: any) => {
-      if (res != null) {
+      if (res.success == true) {
         this.BindExchange(res);
       }
     });
@@ -131,15 +131,18 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
         side: "BUY"
       };
       this.exchangeService.BuyMarketTrade(obj).subscribe((res: any) => {
-        if (res != null) {
+
+        if (res.success == true) {
           this.isBuySubmitted = false;
           this.ResetForm();
           this.GetWalletBalance(null);
-          this.buysellmsg = res.output;
-          this.RefreshMarket(this.pairId);
-          this.ShowPopUp();
+          // this.buysellmsg = res.output;
+          // this.ShowPopUp();
+          if (res.output != undefined && res.output != "")
+            this.toast.success(res.output);
         } else {
-          this.toast.error(res.output);
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
         }
         this.isBuyLoading = false;
       });
@@ -162,27 +165,23 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
         side: "SELL"
       };
       this.exchangeService.SellMarketTrade(obj).subscribe((res: any) => {
-        if (res !== null) {
+
+        if (res.success == true) {
           this.isSellSubmitted = false;
           this.ResetForm();
           this.GetWalletBalance(null);
-          this.buysellmsg = res.output;
-          this.RefreshMarket(this.pairId);
-          this.ShowPopUp();
+          //this.buysellmsg = res.output;
+          //this.RefreshMarket(this.pairId);
+          //this.ShowPopUp();
+          if (res.output != undefined && res.output != "")
+            this.toast.success(res.output);
         } else {
-          this.toast.error(res.data.message);
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
         }
         this.isSellLoading = false;
       });
     }
-  }
-
-  RefreshMarket(pairId) {
-    // const baseMarketId = localStorage.getItem("BaseMarketId");
-    // this.tradeService.MarketRefresh(baseMarketId);
-    // this.tradeService.ChartRefresh();
-    // this.tradeService.GetDailyExchange(pairId);
-    // this.tradeService.TradeHistory(pairId);
   }
 
   calcBalance(value, type) {
@@ -213,7 +212,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
 
   // getOrderFirstRow(pair: any) {
   //  this.exchangeService.GetOrder(pair).subscribe((res: any) => {
-  //     if (res != null) {
+  //     if (res.success == true) {
   //       const dtList = res.data;
 
   //       if (dtList.sellList.length !== 0) {

@@ -40,10 +40,10 @@ export class LoginComponent {
     if (isValid) {
       this.isLoading = true;
       this.authenticationService.Login(obj).subscribe((res: any) => {
-        if (res.message !== "ERROR") {
+        if (res.success == true) {
           this.SetLogin(res.data);
         } else {
-          this.toast.error(res.data.toString());
+          this.toast.error(res.output);
         }
         this.isLoading = false;
       });

@@ -64,20 +64,18 @@ class LoginController extends Controller
             if($request->wantsJson()){
                 $user = $this->guard()->user();
                 $user->generateToken();
-                $response['message'] = "SUCCESS";
+                $response['success'] = true;
+                $response['output'] = "";
                 $response['data'] = $user;
-                /* return response()->json([
-                    'data' => $user->toArray(),
-                ]); */
                 return response()->json($response, 200);
             }else{
                 return redirect()->intended($this->redirectPath());
             }
         }else{
             if($request->wantsJson()){
-                // return $this->sendFailedLoginResponse($request);
-                $response['message'] = "ERROR";
-                $response['data'] = "Invalid username and password.";
+                $response['success'] = false;
+                $response['output'] = "Invalid username and password.";
+                $response['data'] = null;
                 return response()->json($response, 200);
             }else{
                 return redirect()->back()

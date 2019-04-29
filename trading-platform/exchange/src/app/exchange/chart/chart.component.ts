@@ -51,7 +51,7 @@ export class ChartComponent implements OnChanges, OnInit {
   GetDailyExchange() {
     this.isDailyExchangeLoader = true;
     this.exchangeService.GetDailyExchange(this.pairId).subscribe((res: any) => {
-      if (res != null) {
+      if (res.success == true) {
         if (Object.keys(res.data).length > 0) {
           this.dailyExchange = res.data;
         } else {

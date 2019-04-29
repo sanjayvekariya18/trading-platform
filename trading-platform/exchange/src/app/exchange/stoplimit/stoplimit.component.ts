@@ -84,8 +84,8 @@ export class StoplimitComponent implements OnInit, OnChanges {
       BaseCurrency: this.baseCurrency,
       MainCurrency: this.mainCurrency
     };
-    this.exchangeService.GetWalletBalance(obj).subscribe((res: Response) => {
-      if (res !== null) {
+    this.exchangeService.GetWalletBalance(obj).subscribe((res: any) => {
+      if (res.success == true) {
         this.BindExchange(res);
       }
     });
@@ -195,13 +195,16 @@ export class StoplimitComponent implements OnInit, OnChanges {
 
       };
       this.exchangeService.OrderStopLimit(obj).subscribe((res: any) => {
-        if (res !== null) {
+
+        if (res.success == true) {
           this.isBuySubmitted = false;
           this.ResetForm();
           this.GetWalletBalance(null);
-          this.toast.success(res.output);
+          if (res.output != undefined && res.output != "")
+            this.toast.success(res.output);
         } else {
-          this.toast.error(res.output);
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
         }
         this.isBuyLoading = false;
       });
@@ -220,14 +223,17 @@ export class StoplimitComponent implements OnInit, OnChanges {
         side: "SELL"
       };
       this.exchangeService.OrderStopLimit(obj).subscribe((res: any) => {
-        if (res !== null) {
+
+        if (res.success == true) {
           this.isSellSubmitted = false;
           this.ResetForm();
           this.GetWalletBalance(null);
-          this.toast.success(res.output);
+          if (res.output != undefined && res.output != "")
+            this.toast.success(res.output);
         } else {
           this.isSellLoading = false;
-          this.toast.error(res.output);
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
         }
         this.isSellLoading = false;
       });

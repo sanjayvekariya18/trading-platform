@@ -91,7 +91,6 @@ export class ExchangeComponent implements OnInit, OnChanges {
       if (type === 'sellModel') {
         this.ChangeUpdateModel(change.sellModel.currentValue);
       }
-
       if (type === 'buyModel') {
         this.ChangeUpdateModel(change.buyModel.currentValue);
       }
@@ -134,7 +133,7 @@ export class ExchangeComponent implements OnInit, OnChanges {
       MainCurrency: this.mainCurrency
     };
     this.exchangeService.GetWalletBalance(obj).subscribe((res: any) => {
-      if (res != null) {
+      if (res.success == true) {
         this.BindExchange(res);
         if (change != null) {
           this.ChangeUpdateModel(change);
@@ -246,17 +245,19 @@ export class ExchangeComponent implements OnInit, OnChanges {
         side: "BUY"
       };
       this.exchangeService.BuyTrade(obj).subscribe((res: any) => {
-        if (res != null) {
+        if (res.success == true) {
           this.isBuySubmitted = false;
           this.ResetForm();
           this.GetWalletBalance(null);
           // this.buysellmsg = res.output;
           // this.RefreshMarket(this.pairId);
           // this.ShowPopUp();
-          this.toast.success(res.output);
+          if (res.output != undefined && res.output != "")
+            this.toast.success(res.output);
           this.isBuyLoading = false;
         } else {
-          this.toast.error(res.output);
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
           this.isBuyLoading = false;
         }
       });
@@ -303,31 +304,24 @@ export class ExchangeComponent implements OnInit, OnChanges {
         side: "SELL"
       };
       this.exchangeService.SellTrade(obj).subscribe((res: any) => {
-        if (res != null) {
+        if (res.success == true) {
           this.isSellSubmitted = false;
           this.ResetForm();
           this.GetWalletBalance(null);
           this.isSellLoading = false;
-          this.toast.success(res.output);
+          if (res.output != undefined && res.output != "")
+            this.toast.success(res.output);
           // this.buysellmsg = res.output;
           // this.RefreshMarket(this.pairId);
           // this.ShowPopUp();
         } else {
           this.isSellLoading = false;
-          this.toast.error(res.output);
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
         }
       });
     }
   }
-
-  /* RefreshMarket(pairId) {
-    const baseMarketId = localStorage.getItem("BaseMarketId");
-    // this.tradeService.MarketRefresh(baseMarketId);
-    // this.tradeService.ChartRefresh();
-    // this.tradeService.GetDailyExchange(pairId);
-    //this.tradeService.GetOrder(pairId);
-    // this.tradeService.TradeHistory(pairId);
-  } */
 
   ClosePopUp() {
     this.modal.hide();

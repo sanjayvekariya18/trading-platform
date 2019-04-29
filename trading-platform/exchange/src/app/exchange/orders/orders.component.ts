@@ -32,8 +32,10 @@ export class OrdersComponent implements OnInit, OnChanges {
   totalBuy: string;
   totalSell: string;
   buyCount = 0;
-  loading = false;
-  hisloading = false;
+  openloading = false;
+  myorderloading = false;
+  buyloading = false;
+  sellloading = false;
   config: PerfectScrollbarConfigInterface = {};
 
   @Input() baseCurrency: string;
@@ -96,57 +98,65 @@ export class OrdersComponent implements OnInit, OnChanges {
 
   GetUserPendingOrders(orderstatus: string, id: number) {
     const obj = { order_status: orderstatus, currency_pair_id: id };
-    this.loading = true;
+    this.openloading = true;
     this.exchangeService.GetUserTrade(obj).subscribe((res: any) => {
-      if (res !== null) {
+
+      if (res.success == true) {
         this.openOrderlist = res.data;
       } else {
-        this.toast.error(res.message);
+        if (res.output != undefined && res.output != "")
+          this.toast.error(res.output);
       }
-      this.loading = false;
+      this.openloading = false;
     });
   }
 
   GetUserConfirmOrders(orderstatus: string, id: number) {
     const obj = { order_status: orderstatus, currency_pair_id: id };
-    this.hisloading = true;
+    this.myorderloading = true;
     this.exchangeService.GetUserTrade(obj).subscribe((res: any) => {
-      if (res !== null) {
+
+      if (res.success == true) {
         this.tradeHisList = res.data;
       } else {
-        this.toast.error(res.message);
+        if (res.output != undefined && res.output != "")
+          this.toast.error(res.output);
       }
-      this.hisloading = false;
+      this.myorderloading = false;
     });
   }
 
   GetSellOrder(id: any) {
-    this.hisloading = true;
+    this.sellloading = true;
     this.exchangeService.GetSellOrder(id).subscribe((res: any) => {
-      if (res !== null) {
+
+      if (res.success == true) {
         if (res.data !== null && res.data.length > 0) {
           this.sellModelChange.emit(res.data[0]);
         }
         this.sellOrderList = res.data;
       } else {
-        this.toast.error(res.message);
+        if (res.output != undefined && res.output != "")
+          this.toast.error(res.output);
       }
-      this.hisloading = false;
+      this.sellloading = false;
     });
   }
 
   GetBuyOrder(id: any) {
-    this.hisloading = true;
+    this.buyloading = true;
     this.exchangeService.GetBuyOrder(id).subscribe((res: any) => {
-      if (res !== null) {
+
+      if (res.success == true) {
         if (res.data !== null && res.data.length > 0) {
           this.buyModelChange.emit(res.data[0]);
         }
         this.buyOrderList = res.data;
       } else {
-        this.toast.error(res.message);
+        if (res.output != undefined && res.output != "")
+          this.toast.error(res.output);
       }
-      this.hisloading = false;
+      this.buyloading = false;
     });
   }
 
@@ -162,18 +172,28 @@ export class OrdersComponent implements OnInit, OnChanges {
       type: 'warning',
     }).then(result => {
       if (result.value) {
+        this.openloading = true;
         this.exchangeService.CancelOrder(id).subscribe((res: any) => {
-          if (res !== null) {
+          if (res.success == true) {
             this.GetUserPendingOrders("Pending", this.pairId);
-            this.toast.success(res.output);
+            if (res.output != undefined && res.output != "")
+              this.toast.success(res.output);
           } else {
-            this.toast.error(res.output);
+            if (res.output != undefined && res.output != "")
+              this.toast.error(res.output);
           }
-          this.hisloading = false;
         });
       } else {
         this.toast.success('Your data is safe :)');
       }
+      this.openloading = false;
     });
+  }
+
+  getRowBuyOrder(item: any) {
+    this.buyModelChange.emit(item);
+  }
+  getRowSellOrder(item: any) {
+    this.sellModelChange.emit(item);
   }
 }

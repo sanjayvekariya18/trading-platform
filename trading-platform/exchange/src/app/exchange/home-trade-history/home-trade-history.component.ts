@@ -58,10 +58,12 @@ export class HomeTradeHistoryComponent implements OnInit, OnChanges {
   GetUserHistory(id: number) {
     this.tradeListLoading = true;
     this.exchangeService.GetUserHistory(id).subscribe((res: any) => {
-      if (res !== null) {
+
+      if (res.success == true) {
         this.tradeHisList = res.data;
       } else {
-        this.toast.error(res.message);
+        if (res.output != undefined && res.output != "")
+          this.toast.error(res.output);
       }
       this.tradeListLoading = false;
     });

@@ -15,10 +15,10 @@ class ExchangeController extends Controller
     {
         $orders = Order::all();
         if(count($orders) > 0){
-            $response['message'] = "SUCCESS";
+            $response['success'] = true;
             $response['data'] = $orders;
         }else{
-            $response['message'] = "EMPTY";
+            $response['success'] = false;
             $response['data'] = null;
         }
         return response()->json($response, 200);
@@ -28,10 +28,10 @@ class ExchangeController extends Controller
     {
         $orders = Order::where('order_status',"Pending")->get();
         if(count($orders) > 0){
-            $response['message'] = "SUCCESS";
+            $response['success'] = true;
             $response['data'] = $orders;
         }else{
-            $response['message'] = "EMPTY";
+            $response['success'] = false;
             $response['data'] = null;
         }
         return response()->json($response, 200);
@@ -41,10 +41,10 @@ class ExchangeController extends Controller
     {
         $orders = Order::where('order_status',"Confirmed")->get();
         if(count($orders) > 0){
-            $response['message'] = "SUCCESS";
+            $response['success'] = true;
             $response['data'] = $orders;
         }else{
-            $response['message'] = "EMPTY";
+            $response['success'] = false;
             $response['data'] = null;
         }
         return response()->json($response, 200);
@@ -54,10 +54,10 @@ class ExchangeController extends Controller
     {
         $currencies = Currency::all();
         if(count($currencies) > 0){
-            $response['message'] = "SUCCESS";
+            $response['success'] = true;
             $response['data'] = $currencies;
         }else{
-            $response['message'] = "EMPTY";
+            $response['success'] = false;
             $response['data'] = null;
         }
         return response()->json($response, 200);
@@ -83,10 +83,10 @@ class ExchangeController extends Controller
         $response = array();
         $data = array();
         if(count($currency_pairs) > 0){
-            $response['message'] = "SUCCESS";
+            $response['success'] = true;
             $response['data'] = $this->getCurrencyChange($currency_pairs);
         }else{
-            $response['message'] = "EMPTY";
+            $response['success'] = false;
             $response['data'] = null;
         }
         return response()->json($response, 200);
@@ -97,10 +97,10 @@ class ExchangeController extends Controller
         $data = array();
         $currency_pairs = Currency_pair::with('fromAsset')->with('toAsset')->get();
         if(count($currency_pairs) > 0){
-            $response['message'] = "SUCCESS";
+            $response['success'] = true;
             $response['data'] = $this->getCurrencyChange($currency_pairs);
         }else{
-            $response['message'] = "EMPTY";
+            $response['success'] = false;
             $response['data'] = null;
         }
         return response()->json($response, 200);
@@ -154,10 +154,10 @@ class ExchangeController extends Controller
                 ->where('order_status',"Confirmed")
                 ->get();
         if(count($orders) > 0){
-            $response['message'] = "SUCCESS";
+            $response['success'] = true;
             $response['data'] = $orders;
         }else{
-            $response['message'] = "EMPTY";
+            $response['success'] = false;
             $response['data'] = null;
         }
          return response()->json($response, 200);
@@ -166,16 +166,19 @@ class ExchangeController extends Controller
     public function getSellOrders($pairId)
     {
         $orders = Order::
-                where('currency_pair_id',$pairId)
+                selectRaw('price,SUM(amount) as amount,side')
+                ->where('currency_pair_id',$pairId)
                 ->where('order_status',"Pending")
                 ->where('side',"SELL")
                 ->orderBy('price')
+                ->groupBy('price')
+                ->groupBy('side')
                 ->get();
         if(count($orders) > 0){
-            $response['message'] = "SUCCESS";
+            $response['success'] = true;
             $response['data'] = $orders;
         }else{
-            $response['message'] = "EMPTY";
+            $response['success'] = false;
             $response['data'] = null;
         }
         return response()->json($response, 200);
@@ -184,16 +187,19 @@ class ExchangeController extends Controller
     public function getBuyOrders($pairId)
     {
         $orders = Order::
-                where('currency_pair_id',$pairId)
+                selectRaw('price,SUM(amount) as amount,side')
+                ->where('currency_pair_id',$pairId)
                 ->where('order_status',"Pending")
                 ->where('side',"BUY")
                 ->orderBy('price','DESC')
+                ->groupBy('price')
+                ->groupBy('side')
                 ->get();
         if(count($orders) > 0){
-            $response['message'] = "SUCCESS";
+            $response['success'] = true;
             $response['data'] = $orders;
         }else{
-            $response['message'] = "EMPTY";
+            $response['success'] = false;
             $response['data'] = null;
         }
         return response()->json($response, 200);
@@ -249,7 +255,7 @@ class ExchangeController extends Controller
             $data['lastPrice'] = 0.00000000;
         }
         
-        $response['message'] = "SUCCESS";
+        $response['success'] = true;
         $response['data'] = $data;
         
         return response()->json($response, 200);
@@ -270,6 +276,7 @@ class ExchangeController extends Controller
                     order_status = 'Confirmed'
                     GROUP BY time_interval
                     ORDER BY time_interval");
-        return response()->json(['data' => $chart], 200);
+        $response = array('success'=> true,'data'=>$chart);
+        return response()->json($response, 200);
     }
 }
