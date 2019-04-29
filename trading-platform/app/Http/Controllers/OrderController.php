@@ -19,6 +19,7 @@ use App\Events\CurrencyPair;
 use App\Events\DailyExchange;
 use App\Events\TradeHistory;
 use App\Events\WalletAmount;
+use App\Events\OrderCancel;
 
 class OrderController extends Controller
 {
@@ -260,7 +261,7 @@ class OrderController extends Controller
                         );
                         $this->manageWallet($walletParam);
 
-                        $output .= "Your Order(".$order->order_no." is confirmed for ".$givenAmount." ".$fromCurSym." of ".$price1." ".$toCurSym." <br />";
+                        $output .= "Your Order(".$order->order_no." is confirmed for ".$givenAmount." ".$fromCurSym." of ".$price1." ".$toCurSym." \n";
 
                         $chargeAmount = $total * $charge / 100;
 
@@ -325,6 +326,7 @@ class OrderController extends Controller
                         $order->fee = $chargeAmount;
                         $order->fee_remark = "Charge:($charge)% $toCurSym";
                         $order->save();
+
                         event(new ConfirmOrder($order));
                         event(new TradeHistory($order));
                         event(new CurrencyPair($order->currency_pair_id));
@@ -343,6 +345,10 @@ class OrderController extends Controller
                             'remark' => $remark1
                         );
                         $this->manageWallet($walletParam);
+
+                        /* echo "<pre>";
+                        print_r($walletParam);
+                        die; */
 
                         DB::table('orders')
                                 ->where('id',$toOrderId)
@@ -376,7 +382,7 @@ class OrderController extends Controller
                         );
                         $this->manageWallet($walletParam);
 
-                        $output .= 'Your Order(' .$order->order_no .') is confirmed for '.$givenAmount.' '.$fromCurSym.' of '.$price1.' '.$toCurSym .' .<br />';
+                        $output .= 'Your Order(' .$order->order_no .') is confirmed for '.$givenAmount.' '.$fromCurSym.' of '.$price1.' '.$toCurSym .' .\n';
 
                         $chargeAmount = $givenAmount * $charge / 100;
 
@@ -453,7 +459,7 @@ class OrderController extends Controller
                         }else{
                             $remark1 = ' Trade sell confirmed order no :'. $order->order_no;
                             $walletParam = array(
-                                'currency_id' => $currencyPair->from_asset,
+                                'currency_id' => $sellerCurrencyPair->from_asset,
                                 'user_id' => \Auth::user()->id,
                                 'context_id' => $order->id,
                                 'source' => "Order",
@@ -686,8 +692,8 @@ class OrderController extends Controller
                     }
                 }
             }
-            $output .= "Last Price: ".$lastPrice."<br>";
-            //$output .= "@Id : ".$orderStopLimit->id." @Stop ".$orderStopLimit->stop." @Limit ".$orderStopLimit->limit." @Amount ".$orderStopLimit->amount."<br>";
+            $output .= "Last Price: ".$lastPrice."\n";
+            //$output .= "@Id : ".$orderStopLimit->id." @Stop ".$orderStopLimit->stop." @Limit ".$orderStopLimit->limit." @Amount ".$orderStopLimit->amount."\n";
         }
         
         return $output;
@@ -704,25 +710,24 @@ class OrderController extends Controller
                 ->get()->first();
 
         
-        /* echo "<pre>";
-        print_r($order->currencyPair);
-        die; */
+        
         if(!$order){
             $output = 'Order Not Found..!';
             return response()->json(['output' => $output], 200);
         }
         DB::table("orders")->where('id',$order->id)->update(['order_status' => "Canceled"]);
-    
-        if($order->side = "BUY"){
+        event(new OrderCancel($order));
+
+        if($order->side == "BUY"){
             $amount = $order->amount * $order->price;
             $remark = "Cancel-Buy-Order No-".$order->order_no;
         }else{
             $amount = $order->amount;
             $remark = "Cancel-Sell-Order No-".$order->order_no;
         }
-
+        
         $walletParam = array(
-            'currency_id' => $order->currencyPair->from_asset,
+            'currency_id' => $order->currencyPair->to_asset,
             'user_id' => $order->user_id,
             'context_id' => $order->id,
             'source' => "Order",
@@ -730,6 +735,7 @@ class OrderController extends Controller
             'amount' => $amount,
             'remark' => $remark
         );
+
         $this->manageWallet($walletParam);
         $output = "Trade canceled successfully.";
 
@@ -742,7 +748,7 @@ class OrderController extends Controller
         $toCurSym = $currencyPair->toAsset->asset;
 
         event(new WalletAmount($fromCurSym,$toCurSym));
-         DB::commit();
+        DB::commit();
         return response()->json(['output' => $output], 200);
     }
 

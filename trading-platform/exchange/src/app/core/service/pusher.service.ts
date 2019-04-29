@@ -18,6 +18,7 @@ export class PusherService {
     ch_trade_history: any;
     ch_daily_exchange: any;
     ch_wallet_amount: any;
+    ch_order_cancel: any;
     constructor(private http: HttpClient, public httpService: HttpService) {
         this.pusher = new Pusher('7b488ce6d8fea3f95cc6', {
             cluster: 'ap2',
@@ -31,5 +32,6 @@ export class PusherService {
         this.ch_trade_history = this.pusher.subscribe('trade_history');
         this.ch_daily_exchange = this.pusher.subscribe('daily_exchange');
         this.ch_wallet_amount = this.pusher.subscribe('wallet_amount');
+        this.ch_order_cancel = this.pusher.subscribe('order_cancel');
     }
 }
