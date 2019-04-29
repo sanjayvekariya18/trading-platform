@@ -136,7 +136,6 @@ export class TradeComponent implements OnInit {
   GetPairDetail(pairName) {
     this.loading = true;
     this.exchangeService.GetMarketList(pairName).subscribe((res: any) => {
-      console.log(res.data);
       this.dataList = res.data;
       for (const pairList in res.data) {
         if (res.data.hasOwnProperty(pairList)) {

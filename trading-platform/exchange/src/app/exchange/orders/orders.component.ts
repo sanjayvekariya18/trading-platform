@@ -62,6 +62,16 @@ export class OrdersComponent implements OnInit, OnChanges {
       this.GetSellOrder(this.pairId);
       this.GetBuyOrder(this.pairId);
     });
+    this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', data => {
+      this.GetUserConfirmOrders("Confirmed", this.pairId);
+      this.GetSellOrder(this.pairId);
+      this.GetBuyOrder(this.pairId);
+    });
+    this._pusherService.ch_order_cancel.bind('App\\Events\\OrderCancel', data => {
+      this.GetUserPendingOrders("Confirmed", this.pairId);
+      this.GetSellOrder(this.pairId);
+      this.GetBuyOrder(this.pairId);
+    });
     /* this.GetSellOrder(this.pairId);
     this.GetBuyOrder(this.pairId); */
 
@@ -114,6 +124,9 @@ export class OrdersComponent implements OnInit, OnChanges {
     this.hisloading = true;
     this.exchangeService.GetSellOrder(id).subscribe((res: any) => {
       if (res !== null) {
+        if (res.data !== null && res.data.length > 0) {
+          this.sellModelChange.emit(res.data[0]);
+        }
         this.sellOrderList = res.data;
       } else {
         this.toast.error(res.message);
@@ -126,6 +139,9 @@ export class OrdersComponent implements OnInit, OnChanges {
     this.hisloading = true;
     this.exchangeService.GetBuyOrder(id).subscribe((res: any) => {
       if (res !== null) {
+        if (res.data !== null && res.data.length > 0) {
+          this.buyModelChange.emit(res.data[0]);
+        }
         this.buyOrderList = res.data;
       } else {
         this.toast.error(res.message);
@@ -160,5 +176,4 @@ export class OrdersComponent implements OnInit, OnChanges {
       }
     });
   }
-
 }

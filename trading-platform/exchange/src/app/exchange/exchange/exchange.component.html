@@ -21,7 +21,7 @@
               Buy <span class="crypt-up">{{ exchange.MainCurrency }}</span>
               <span class="fright" *ngIf="exchange.BaseValue != null">
                 Available:
-                <b class="crypt-up">
+                <b class="crypt-up" (click)="BuyBaseValueClick()" style="cursor: pointer;">
                   {{ exchange.BaseValue | appDynamicDigit: 8 }}
                   {{ exchange.BaseCurrency }}
                 </b>
@@ -112,7 +112,7 @@
             <p>
               Sell <span class="crypt-down">{{ exchange.MainCurrency }}</span>
               <span class="fright">Available:
-                <b class="crypt-down">{{ exchange.MainValue | appDynamicDigit: 8
+                <b class="crypt-down" (click)="SellBaseValueClick()" style="cursor: pointer;">{{ exchange.MainValue | appDynamicDigit: 8
                   }}
                   {{ exchange.MainCurrency }}</b></span>
             </p>

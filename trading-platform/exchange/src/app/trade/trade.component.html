@@ -116,9 +116,8 @@
     </div>
     <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-8">
       <app-chart [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency"></app-chart>
-      <app-exchange [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency"
-        [orderType]="orderType" [price]="price" [amount]="amount" [total]="total" [buyModel]="buyModel"
-        [sellModel]="sellModel"></app-exchange>
+      <app-exchange [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency" [side]="side"
+        [price]="price" [amount]="amount" [total]="total" [buyModel]="buyModel" [sellModel]="sellModel"></app-exchange>
 
       <!-- <div id="depthchart" class="depthchart h-40 crypt-dark-segment"></div> -->
     </div>

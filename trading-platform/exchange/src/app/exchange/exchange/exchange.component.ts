@@ -32,7 +32,7 @@ export class ExchangeComponent implements OnInit, OnChanges {
   @Input() baseCurrency: string;
   @Input() mainCurrency: string;
   @Input() pairId: string;
-  @Input() orderType: number;
+  @Input() side: string;
   @Input() price: number;
   @Input() amount: number;
   @Input() total: number;
@@ -86,60 +86,43 @@ export class ExchangeComponent implements OnInit, OnChanges {
       this.pairName = `${this.mainCurrency}/${this.baseCurrency}`;
       this.GetWalletBalance(change);
     } else {
-      this.ChangeUpdateModel(change);
+      const type = change.hasOwnProperty('sellModel') ? 'sellModel' : change.hasOwnProperty('buyModel') ? 'buyModel' : '';
+
+      if (type === 'sellModel') {
+        this.ChangeUpdateModel(change.sellModel.currentValue);
+      }
+
+      if (type === 'buyModel') {
+        this.ChangeUpdateModel(change.buyModel.currentValue);
+      }
     }
   }
 
   ChangeUpdateModel(change: any) {
-    if (
-      change.price !== undefined ||
-      change.amount !== undefined ||
-      change.total !== undefined
-    ) {
-      if (this.price != null && this.price !== undefined) {
-        if (
-          change.price === undefined ||
-          (this.price !== change.price.previousValue && this.orderType === 1)
-        ) {
-          this.ResetForm();
-          // this.exchange.BuyPrice = this.common.toFixedCustom(this.price, 8);
-          this.exchange.SellPrice = this.common.toFixedCustom(this.price, 8);
-          this.exchange.SellAmount = this.common.toFixedCustom(this.amount, 8);
-          this.exchange.SellTotal = parseFloat(this.total.toString()).toFixed(
-            8
-          );
-        }
 
-        if (
-          change.price === undefined ||
-          (this.price !== change.price.previousValue && this.orderType === 2)
-        ) {
-          this.ResetForm();
-          this.exchange.BuyPrice = this.common.toFixedCustom(this.price, 8);
-          // this.exchange.SellPrice = this.common.toFixedCustom(this.price, 8);
-          this.exchange.BuyAmount = this.common.toFixedCustom(this.amount, 8);
-          this.exchange.BuyTotalFees = parseFloat(
-            this.total.toString()
-          ).toFixed(8);
-        }
-      }
+    if ((change.price !== undefined || change.amount !== undefined) && change.side === 'SELL') {
+      this.exchange.BuyPrice = change.price;
+      this.exchange.BuyAmount = change.amount;
+      this.total = change.price * change.amount;
+      this.exchange.BuyTotalFees = parseFloat(this.total.toString()).toFixed(8);
+    }
+
+    if ((change.price !== undefined || change.amount !== undefined) && change.side === 'BUY') {
+      this.exchange.SellPrice = change.price;
+      this.exchange.SellAmount = change.amount;
+      this.total = change.price * change.amount;
+      this.exchange.SellTotal = parseFloat(this.total.toString()).toFixed(8);
     }
 
     if (change.sellModel !== undefined) {
       if (this.sellModel != null) {
-        this.exchange.BuyPrice = this.common.toFixedCustom(
-          this.sellModel.Price,
-          8
-        );
+        this.exchange.BuyPrice = this.common.toFixedCustom(this.sellModel.Price, 8);
       }
     }
 
     if (change.buyModel !== undefined) {
       if (this.buyModel != null) {
-        this.exchange.SellPrice = this.common.toFixedCustom(
-          this.buyModel.Price,
-          8
-        );
+        this.exchange.SellPrice = this.common.toFixedCustom(this.buyModel.Price, 8);
       }
     }
   }
@@ -264,16 +247,16 @@ export class ExchangeComponent implements OnInit, OnChanges {
       };
       this.exchangeService.BuyTrade(obj).subscribe((res: any) => {
         if (res != null) {
-          console.log(res);
           this.isBuySubmitted = false;
           this.ResetForm();
           this.GetWalletBalance(null);
-          this.buysellmsg = res.output;
+          // this.buysellmsg = res.output;
           // this.RefreshMarket(this.pairId);
-          this.ShowPopUp();
+          // this.ShowPopUp();
+          this.toast.success(res.output);
           this.isBuyLoading = false;
         } else {
-          // this.toast.error(res.output);
+          this.toast.error(res.output);
           this.isBuyLoading = false;
         }
       });
@@ -325,9 +308,10 @@ export class ExchangeComponent implements OnInit, OnChanges {
           this.ResetForm();
           this.GetWalletBalance(null);
           this.isSellLoading = false;
-          this.buysellmsg = res.output;
+          this.toast.success(res.output);
+          // this.buysellmsg = res.output;
           // this.RefreshMarket(this.pairId);
-          this.ShowPopUp();
+          // this.ShowPopUp();
         } else {
           this.isSellLoading = false;
           this.toast.error(res.output);
@@ -336,14 +320,14 @@ export class ExchangeComponent implements OnInit, OnChanges {
     }
   }
 
-  // RefreshMarket(pairId) {
-  //   const baseMarketId = localStorage.getItem("BaseMarketId");
-  //   this.tradeService.MarketRefresh(baseMarketId);
-  //   this.tradeService.ChartRefresh();
-  //   this.tradeService.GetDailyExchange(pairId);
-  //   //this.tradeService.GetOrder(pairId);
-  //   this.tradeService.TradeHistory(pairId);
-  // }
+  /* RefreshMarket(pairId) {
+    const baseMarketId = localStorage.getItem("BaseMarketId");
+    // this.tradeService.MarketRefresh(baseMarketId);
+    // this.tradeService.ChartRefresh();
+    // this.tradeService.GetDailyExchange(pairId);
+    //this.tradeService.GetOrder(pairId);
+    // this.tradeService.TradeHistory(pairId);
+  } */
 
   ClosePopUp() {
     this.modal.hide();
@@ -359,26 +343,26 @@ export class ExchangeComponent implements OnInit, OnChanges {
     this.router.navigate(["/" + route + ""]);
   }
 
-  // BuyBaseValueClick() {
-  //   if (
-  //     this.common.IsNumeric(this.exchange.BaseValue) &&
-  //     this.common.IsNumeric(this.exchange.BuyPrice)
-  //   ) {
-  //     this.exchange.BuyTotalFees = this.exchange.BaseValue.toString();
-  //     this.exchange.BuyAmount = Number(
-  //       Number(this.exchange.BuyTotalFees) / this.exchange.BuyPrice
-  //     );
-  //   }
-  // }
+  BuyBaseValueClick() {
+    if (
+      this.common.IsNumeric(this.exchange.BaseValue) &&
+      this.common.IsNumeric(this.exchange.BuyPrice)
+    ) {
+      this.exchange.BuyTotalFees = this.exchange.BaseValue.toString();
+      this.exchange.BuyAmount = Number(
+        Number(this.exchange.BuyTotalFees) / this.exchange.BuyPrice
+      );
+    }
+  }
 
-  // SellBaseValueClick() {
-  //   if (this.common.IsNumeric(this.exchange.MainValue)) {
-  //     this.exchange.SellAmount = this.exchange.MainValue;
-  //     this.exchange.SellTotal = (
-  //       this.exchange.SellPrice * this.exchange.SellAmount
-  //     ).toFixed(8);
-  //   }
-  // }
+  SellBaseValueClick() {
+    if (this.common.IsNumeric(this.exchange.MainValue)) {
+      this.exchange.SellAmount = this.exchange.MainValue;
+      this.exchange.SellTotal = (
+        this.exchange.SellPrice * this.exchange.SellAmount
+      ).toFixed(8);
+    }
+  }
 
   calcBalance(value, type) {
     for (let i = 0; i < this.arrBalPerc.length; i++) {
