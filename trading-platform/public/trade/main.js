@@ -1206,7 +1206,7 @@ var ChartComponent = /** @class */ (function () {
         var _this = this;
         this.isDailyExchangeLoader = true;
         this.exchangeService.GetDailyExchange(this.pairId).subscribe(function (res) {
-            if (res != null) {
+            if (res.success == true) {
                 if (Object.keys(res.data).length > 0) {
                     _this.dailyExchange = res.data;
                 }
@@ -1451,7 +1451,7 @@ var ExchangeComponent = /** @class */ (function () {
             MainCurrency: this.mainCurrency
         };
         this.exchangeService.GetWalletBalance(obj).subscribe(function (res) {
-            if (res != null) {
+            if (res.success == true) {
                 _this.BindExchange(res);
                 if (change != null) {
                     _this.ChangeUpdateModel(change);
@@ -1545,18 +1545,20 @@ var ExchangeComponent = /** @class */ (function () {
                 side: "BUY"
             };
             this.exchangeService.BuyTrade(obj).subscribe(function (res) {
-                if (res != null) {
+                if (res.success == true) {
                     _this.isBuySubmitted = false;
                     _this.ResetForm();
                     _this.GetWalletBalance(null);
                     // this.buysellmsg = res.output;
                     // this.RefreshMarket(this.pairId);
                     // this.ShowPopUp();
-                    _this.toast.success(res.output);
+                    if (res.output != undefined && res.output != "")
+                        _this.toast.success(res.output);
                     _this.isBuyLoading = false;
                 }
                 else {
-                    _this.toast.error(res.output);
+                    if (res.output != undefined && res.output != "")
+                        _this.toast.error(res.output);
                     _this.isBuyLoading = false;
                 }
             });
@@ -1595,31 +1597,25 @@ var ExchangeComponent = /** @class */ (function () {
                 side: "SELL"
             };
             this.exchangeService.SellTrade(obj).subscribe(function (res) {
-                if (res != null) {
+                if (res.success == true) {
                     _this.isSellSubmitted = false;
                     _this.ResetForm();
                     _this.GetWalletBalance(null);
                     _this.isSellLoading = false;
-                    _this.toast.success(res.output);
+                    if (res.output != undefined && res.output != "")
+                        _this.toast.success(res.output);
                     // this.buysellmsg = res.output;
                     // this.RefreshMarket(this.pairId);
                     // this.ShowPopUp();
                 }
                 else {
                     _this.isSellLoading = false;
-                    _this.toast.error(res.output);
+                    if (res.output != undefined && res.output != "")
+                        _this.toast.error(res.output);
                 }
             });
         }
     };
-    /* RefreshMarket(pairId) {
-      const baseMarketId = localStorage.getItem("BaseMarketId");
-      // this.tradeService.MarketRefresh(baseMarketId);
-      // this.tradeService.ChartRefresh();
-      // this.tradeService.GetDailyExchange(pairId);
-      //this.tradeService.GetOrder(pairId);
-      // this.tradeService.TradeHistory(pairId);
-    } */
     ExchangeComponent.prototype.ClosePopUp = function () {
         this.modal.hide();
         this.isOpen = false;
@@ -1804,11 +1800,12 @@ var HomeTradeHistoryComponent = /** @class */ (function () {
         var _this = this;
         this.tradeListLoading = true;
         this.exchangeService.GetUserHistory(id).subscribe(function (res) {
-            if (res !== null) {
+            if (res.success == true) {
                 _this.tradeHisList = res.data;
             }
             else {
-                _this.toast.error(res.message);
+                if (res.output != undefined && res.output != "")
+                    _this.toast.error(res.output);
             }
             _this.tradeListLoading = false;
         });
@@ -1906,7 +1903,7 @@ var MarketExchangeComponent = /** @class */ (function () {
         this.isWalletBal = false;
         this.arrBalPerc = [25, 50, 75, 100];
         this.authenticationService.isLoginChanged.subscribe(function (isLogin) {
-            setTimeout(function () { return (_this.isLogin = isLogin); }, 0);
+            setTimeout(function () { return (_this.isLogin = isLogin); }, 10);
         });
     }
     MarketExchangeComponent.prototype.ngOnInit = function () {
@@ -1950,7 +1947,7 @@ var MarketExchangeComponent = /** @class */ (function () {
             MainCurrency: this.mainCurrency
         };
         this.exchangeService.GetWalletBalance(obj).subscribe(function (res) {
-            if (res != null) {
+            if (res.success == true) {
                 _this.BindExchange(res);
             }
         });
@@ -1971,16 +1968,18 @@ var MarketExchangeComponent = /** @class */ (function () {
                 side: "BUY"
             };
             this.exchangeService.BuyMarketTrade(obj).subscribe(function (res) {
-                if (res != null) {
+                if (res.success == true) {
                     _this.isBuySubmitted = false;
                     _this.ResetForm();
                     _this.GetWalletBalance(null);
-                    _this.buysellmsg = res.output;
-                    _this.RefreshMarket(_this.pairId);
-                    _this.ShowPopUp();
+                    // this.buysellmsg = res.output;
+                    // this.ShowPopUp();
+                    if (res.output != undefined && res.output != "")
+                        _this.toast.success(res.output);
                 }
                 else {
-                    _this.toast.error(res.output);
+                    if (res.output != undefined && res.output != "")
+                        _this.toast.error(res.output);
                 }
                 _this.isBuyLoading = false;
             });
@@ -2003,27 +2002,23 @@ var MarketExchangeComponent = /** @class */ (function () {
                 side: "SELL"
             };
             this.exchangeService.SellMarketTrade(obj).subscribe(function (res) {
-                if (res !== null) {
+                if (res.success == true) {
                     _this.isSellSubmitted = false;
                     _this.ResetForm();
                     _this.GetWalletBalance(null);
-                    _this.buysellmsg = res.output;
-                    _this.RefreshMarket(_this.pairId);
-                    _this.ShowPopUp();
+                    //this.buysellmsg = res.output;
+                    //this.RefreshMarket(this.pairId);
+                    //this.ShowPopUp();
+                    if (res.output != undefined && res.output != "")
+                        _this.toast.success(res.output);
                 }
                 else {
-                    _this.toast.error(res.data.message);
+                    if (res.output != undefined && res.output != "")
+                        _this.toast.error(res.output);
                 }
                 _this.isSellLoading = false;
             });
         }
-    };
-    MarketExchangeComponent.prototype.RefreshMarket = function (pairId) {
-        // const baseMarketId = localStorage.getItem("BaseMarketId");
-        // this.tradeService.MarketRefresh(baseMarketId);
-        // this.tradeService.ChartRefresh();
-        // this.tradeService.GetDailyExchange(pairId);
-        // this.tradeService.TradeHistory(pairId);
     };
     MarketExchangeComponent.prototype.calcBalance = function (value, type) {
         // this.getOrderFirstRow(this.pairName);
@@ -2046,7 +2041,7 @@ var MarketExchangeComponent = /** @class */ (function () {
     };
     // getOrderFirstRow(pair: any) {
     //  this.exchangeService.GetOrder(pair).subscribe((res: any) => {
-    //     if (res != null) {
+    //     if (res.success == true) {
     //       const dtList = res.data;
     //       if (dtList.sellList.length !== 0) {
     //         this.exchange.SellPrice = this.common.toFixedCustom(
@@ -2143,7 +2138,7 @@ var MarketExchangeComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<!-- New Theme -->\n<div class=\"row sm-gutters\">\n  <div class=\"col-lg-3 col-md-3 col-xl-3\">\n    <div class=\"crypt-market-status\">\n      <ul class=\"nav nav-tabs\">\n        <li role=\"presentation\">\n          <a class=\"crypt-down\" href=\"javascript:void(0);\">SELL ODERS</a>\n        </li>\n      </ul>\n      <div class=\"tab-content\">\n        <div role=\"tabpanel\" class=\"tab-pane active mx-height\" id=\"SELL\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"hisloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th scope=\"col\">Price</th>\n                  <th scope=\"col\">Amount</th>\n                  <th scope=\"col\">Value</th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr class=\"animated fadeInUp\" *ngFor=\"let item of sellOrderList\">\n                  <td>{{ item.price | appDynamicDigit: 8 }} </td>\n                  <td> {{ item.amount | appDynamicDigit: 8 }} </td>\n                  <td>\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                </tr>\n                <tr *ngIf=\"sellOrderList == null\" class=\"text-center\">\n                  <td colspan=\"3\"> You have not made any trades yet. Once you make some trades, they will appear here.\n                  </td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"col-lg-3 col-md-3 col-xl-3\">\n    <div class=\"crypt-market-status\">\n      <ul class=\"nav nav-tabs\">\n        <li role=\"presentation\">\n          <a class=\"crypt-up\" href=\"javascript:void(0);\">BUY ORDERS</a>\n        </li>\n      </ul>\n      <div class=\"tab-content\">\n        <div role=\"tabpanel\" class=\"tab-pane active mx-height\" id=\"BUY\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"hisloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th scope=\"col\">Price</th>\n                  <th scope=\"col\">Amount</th>\n                  <th scope=\"col\">Value</th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr class=\"animated fadeInUp\" *ngFor=\"let item of buyOrderList\">\n                  <td>{{ item.price | appDynamicDigit: 8 }} </td>\n                  <td> {{ item.amount | appDynamicDigit: 8 }} </td>\n                  <td>\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                </tr>\n                <tr *ngIf=\"buyOrderList == null\" class=\"text-center\">\n                  <td colspan=\"3\"> You have not made any trades yet. Once you make some trades, they will appear here.\n                  </td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"col-lg-6 col-md-6 col-xl-6\">\n    <div class=\"crypt-market-status\">\n      <ul class=\"nav nav-tabs\">\n        <li role=\"presentation\">\n          <a href=\"#active-orders\" class=\"active\" data-toggle=\"tab\">Open Orders</a>\n        </li>\n        <li role=\"presentation\" (click)=\"GetUserConfirmOrders('Confirmed', pairId)\">\n          <a href=\"#closed-orders\" data-toggle=\"tab\">My Order</a>\n        </li>\n      </ul>\n      <div class=\"tab-content\">\n        <div role=\"tabpanel\" class=\"tab-pane active\" id=\"active-orders\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"hisloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th class=\"text-center\" scope=\"col\">\n                    Date\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Type\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Side\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Price <span>({{ baseCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Amount <span>({{ mainCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Value <span>({{ baseCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Cancel Order\n                  </th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr *ngFor=\"let item of openOrderlist\">\n                  <td class=\"text-center\">{{ item.updated_at | date:'dd-MM-yyyy hh:mm:ss' }}</td>\n                  <td class=\"text-center\">{{ item.order_type }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.side }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.price | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">{{ item.amount | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                  <td class=\"text-center\">\n                    <a href=\"javascript:void(0);\"><i class=\"fa fa-times crypt-down\" title=\"Cancel Order\"\n                        (click)=\"CancelOrder(item.id)\"></i></a>\n                  </td>\n                </tr>\n                <tr *ngIf=\"openOrderlist == null\">\n                  <td colspan=\"7\">No data found</td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n        <div role=\"tabpanel\" class=\"tab-pane\" id=\"closed-orders\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"hisloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th class=\"text-center\" scope=\"col\">\n                    Date\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Type\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Side\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Price <span>({{ baseCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Amount <span>({{ mainCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Value <span>({{ baseCurrency }})</span>\n                  </th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr *ngFor=\"let item of tradeHisList\">\n                  <td class=\"text-center\">{{ item.updated_at | date:'dd-MM-yyyy hh:mm:ss' }}</td>\n                  <td class=\"text-center\">{{ item.order_type }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.side }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.price | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">{{ item.amount | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                </tr>\n                <tr *ngIf=\"tradeHisList == null\">\n                  <td colspan=\"6\">No data found</td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
+module.exports = "<!-- New Theme -->\n<div class=\"row sm-gutters\">\n  <div class=\"col-lg-3 col-md-3 col-xl-3\">\n    <div class=\"crypt-market-status\">\n      <ul class=\"nav nav-tabs\">\n        <li role=\"presentation\">\n          <a class=\"crypt-down\" href=\"javascript:void(0);\">SELL ODERS</a>\n        </li>\n      </ul>\n      <div class=\"tab-content\">\n        <div role=\"tabpanel\" class=\"tab-pane active mx-height\" id=\"SELL\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"sellloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th scope=\"col\">Price</th>\n                  <th scope=\"col\">Amount</th>\n                  <th scope=\"col\">Value</th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr class=\"animated fadeInUp\" *ngFor=\"let item of sellOrderList\" (click)=\"getRowSellOrder(item)\"\n                  style=\"cursor: pointer;\">\n                  <td>{{ item.price | appDynamicDigit: 8 }} </td>\n                  <td> {{ item.amount | appDynamicDigit: 8 }} </td>\n                  <td>\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                </tr>\n                <tr *ngIf=\"sellOrderList == null\" class=\"text-center\">\n                  <td colspan=\"3\"> You have not made any trades yet. Once you make some trades, they will appear here.\n                  </td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"col-lg-3 col-md-3 col-xl-3\">\n    <div class=\"crypt-market-status\">\n      <ul class=\"nav nav-tabs\">\n        <li role=\"presentation\">\n          <a class=\"crypt-up\" href=\"javascript:void(0);\">BUY ORDERS</a>\n        </li>\n      </ul>\n      <div class=\"tab-content\">\n        <div role=\"tabpanel\" class=\"tab-pane active mx-height\" id=\"BUY\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"buyloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th scope=\"col\">Price</th>\n                  <th scope=\"col\">Amount</th>\n                  <th scope=\"col\">Value</th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr class=\"animated fadeInUp\" *ngFor=\"let item of buyOrderList\" (click)=\"getRowBuyOrder(item)\"\n                  style=\"cursor: pointer;\">\n                  <td>{{ item.price | appDynamicDigit: 8 }} </td>\n                  <td> {{ item.amount | appDynamicDigit: 8 }} </td>\n                  <td>\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                </tr>\n                <tr *ngIf=\"buyOrderList == null\" class=\"text-center\">\n                  <td colspan=\"3\"> You have not made any trades yet. Once you make some trades, they will appear here.\n                  </td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"col-lg-6 col-md-6 col-xl-6\">\n    <div class=\"crypt-market-status\">\n      <ul class=\"nav nav-tabs\">\n        <li role=\"presentation\">\n          <a href=\"#active-orders\" class=\"active\" data-toggle=\"tab\">Open Orders</a>\n        </li>\n        <li role=\"presentation\" (click)=\"GetUserConfirmOrders('Confirmed', pairId)\">\n          <a href=\"#closed-orders\" data-toggle=\"tab\">My Order</a>\n        </li>\n      </ul>\n      <div class=\"tab-content\">\n        <div role=\"tabpanel\" class=\"tab-pane active\" id=\"active-orders\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"openloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th class=\"text-center\" scope=\"col\">\n                    Date\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Type\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Side\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Price <span>({{ baseCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Amount <span>({{ mainCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Value <span>({{ baseCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Cancel Order\n                  </th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr *ngFor=\"let item of openOrderlist\">\n                  <td class=\"text-center\">{{ item.updated_at | date:'dd-MM-yyyy hh:mm:ss' }}</td>\n                  <td class=\"text-center\">{{ item.order_type }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.side }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.price | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">{{ item.amount | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                  <td class=\"text-center\">\n                    <a href=\"javascript:void(0);\"><i class=\"fa fa-times crypt-down\" title=\"Cancel Order\"\n                        (click)=\"CancelOrder(item.id)\"></i></a>\n                  </td>\n                </tr>\n                <tr *ngIf=\"openOrderlist == null\">\n                  <td colspan=\"7\">No data found</td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n        <div role=\"tabpanel\" class=\"tab-pane\" id=\"closed-orders\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"myorderloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th class=\"text-center\" scope=\"col\">\n                    Date\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Type\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Side\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Price <span>({{ baseCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Amount <span>({{ mainCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Value <span>({{ baseCurrency }})</span>\n                  </th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr *ngFor=\"let item of tradeHisList\">\n                  <td class=\"text-center\">{{ item.updated_at | date:'dd-MM-yyyy hh:mm:ss' }}</td>\n                  <td class=\"text-center\">{{ item.order_type }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.side }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.price | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">{{ item.amount | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                </tr>\n                <tr *ngIf=\"tradeHisList == null\">\n                  <td colspan=\"6\">No data found</td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -2183,8 +2178,10 @@ var OrdersComponent = /** @class */ (function () {
         this.buyData = [];
         this.sellData = [];
         this.buyCount = 0;
-        this.loading = false;
-        this.hisloading = false;
+        this.openloading = false;
+        this.myorderloading = false;
+        this.buyloading = false;
+        this.sellloading = false;
         this.config = {};
         this.orederTypeChange = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
         this.priceChange = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
@@ -2231,61 +2228,65 @@ var OrdersComponent = /** @class */ (function () {
     OrdersComponent.prototype.GetUserPendingOrders = function (orderstatus, id) {
         var _this = this;
         var obj = { order_status: orderstatus, currency_pair_id: id };
-        this.loading = true;
+        this.openloading = true;
         this.exchangeService.GetUserTrade(obj).subscribe(function (res) {
-            if (res !== null) {
+            if (res.success == true) {
                 _this.openOrderlist = res.data;
             }
             else {
-                _this.toast.error(res.message);
+                if (res.output != undefined && res.output != "")
+                    _this.toast.error(res.output);
             }
-            _this.loading = false;
+            _this.openloading = false;
         });
     };
     OrdersComponent.prototype.GetUserConfirmOrders = function (orderstatus, id) {
         var _this = this;
         var obj = { order_status: orderstatus, currency_pair_id: id };
-        this.hisloading = true;
+        this.myorderloading = true;
         this.exchangeService.GetUserTrade(obj).subscribe(function (res) {
-            if (res !== null) {
+            if (res.success == true) {
                 _this.tradeHisList = res.data;
             }
             else {
-                _this.toast.error(res.message);
+                if (res.output != undefined && res.output != "")
+                    _this.toast.error(res.output);
             }
-            _this.hisloading = false;
+            _this.myorderloading = false;
         });
     };
     OrdersComponent.prototype.GetSellOrder = function (id) {
         var _this = this;
-        this.hisloading = true;
+        this.sellloading = true;
         this.exchangeService.GetSellOrder(id).subscribe(function (res) {
-            if (res !== null) {
+            if (res.success == true) {
                 if (res.data !== null && res.data.length > 0) {
                     _this.sellModelChange.emit(res.data[0]);
                 }
                 _this.sellOrderList = res.data;
             }
             else {
-                _this.toast.error(res.message);
+                if (res.output != undefined && res.output != "")
+                    _this.toast.error(res.output);
             }
-            _this.hisloading = false;
+            _this.sellloading = false;
         });
     };
     OrdersComponent.prototype.GetBuyOrder = function (id) {
         var _this = this;
-        this.hisloading = true;
+        this.buyloading = true;
         this.exchangeService.GetBuyOrder(id).subscribe(function (res) {
-            if (res !== null) {
+            if (res.success == true) {
                 if (res.data !== null && res.data.length > 0) {
                     _this.buyModelChange.emit(res.data[0]);
                 }
                 _this.buyOrderList = res.data;
             }
             else {
-                _this.toast.error(res.message);
+                if (res.output != undefined && res.output != "")
+                    _this.toast.error(res.output);
             }
-            _this.hisloading = false;
+            _this.buyloading = false;
         });
     };
     OrdersComponent.prototype.CancelOrder = function (id) {
@@ -2299,21 +2300,30 @@ var OrdersComponent = /** @class */ (function () {
             type: 'warning',
         }).then(function (result) {
             if (result.value) {
+                _this.openloading = true;
                 _this.exchangeService.CancelOrder(id).subscribe(function (res) {
-                    if (res !== null) {
+                    if (res.success == true) {
                         _this.GetUserPendingOrders("Pending", _this.pairId);
-                        _this.toast.success(res.output);
+                        if (res.output != undefined && res.output != "")
+                            _this.toast.success(res.output);
                     }
                     else {
-                        _this.toast.error(res.output);
+                        if (res.output != undefined && res.output != "")
+                            _this.toast.error(res.output);
                     }
-                    _this.hisloading = false;
                 });
             }
             else {
                 _this.toast.success('Your data is safe :)');
             }
+            _this.openloading = false;
         });
+    };
+    OrdersComponent.prototype.getRowBuyOrder = function (item) {
+        this.buyModelChange.emit(item);
+    };
+    OrdersComponent.prototype.getRowSellOrder = function (item) {
+        this.sellModelChange.emit(item);
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
@@ -2653,7 +2663,7 @@ var StoplimitComponent = /** @class */ (function () {
             MainCurrency: this.mainCurrency
         };
         this.exchangeService.GetWalletBalance(obj).subscribe(function (res) {
-            if (res !== null) {
+            if (res.success == true) {
                 _this.BindExchange(res);
             }
         });
@@ -2747,14 +2757,16 @@ var StoplimitComponent = /** @class */ (function () {
                 side: "BUY"
             };
             this.exchangeService.OrderStopLimit(obj).subscribe(function (res) {
-                if (res !== null) {
+                if (res.success == true) {
                     _this.isBuySubmitted = false;
                     _this.ResetForm();
                     _this.GetWalletBalance(null);
-                    _this.toast.success(res.output);
+                    if (res.output != undefined && res.output != "")
+                        _this.toast.success(res.output);
                 }
                 else {
-                    _this.toast.error(res.output);
+                    if (res.output != undefined && res.output != "")
+                        _this.toast.error(res.output);
                 }
                 _this.isBuyLoading = false;
             });
@@ -2773,15 +2785,17 @@ var StoplimitComponent = /** @class */ (function () {
                 side: "SELL"
             };
             this.exchangeService.OrderStopLimit(obj).subscribe(function (res) {
-                if (res !== null) {
+                if (res.success == true) {
                     _this.isSellSubmitted = false;
                     _this.ResetForm();
                     _this.GetWalletBalance(null);
-                    _this.toast.success(res.output);
+                    if (res.output != undefined && res.output != "")
+                        _this.toast.success(res.output);
                 }
                 else {
                     _this.isSellLoading = false;
-                    _this.toast.error(res.output);
+                    if (res.output != undefined && res.output != "")
+                        _this.toast.error(res.output);
                 }
                 _this.isSellLoading = false;
             });
@@ -2897,11 +2911,11 @@ var LoginComponent = /** @class */ (function () {
         if (isValid) {
             this.isLoading = true;
             this.authenticationService.Login(obj).subscribe(function (res) {
-                if (res.message !== "ERROR") {
+                if (res.success == true) {
                     _this.SetLogin(res.data);
                 }
                 else {
-                    _this.toast.error(res.data.toString());
+                    _this.toast.error(res.output);
                 }
                 _this.isLoading = false;
             });
