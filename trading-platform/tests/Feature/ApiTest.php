@@ -20,7 +20,7 @@ class ApiTest extends TestCase
       ["'--",0]
     ]; //data test to validate
 
-    private $authorization = 'Bearer Jiycs8SnLg5bLUTpe4thmCOnAhH6CN3Su4pducxj3rtEugHo4NZhT4Sk1VPd'; //replace with your HTTP_Authorization
+    private $authorization = 'Bearer t2Ya1n8tRB8c5jLAu3s1C9SvkXdx62zUZzq3CAcXdW80NWS6oaFqMeWYDWjP'; //replace with your HTTP_Authorization
 
     public function testExample()
     {
@@ -72,11 +72,17 @@ class ApiTest extends TestCase
       $interval_test_data = $this->test_input_data;
       $interval_test_data[] = [14400,1]; //test 4h
       $interval_test_data[] = [14401,0]; //test not in 4h
+      $this->test_input_data[] = [14400, 1];
+      $this->test_input_data[] = [14400, 1];
+      //#27 ('ahbdhsd/1', 1)
+
       foreach ($interval_test_data as $test_data1) {
         foreach ($this->test_input_data as $test_data) {
-          $arr[] = [$test_data[0].'/'.$test_data1[0],$test_data1[1]];
+          $arr[] = [$test_data[0].'/'.$test_data1[0],0];
         }
       }
+      $arr[] = ['2/180',1];
+      $arr[] = ['2/14400',1];
       return $arr;
     }
     /**

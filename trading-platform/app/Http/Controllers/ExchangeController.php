@@ -14,95 +14,99 @@ class ExchangeController extends Controller
     public function getAllOrders()
     {
         $orders = Order::all();
-        if(count($orders) > 0){
-            $response['success'] = true;
-            $response['data'] = $orders;
-        }else{
-            $response['success'] = false;
-            $response['data'] = null;
-        }
+        $response['data'] = (count($orders) > 0) ? $orders : null;
+        $response['success'] = true;
         return response()->json($response, 200);
     }
 
     public function getActiveOrders()
     {
         $orders = Order::where('order_status',"Pending")->get();
-        if(count($orders) > 0){
-            $response['success'] = true;
-            $response['data'] = $orders;
-        }else{
-            $response['success'] = false;
-            $response['data'] = null;
-        }
+        $response['data'] = (count($orders) > 0) ? $orders : null;
+        $response['success'] = true;
         return response()->json($response, 200);
     }
 
     public function getCloseOrders()
     {
         $orders = Order::where('order_status',"Confirmed")->get();
-        if(count($orders) > 0){
-            $response['success'] = true;
-            $response['data'] = $orders;
-        }else{
-            $response['success'] = false;
-            $response['data'] = null;
-        }
+        $response['data'] = (count($orders) > 0) ? $orders : null;
+        $response['success'] = true;
         return response()->json($response, 200);
     }
 
     public function getCurrencies()
     {
         $currencies = Currency::all();
-        if(count($currencies) > 0){
-            $response['success'] = true;
-            $response['data'] = $currencies;
-        }else{
-            $response['success'] = false;
-            $response['data'] = null;
-        }
+        $response['data'] = (count($currencies) > 0) ? $currencies : null;
+        $response['success'] = true;
         return response()->json($response, 200);
     }
 
-    public function getCurrencyPair($currencyId)
+    public function getCurrencyPair($currencyId = null)
     {
-        if(is_numeric($currencyId)){
-            $currency_pairs = Currency_pair::where('from_asset',$currencyId)->with('fromAsset')->with('toAsset')->get();
-        }else{
-            if($currencyId != "undefined"){
-                $pair = explode('_',$currencyId);
-                $fromCurency = Currency::where('asset',$pair[1])->first();
-                $currency_pairs = Currency_pair::
-                                where('from_asset',$fromCurency->id)
-                                ->with('fromAsset')->with('toAsset')->get();
-            }else{
-                $currency_pairs = Currency_pair::
-                    where('from_asset',1)
-                    ->with('fromAsset')->with('toAsset')->get();
+        try {
+            if(!is_numeric($currencyId) || $currencyId <= 0){
+                $response = array('success' => false,'data' => null); 
+            return response()->json($response, 200);    
             }
-        }
-        $response = array();
-        $data = array();
-        if(count($currency_pairs) > 0){
+
+            $currency = Currency::find($currencyId);
+
+            if(!$currency){
+                $response = array('success' => false,'data' => null);
+                return response()->json($response, 200);
+            }
+            $currency_pairs = Currency_pair::where('from_asset',$currencyId)->with('fromAsset')->with('toAsset')->get();
+            
+            
+            $response['data'] = (count($currency_pairs) > 0) ? $this->getCurrencyChange($currency_pairs) : null;        
             $response['success'] = true;
-            $response['data'] = $this->getCurrencyChange($currency_pairs);
-        }else{
-            $response['success'] = false;
-            $response['data'] = null;
+            return response()->json($response, 200);
+        } catch (\Exception $ex) {
+            $response = array('success' => false,'output' => $ex->getMessage(),'data' => null);
+            return response()->json($response, 200);
         }
-        return response()->json($response, 200);
+    }
+
+    public function getCurrencyPairByName($currencyPairName = null)
+    {
+        try {
+            if($currencyPairName == null){
+            $response = array('success' => false,'data' => null); 
+            return response()->json($response, 200);    
+            }
+            // Convert Pair into Array
+            $pair = explode('_',$currencyPairName);
+
+            if(isset($pair[1])){
+                $fromCurency = Currency::where('asset',$pair[1])->first();
+
+                // Check From Currency is exist or not
+                if(!$fromCurency){
+                    $currency_pairs = Currency_pair::
+                            where('from_asset',$fromCurency->id)
+                            ->with('fromAsset')->with('toAsset')->get();
+                    $response['data'] = count($currency_pairs > 0) ? $currency_pairs : null;
+                    $response['success'] = true;
+                }else{
+                    $response = array('success' => false,'data' => null);
+                }
+            }else{
+                $response = array('success' => false,'data' => null);
+            }
+            return response()->json($response, 200);
+        } catch (\Exception $ex) {
+            $response = array('success' => false,'output' => $ex->getMessage(),'data' => null);
+            return response()->json($response, 200);
+        }
     }
 
     public function getCurrencyPairs()
     {
-        $data = array();
         $currency_pairs = Currency_pair::with('fromAsset')->with('toAsset')->get();
-        if(count($currency_pairs) > 0){
-            $response['success'] = true;
-            $response['data'] = $this->getCurrencyChange($currency_pairs);
-        }else{
-            $response['success'] = false;
-            $response['data'] = null;
-        }
+        $response['data'] = (count($currency_pairs) > 0) ? $currency_pairs : null;
+        $response['success'] = true;
         return response()->json($response, 200);
     }
 
@@ -147,136 +151,207 @@ class ExchangeController extends Controller
         return $data;
     }
 
-    public function getTradeHistory($pairId)
-    {
-        $orders = Order::
+    public function getTradeHistory($pairId = null)
+    {   
+        try {
+            if(!is_numeric($pairId) || $pairId <= 0){
+                $response = array('success' => false,'data' => null); 
+                return response()->json($response, 200);    
+            }
+
+            $currencyPair = Currency_pair::find($pairId);
+            if(!$currencyPair){
+                $response = array('success' => false,'data' => null);
+                return response()->json($response, 200);
+            }
+            
+            $orders = Order::
                 where('currency_pair_id',$pairId)
                 ->where('order_status',"Confirmed")
                 ->get();
-        if(count($orders) > 0){
+
+            $response['data'] = (count($orders) > 0)? $orders : null;
             $response['success'] = true;
-            $response['data'] = $orders;
-        }else{
-            $response['success'] = false;
-            $response['data'] = null;
+            return response()->json($response, 200);
+        } catch (\Exception $ex) {
+            $response = array('success' => false,'output' => $ex->getMessage(),'data' => null);
+            return response()->json($response, 200);
         }
-         return response()->json($response, 200);
     }
 
-    public function getSellOrders($pairId)
+    public function getSellOrders($pairId = null)
     {
-        $orders = Order::
-                selectRaw('price,SUM(amount) as amount,side')
-                ->where('currency_pair_id',$pairId)
-                ->where('order_status',"Pending")
-                ->where('side',"SELL")
-                ->orderBy('price')
-                ->groupBy('price')
-                ->groupBy('side')
-                ->get();
-        if(count($orders) > 0){
-            $response['success'] = true;
-            $response['data'] = $orders;
-        }else{
-            $response['success'] = false;
-            $response['data'] = null;
-        }
-        return response()->json($response, 200);
-    }
-
-    public function getBuyOrders($pairId)
-    {
-        $orders = Order::
-                selectRaw('price,SUM(amount) as amount,side')
-                ->where('currency_pair_id',$pairId)
-                ->where('order_status',"Pending")
-                ->where('side',"BUY")
-                ->orderBy('price','DESC')
-                ->groupBy('price')
-                ->groupBy('side')
-                ->get();
-        if(count($orders) > 0){
-            $response['success'] = true;
-            $response['data'] = $orders;
-        }else{
-            $response['success'] = false;
-            $response['data'] = null;
-        }
-        return response()->json($response, 200);
-    }
-
-    public function getDailyExchange($curPairId)
-    {
-       /* 
-        Last Price
-        Daily Change
-        highest24hours
-        lowest24hours
-        Volume24Hours
-       */
-        $currentTrade = Order::orderBy('id','desc')
-                    ->where('currency_pair_id',$curPairId)
-                    ->where('order_status','Confirmed')
-                    ->whereDate('updated_at',date('Y-m-d'))
-                    ->limit(1)
-                    ->get()->first();
+        try {
+            if(!is_numeric($pairId) || $pairId <= 0){
+                $response = array('success' => false,'data' => null); 
+                return response()->json($response, 200);    
+            }
             
-        $previousTrade = Order::orderBy('id','desc')
-                    ->where('currency_pair_id',$curPairId)
-                    ->where('order_status','Confirmed')
-                    ->whereDate('updated_at',date('Y-m-d',strtotime("-1 days")))
-                    ->limit(1)
-                    ->get()->first();
-
-        $last24Hour = Order::selectRaw('MIN(price),MAX(price),SUM(price*amount)')
-                    ->where('currency_pair_id',$curPairId)
-                    ->where('order_status','Confirmed')
-                    ->where('created_at', '>=', Carbon::now()->subDay())
-                    ->first();
-
-        $data['highest24hours'] = $last24Hour->max;
-        $data['lowest24hours'] = $last24Hour->min;
-        $data['volume24hours'] = $last24Hour->sum;
-        
-        if($currentTrade){
-            if($previousTrade){
-                $price = (($currentTrade->price - $previousTrade->price)/$previousTrade->price)*100;
-                $data['dailyChange'] = $price;
-            }else{
-                $data['dailyChange'] = $currentTrade->price;
+            $currencyPair = Currency_pair::find($pairId);
+            if(!$currencyPair){
+                $response = array('success' => false,'data' => null);
+                return response()->json($response, 200);
             }
-            $data['lastPrice'] = $currentTrade->price;
-        }else{
-            if($previousTrade){
-                $data['dailyChange'] = $previousTrade->price;
-            }else{
-                $data['dailyChange'] = 0.00000000;
-            }
-            $data['lastPrice'] = 0.00000000;
+
+            $orders = Order::
+                    selectRaw('price,SUM(amount) as amount,side')
+                    ->where('currency_pair_id',$pairId)
+                    ->where('order_status',"Pending")
+                    ->where('side',"SELL")
+                    ->orderBy('price')
+                    ->groupBy('price')
+                    ->groupBy('side')
+                    ->get();
+            $response['data'] = (count($orders) > 0)? $orders : null;
+            $response['success'] = true;
+            return response()->json($response, 200);
+        } catch (\Exception $ex) {
+            $response = array('success' => false,'output' => $ex->getMessage(),'data' => null);
+            return response()->json($response, 200);
         }
-        
-        $response['success'] = true;
-        $response['data'] = $data;
-        
-        return response()->json($response, 200);
     }
 
-    public function getChartData($curPairId,$interval)
+    public function getBuyOrders($pairId = null)
     {
-        $chart = \DB::select("SELECT  
-                        to_timestamp(floor((extract('epoch' from created_at) / $interval )) * $interval) 
-                        AT TIME ZONE 'UTC' as time_interval,
-                        (array_agg(price ORDER BY created_at ASC))[1] o,
-                        (array_agg(price ORDER BY created_at DESC))[1] c,
-                        MAX(price) h,
-                        MIN(price) l,
-                        SUM(amount) vol
-                    FROM orders  
-                    where currency_pair_id = $curPairId AND
-                    order_status = 'Confirmed'
-                    GROUP BY time_interval
-                    ORDER BY time_interval");
-        $response = array('success'=> true,'data'=>$chart);
-        return response()->json($response, 200);
+        try {
+            if(!is_numeric($pairId) || $pairId <= 0){
+                $response = array('success' => false,'data' => null); 
+                return response()->json($response, 200);    
+            }
+            
+            $currencyPair = Currency_pair::find($pairId);
+            if(!$currencyPair){
+                $response = array('success' => false,'data' => null);
+                return response()->json($response, 200);
+            }
+
+            $orders = Order::
+                    selectRaw('price,SUM(amount) as amount,side')
+                    ->where('currency_pair_id',$pairId)
+                    ->where('order_status',"Pending")
+                    ->where('side',"BUY")
+                    ->orderBy('price','DESC')
+                    ->groupBy('price')
+                    ->groupBy('side')
+                    ->get();
+            $response['data'] = (count($orders) > 0) ? $orders : null;
+            $response['success'] = true;
+            return response()->json($response, 200);
+        } catch (\Exception $ex) {
+            $response = array('success' => false,'output' => $ex->getMessage(),'data' => null);
+            return response()->json($response, 200);
+        }
+    }
+
+    public function getDailyExchange($pairId)
+    {
+        try {
+            if(!is_numeric($pairId) || $pairId <= 0){
+                $response = array('success' => false,'data' => null); 
+                return response()->json($response, 200);    
+            }
+            
+            $currencyPair = Currency_pair::find($pairId);
+            if(!$currencyPair){
+                $response = array('success' => false,'data' => null);
+                return response()->json($response, 200);
+            }
+
+            $currentTrade = Order::orderBy('id','desc')
+                        ->where('currency_pair_id',$pairId)
+                        ->where('order_status','Confirmed')
+                        ->whereDate('updated_at',date('Y-m-d'))
+                        ->limit(1)
+                        ->get()->first();
+                
+            $previousTrade = Order::orderBy('id','desc')
+                        ->where('currency_pair_id',$pairId)
+                        ->where('order_status','Confirmed')
+                        ->whereDate('updated_at',date('Y-m-d',strtotime("-1 days")))
+                        ->limit(1)
+                        ->get()->first();
+
+            $last24Hour = Order::selectRaw('MIN(price),MAX(price),SUM(price*amount)')
+                        ->where('currency_pair_id',$pairId)
+                        ->where('order_status','Confirmed')
+                        ->where('created_at', '>=', Carbon::now()->subDay())
+                        ->first();
+            
+            $data['highest24hours'] = ($last24Hour->max) ? $last24Hour->max : 0.00000000;
+            $data['lowest24hours'] = ($last24Hour->min) ? $last24Hour->min : 0.00000000;
+            $data['volume24hours'] = ($last24Hour->sum) ? $last24Hour->sum : 0.00000000;
+            
+            if($currentTrade){
+                if($previousTrade){
+                    $price = (($currentTrade->price - $previousTrade->price)/$previousTrade->price)*100;
+                    $data['dailyChange'] = $price;
+                }else{
+                    $data['dailyChange'] = $currentTrade->price;
+                }
+                $data['lastPrice'] = $currentTrade->price;
+            }else{
+                if($previousTrade){
+                    $data['dailyChange'] = $previousTrade->price;
+                }else{
+                    $data['dailyChange'] = 0.00000000;
+                }
+                $data['lastPrice'] = 0.00000000;
+            }
+            
+            $response['success'] = true;
+            $response['data'] = $data;
+            
+            return response()->json($response, 200);
+        } catch (\Exception $ex) {
+            $response = array('success' => false,'output' => $ex->getMessage(),'data' => null);
+            return response()->json($response, 200);
+        }
+    }
+
+    public function getChartData($pairId,$interval)
+    {
+        try {
+            // 1m,3m,5m,15m,30m,1h,2h,4h,6h,8h,12h,24h,1w,1m
+            $intervals = array(
+                60,180,300,900,1800,3600,7200,14400,21600,28800,43200,86400,604800,2592000
+            );
+
+            if(!is_numeric($pairId) || $pairId <= 0){
+                $response = array('success' => false,'data' => null); 
+                return response()->json($response, 200);    
+            }
+            if(!is_numeric($interval) || $interval <= 0){
+                $response = array('success' => false,'data' => null); 
+                return response()->json($response, 200);    
+            }
+            if(!in_array($interval,$intervals)){
+                $response = array('success' => false,'data' => null); 
+                return response()->json($response, 200);
+            }
+            $currencyPair = Currency_pair::find($pairId);
+            if(!$currencyPair){
+                $response = array('success' => false,'data' => null);
+                return response()->json($response, 200);
+            }
+
+            $chart = \DB::select("SELECT  
+                            to_timestamp(floor((extract('epoch' from created_at) / $interval )) * $interval) 
+                            AT TIME ZONE 'UTC' as time_interval,
+                            (array_agg(price ORDER BY created_at ASC))[1] o,
+                            (array_agg(price ORDER BY created_at DESC))[1] c,
+                            MAX(price) h,
+                            MIN(price) l,
+                            SUM(amount) vol
+                        FROM orders  
+                        where currency_pair_id = $pairId AND
+                        order_status = 'Confirmed'
+                        GROUP BY time_interval
+                        ORDER BY time_interval");
+            $response = array('success'=> true,'data'=>$chart);
+            return response()->json($response, 200);
+        } catch (\Exception $ex) {
+            $response = array('success' => false,'output' => $ex->getMessage(),'data' => null);
+            return response()->json($response, 200);
+        }
     }
 }
