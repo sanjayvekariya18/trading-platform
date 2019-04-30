@@ -72,11 +72,17 @@ class ApiTest extends TestCase
       $interval_test_data = $this->test_input_data;
       $interval_test_data[] = [14400,1]; //test 4h
       $interval_test_data[] = [14401,0]; //test not in 4h
+      $this->test_input_data[] = [14400, 1];
+      $this->test_input_data[] = [14400, 1];
+      //#27 ('ahbdhsd/1', 1)
+
       foreach ($interval_test_data as $test_data1) {
         foreach ($this->test_input_data as $test_data) {
-          $arr[] = [$test_data[0].'/'.$test_data1[0],$test_data1[1]];
+          $arr[] = [$test_data[0].'/'.$test_data1[0],0];
         }
       }
+      $arr[] = ['2/180',1];
+      $arr[] = ['2/14400',1];
       return $arr;
     }
     /**
