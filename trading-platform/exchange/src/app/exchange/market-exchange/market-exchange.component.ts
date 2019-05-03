@@ -40,6 +40,8 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
   @Input() baseCurrency: string;
   @Input() mainCurrency: string;
   @Input() pairId: string;
+  @Input() baseValue: number;
+  @Input() mainValue: number;
   @Input() orderType: number;
   @Input() price: number;
   @Input() amount: number;
@@ -55,7 +57,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
     public toast: ToastService,
     public tradeService: TradeService,
     public common: Common,
-    public _pusherService: PusherService,
+    public pusher: PusherService,
 
   ) {
     this.authenticationService.isLoginChanged.subscribe((isLogin: any) => {
@@ -66,9 +68,10 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.BindData();
     this.authenticationService.CheckUserLoggedIn();
-    this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', data => {
+    this.pusher.ch_wallet_amount.subscribe((wallet: any) => {
+      if (wallet.original != undefined)
+        this.BindExchange(wallet.original.data);
     });
-    this.GetWalletBalance(null);
   }
 
   BindData() {
@@ -100,6 +103,10 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
           : this.mainCurrency;
       this.pairName = `${this.mainCurrency}/${this.baseCurrency}`;
     }
+    // if (change.baseValue !== undefined || change.mainValue !== undefined ) {
+    this.exchange.BaseValue = change.baseValue !== undefined ? change.baseValue.currentValue : this.exchange.BaseValue;
+    this.exchange.MainValue = change.mainValue !== undefined ? change.mainValue.currentValue : this.exchange.MainValue;
+    // }
   }
 
   GetWalletBalance(change): void {
@@ -108,16 +115,24 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
       BaseCurrency: this.baseCurrency,
       MainCurrency: this.mainCurrency
     };
-    this.exchangeService.GetWalletBalance(obj).subscribe((res: any) => {
-      if (res.success == true) {
-        this.BindExchange(res);
+    this.exchangeService.GetWalletBalance(obj).subscribe(
+      (res: any) => {
+        if (res.success == true) {
+          this.BindExchange(res.data);
+        } else {
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
+        }
+      },
+      err => {
+        console.log(err);
       }
-    });
+    );
   }
 
-  BindExchange(res: any) {
-    this.exchange.BaseValue = res.data.BaseCurrencyValue;
-    this.exchange.MainValue = res.data.MainCurrencyValue;
+  BindExchange(data: any) {
+    this.exchange.BaseValue = data.BaseCurrencyValue;
+    this.exchange.MainValue = data.MainCurrencyValue;
   }
 
   BuyMarket(model: Exchange, isValid: boolean) {
@@ -135,7 +150,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
         if (res.success == true) {
           this.isBuySubmitted = false;
           this.ResetForm();
-          this.GetWalletBalance(null);
+          //this.GetWalletBalance(null);
           // this.buysellmsg = res.output;
           // this.ShowPopUp();
           if (res.output != undefined && res.output != "")
@@ -169,7 +184,7 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
         if (res.success == true) {
           this.isSellSubmitted = false;
           this.ResetForm();
-          this.GetWalletBalance(null);
+          //this.GetWalletBalance(null);
           //this.buysellmsg = res.output;
           //this.RefreshMarket(this.pairId);
           //this.ShowPopUp();

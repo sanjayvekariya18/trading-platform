@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, ViewChild } from "@angular/core";
+import { Component, Input, OnChanges, OnInit, ViewChild, EventEmitter, Output } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { ModalDirective } from "ngx-bootstrap/modal";
@@ -6,6 +6,7 @@ import { AuthenticationService, ExchangeService, PusherService, ToastService, Tr
 import { Common } from "../../shared/common";
 import { Validator } from "../../shared/common/common.validator";
 import { DailyExchange, Exchange, ExchangeModal } from "../../shared/model";
+import { debug } from "util";
 declare var Pusher: any;
 
 @Component({
@@ -38,6 +39,8 @@ export class ExchangeComponent implements OnInit, OnChanges {
   @Input() total: number;
   @Input() buyModel: any;
   @Input() sellModel: any;
+  @Input() baseValue: any;
+  @Input() mainValue: any;
   arrBalPerc = [25, 50, 75, 100];
 
   constructor(
@@ -47,7 +50,7 @@ export class ExchangeComponent implements OnInit, OnChanges {
     public toast: ToastService,
     private router: Router,
     public tradeService: TradeService,
-    public _pusherService: PusherService,
+    public pusher: PusherService,
     public common: Common,
   ) {
     Pusher.logToConsole = true;
@@ -60,8 +63,9 @@ export class ExchangeComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.BindData();
     this.authenticationService.CheckUserLoggedIn();
-    this._pusherService.ch_wallet_amount.bind('App\\Events\\WalletAmount', data => {
-      this.GetWalletBalance(null);
+    this.pusher.ch_wallet_amount.subscribe((wallet: any) => {
+      if (wallet.original != undefined)
+        this.BindExchange(wallet.original.data);
     });
   }
 
@@ -79,11 +83,14 @@ export class ExchangeComponent implements OnInit, OnChanges {
         change.baseCurrency !== undefined
           ? change.baseCurrency.currentValue
           : this.baseCurrency;
+
       this.exchange.MainCurrency =
         change.mainCurrency !== undefined
           ? change.mainCurrency.currentValue
           : this.mainCurrency;
+
       this.pairName = `${this.mainCurrency}/${this.baseCurrency}`;
+
       this.GetWalletBalance(change);
     } else {
       const type = change.hasOwnProperty('sellModel') ? 'sellModel' : change.hasOwnProperty('buyModel') ? 'buyModel' : '';
@@ -132,27 +139,37 @@ export class ExchangeComponent implements OnInit, OnChanges {
       BaseCurrency: this.baseCurrency,
       MainCurrency: this.mainCurrency
     };
-    this.exchangeService.GetWalletBalance(obj).subscribe((res: any) => {
-      if (res.success == true) {
-        this.BindExchange(res);
-        if (change != null) {
-          this.ChangeUpdateModel(change);
+    this.exchangeService.GetWalletBalance(obj).subscribe(
+      (res: any) => {
+        if (res.success == true) {
+          this.BindExchange(res.data);
+          this.baseValue = res.data.BaseCurrencyValue;
+          this.mainValue = res.data.MainCurrencyValue;
+          if (change != null) {
+            this.ChangeUpdateModel(change);
+          }
+        } else {
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
         }
+      },
+      err => {
+        console.log(err);
       }
-    });
+    );
   }
 
-  BindExchange(res: any) {
-    this.exchange.BaseValue = res.data.BaseCurrencyValue;
-    this.exchange.MainValue = res.data.MainCurrencyValue;
-    this.exchange.BuyFees = res.data.TradeFees;
-    this.exchange.SellFees = res.data.TradeFees;
-    this.exchange.BuyMinimum = res.data.MinTrade;
-    this.exchange.SellMinimum = res.data.MinTrade;
+  BindExchange(data: any) {
+    this.exchange.BaseValue = data.BaseCurrencyValue;
+    this.exchange.MainValue = data.MainCurrencyValue;
+    this.exchange.BuyFees = data.TradeFees;
+    this.exchange.SellFees = data.TradeFees;
+    this.exchange.BuyMinimum = data.MinTrade;
+    this.exchange.SellMinimum = data.MinTrade;
     this.buyForm.patchValue({ Range: this.exchange.BaseValue });
     this.sellForm.patchValue({ Range: this.exchange.MainValue });
-    this.buyForm.patchValue({ Minimum: res.data.MinTrade });
-    this.sellForm.patchValue({ Minimum: res.data.MinTrade });
+    this.buyForm.patchValue({ Minimum: data.MinTrade });
+    this.sellForm.patchValue({ Minimum: data.MinTrade });
   }
 
   ResetForm() {
@@ -244,23 +261,24 @@ export class ExchangeComponent implements OnInit, OnChanges {
         order_type: "LIMIT",
         side: "BUY"
       };
-      this.exchangeService.BuyTrade(obj).subscribe((res: any) => {
-        if (res.success == true) {
-          this.isBuySubmitted = false;
-          this.ResetForm();
-          this.GetWalletBalance(null);
-          // this.buysellmsg = res.output;
-          // this.RefreshMarket(this.pairId);
-          // this.ShowPopUp();
-          if (res.output != undefined && res.output != "")
-            this.toast.success(res.output);
+      this.exchangeService.BuyTrade(obj).subscribe(
+        (res: any) => {
+          if (res.success == true) {
+            this.isBuySubmitted = false;
+            this.ResetForm();
+            if (res.output != undefined && res.output != "")
+              this.toast.success(res.output);
+          } else {
+            if (res.output != undefined && res.output != "")
+              this.toast.error(res.output);
+          }
           this.isBuyLoading = false;
-        } else {
-          if (res.output != undefined && res.output != "")
-            this.toast.error(res.output);
+        },
+        err => {
           this.isBuyLoading = false;
+          console.log(err);
         }
-      });
+      );
     }
   }
   SetSelltotal(event) {
@@ -303,23 +321,24 @@ export class ExchangeComponent implements OnInit, OnChanges {
         order_type: "LIMIT",
         side: "SELL"
       };
-      this.exchangeService.SellTrade(obj).subscribe((res: any) => {
-        if (res.success == true) {
-          this.isSellSubmitted = false;
-          this.ResetForm();
-          this.GetWalletBalance(null);
+      this.exchangeService.SellTrade(obj).subscribe(
+        (res: any) => {
+          if (res.success == true) {
+            this.isSellSubmitted = false;
+            this.ResetForm();
+            if (res.output != undefined && res.output != "")
+              this.toast.success(res.output);
+          } else {
+            if (res.output != undefined && res.output != "")
+              this.toast.error(res.output);
+          }
           this.isSellLoading = false;
-          if (res.output != undefined && res.output != "")
-            this.toast.success(res.output);
-          // this.buysellmsg = res.output;
-          // this.RefreshMarket(this.pairId);
-          // this.ShowPopUp();
-        } else {
+        },
+        err => {
           this.isSellLoading = false;
-          if (res.output != undefined && res.output != "")
-            this.toast.error(res.output);
+          console.log(err);
         }
-      });
+      );
     }
   }
 

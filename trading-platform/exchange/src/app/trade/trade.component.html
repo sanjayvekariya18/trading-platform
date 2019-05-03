@@ -64,16 +64,16 @@
           <ul class="nav nav-tabs" id="crypt-tab">
             <li role="presentation">
               <a href="#btc" data-toggle="tab" [ngClass]="{ active: selectedItem == '1' }"
-                (click)="GetMarketList(1)">btc</a>
+                (click)="GetMarketListTab(1)">btc</a>
             </li>
 
             <li role="presentation">
               <a href="#eth" data-toggle="tab" [ngClass]="{ active: selectedItem == '2' }"
-                (click)="GetMarketList(2)">eth</a>
+                (click)="GetMarketListTab(2)">eth</a>
             </li>
             <li role="presentation">
               <a href="#usdt" class="active" data-toggle="tab" [ngClass]="{ active: selectedItem == '3' }"
-                (click)="GetMarketList(3)">usdt</a>
+                (click)="GetMarketListTab(3)">usdt</a>
             </li>
           </ul>
           <div class="tab-content crypt-tab-content">
@@ -89,7 +89,7 @@
                 </thead>
                 <tbody class="crypt-table-hover">
 
-                  <tr *ngFor="let item of dataList" (click)="GetRowDetail(item)" class="cr_success"
+                  <tr *ngFor="let item of currencyPairList" (click)="GetRowDetail(item)" class="cr_success"
                     style="line-height: 2.2em;" [ngClass]="{ 'bg-row': item.name == selectedRow }">
 
                     <td class="align-middle">{{ item.name }}</td>

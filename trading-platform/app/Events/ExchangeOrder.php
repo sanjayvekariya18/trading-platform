@@ -11,7 +11,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class TradeHistory implements ShouldBroadcastNow
+class ExchangeOrder implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -33,7 +33,7 @@ class TradeHistory implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('trade_history');
+        return new Channel('exchange_order');
     }
 
     public function broadcastWith()

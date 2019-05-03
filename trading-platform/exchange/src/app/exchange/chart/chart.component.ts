@@ -28,38 +28,43 @@ export class ChartComponent implements OnChanges, OnInit {
   constructor(
     public tradeService: TradeService,
     public exchangeService: ExchangeService,
-    public _pusherService: PusherService,
+    public pusher: PusherService,
 
   ) {
   }
 
   ngOnInit() {
-    this._pusherService.ch_daily_exchange.bind('App\\Events\\DailyExchange', data => {
-      this.GetDailyExchange();
+    this.pusher.ch_daily_exchange.subscribe((exchange: any) => {
+      if (exchange.original != undefined)
+        this.dailyExchange = exchange.original.data;
     });
   }
 
   ngOnChanges(change: any) {
     this.pairName = `${this.mainCurrency}/${this.baseCurrency}`;
-    this.pairId =
-      change.pairId !== undefined ? change.pairId.currentValue : this.pairId;
-
+    this.pairId = change.pairId !== undefined ? change.pairId.currentValue : this.pairId;
     this.GetDailyExchange();
   }
 
 
   GetDailyExchange() {
     this.isDailyExchangeLoader = true;
-    this.exchangeService.GetDailyExchange(this.pairId).subscribe((res: any) => {
-      if (res.success == true) {
-        if (Object.keys(res.data).length > 0) {
-          this.dailyExchange = res.data;
-        } else {
-          this.dailyExchange = new DailyExchange();
+    this.exchangeService.GetDailyExchange(this.pairId).subscribe(
+      (res: any) => {
+        if (res.success == true) {
+          if (Object.keys(res.data).length > 0) {
+            this.dailyExchange = res.data;
+          } else {
+            this.dailyExchange = new DailyExchange();
+          }
         }
+        this.isDailyExchangeLoader = false;
+      },
+      err => {
+        this.isDailyExchangeLoader = false;
+        console.log(err);
       }
-      this.isDailyExchangeLoader = false;
-    });
+    );
   }
 
   showHideChart(type) {

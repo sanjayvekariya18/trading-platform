@@ -24,6 +24,8 @@ export class StoplimitComponent implements OnInit, OnChanges {
   @Input() baseCurrency: string;
   @Input() mainCurrency: string;
   @Input() pairId: string;
+  @Input() baseValue: number;
+  @Input() mainValue: number;
   @Input() dBtnTrade: boolean;
   isLogin: boolean;
   buyForm: FormGroup;
@@ -33,7 +35,6 @@ export class StoplimitComponent implements OnInit, OnChanges {
   isBuyLoading = false;
   isSellLoading = false;
   stopLimitObj = new StopLimitModel();
-  public baseValue: number;
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -42,7 +43,7 @@ export class StoplimitComponent implements OnInit, OnChanges {
     public toast: ToastService,
     public common: Common,
     public router: Router,
-    public _pusherService: PusherService,
+    public pusher: PusherService,
 
   ) {
     this.authenticationService.isLoginChanged.subscribe((isLogin: any) => {
@@ -68,14 +69,17 @@ export class StoplimitComponent implements OnInit, OnChanges {
           ? change.mainCurrency.currentValue
           : this.mainCurrency;
     }
+    this.stopLimitObj.BaseValue = change.baseValue !== undefined ? change.baseValue.currentValue : this.stopLimitObj.BaseValue;
+    this.stopLimitObj.MainValue = change.mainValue !== undefined ? change.mainValue.currentValue : this.stopLimitObj.MainValue;
   }
 
   ngOnInit() {
     this.authenticationService.CheckUserLoggedIn();
     this.BindData();
-    this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', data => {
+    this.pusher.ch_wallet_amount.subscribe((wallet: any) => {
+      if (wallet.original != undefined)
+        this.BindExchange(wallet.original.data);
     });
-    this.GetWalletBalance(null);
   }
 
   GetWalletBalance(change): void {
@@ -91,9 +95,9 @@ export class StoplimitComponent implements OnInit, OnChanges {
     });
   }
 
-  BindExchange(res: any) {
-    this.stopLimitObj.BaseValue = res.data.BaseCurrencyValue;
-    this.stopLimitObj.MainValue = res.data.MainCurrencyValue;
+  BindExchange(data: any) {
+    this.stopLimitObj.BaseValue = data.BaseCurrencyValue;
+    this.stopLimitObj.MainValue = data.MainCurrencyValue;
   }
   BindData() {
     this.buyForm = new FormGroup({
@@ -199,7 +203,7 @@ export class StoplimitComponent implements OnInit, OnChanges {
         if (res.success == true) {
           this.isBuySubmitted = false;
           this.ResetForm();
-          this.GetWalletBalance(null);
+          //this.GetWalletBalance(null);
           if (res.output != undefined && res.output != "")
             this.toast.success(res.output);
         } else {
@@ -227,7 +231,7 @@ export class StoplimitComponent implements OnInit, OnChanges {
         if (res.success == true) {
           this.isSellSubmitted = false;
           this.ResetForm();
-          this.GetWalletBalance(null);
+          //this.GetWalletBalance(null);
           if (res.output != undefined && res.output != "")
             this.toast.success(res.output);
         } else {

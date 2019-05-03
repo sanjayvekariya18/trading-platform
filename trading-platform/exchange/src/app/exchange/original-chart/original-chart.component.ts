@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, Output, EventEmitter } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { TradeService, ExchangeService } from '../../core/service';
+import { TradeService, ExchangeService, PusherService } from '../../core/service';
 import { DailyExchange } from '../../shared/model';
 
 declare var anychart: any;
@@ -28,14 +28,17 @@ export class OriginalChartComponent implements OnChanges, OnInit {
 
   constructor(
     public tradeService: TradeService,
-    public exchangeService: ExchangeService
+    public exchangeService: ExchangeService,
+    public pusher: PusherService,
   ) {
-    this.ChartObservable();
-    this.GetDailyExchangeObservable();
   }
 
   ngOnInit() {
-
+    this.pusher.ch_exchange_order.subscribe((order: any) => {
+      if (order.order_status == "Confirmed") {
+        this.chartData(180);
+      }
+    });
   }
 
 
@@ -145,23 +148,6 @@ export class OriginalChartComponent implements OnChanges, OnInit {
     );
   }
 
-  ChartObservable() {
-    this.tradeService.chartRefreshAll$().subscribe((data: any) => {
-      const interval = localStorage.getItem('chartInterval');
-      this.chartData(interval);
-    });
-  }
-
-  GetDailyExchangeObservable() {
-    this.tradeService.dailyExchangeAll$().subscribe((data: any) => {
-      if (data.length > 0) {
-        this.dailyExchange = new DailyExchange();
-        this.dailyExchange = data[0];
-      } else {
-        this.dailyExchange = new DailyExchange();
-      }
-    });
-  }
 
   FilterChart(minite: number, header: string, type: string) {
     if (type === 'm') {

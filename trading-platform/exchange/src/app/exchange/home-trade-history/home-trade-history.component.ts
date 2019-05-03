@@ -12,7 +12,7 @@ import { Response } from "../../shared/model";
   styles: []
 })
 export class HomeTradeHistoryComponent implements OnInit, OnChanges {
-  tradeHisList: any;
+  tradeHisList = [];
   tradeListLoading = false;
   @Input() baseCurrency: number;
   @Input() mainCurrency: number;
@@ -23,16 +23,21 @@ export class HomeTradeHistoryComponent implements OnInit, OnChanges {
     private exchangeService: ExchangeService,
     public tradeService: TradeService,
     public toast: ToastrService,
-    public _pusherService: PusherService,
+    public pusher: PusherService,
 
   ) {
     this.GetTradeObservable();
   }
 
   ngOnInit() {
-    this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', data => {
-      this.GetUserHistory(this.pairId);
+    this.pusher.ch_exchange_order.subscribe((order: any) => {
+      if (order.order_status == "Confirmed" && (order.side == "BUY" || order.side == "SELL")) {
+        if (this.tradeHisList == null) this.tradeHisList = [];
+        this.tradeHisList.push(order);
+        this.tradeHisList.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
+      }
     });
+
   }
 
   ngOnChanges(change: any) {
@@ -57,15 +62,20 @@ export class HomeTradeHistoryComponent implements OnInit, OnChanges {
 
   GetUserHistory(id: number) {
     this.tradeListLoading = true;
-    this.exchangeService.GetUserHistory(id).subscribe((res: any) => {
-
-      if (res.success == true) {
-        this.tradeHisList = res.data;
-      } else {
-        if (res.output != undefined && res.output != "")
-          this.toast.error(res.output);
+    this.exchangeService.GetUserHistory(id).subscribe(
+      (res: any) => {
+        if (res.success == true) {
+          this.tradeHisList = res.data;
+        } else {
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
+        }
+        this.tradeListLoading = false;
+      },
+      err => {
+        this.tradeListLoading = false;
+        console.log(err);
       }
-      this.tradeListLoading = false;
-    });
+    );
   }
 }

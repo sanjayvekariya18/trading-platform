@@ -198,11 +198,13 @@
       </div>
     </div>
     <div role="tabpanel" class="tab-pane" id="market">
-      <app-market-exchange [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency">
+      <app-market-exchange [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency"
+        [baseValue]="baseValue" [mainValue]="mainValue">
       </app-market-exchange>
     </div>
     <div role="tabpanel" class="tab-pane" id="stop-limit">
-      <app-stoplimit [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency"></app-stoplimit>
+      <app-stoplimit [pairId]="pairId" [baseCurrency]="baseCurrency" [mainCurrency]="mainCurrency"
+        [baseValue]="baseValue" [mainValue]="mainValue"></app-stoplimit>
     </div>
   </div>
 </div>

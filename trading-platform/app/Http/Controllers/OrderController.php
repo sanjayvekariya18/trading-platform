@@ -12,8 +12,9 @@ use App\User;
 use App\Wallets;
 use DB;
 use Ixudra\Curl\Facades\Curl;
+use App\Events\ExchangeOrder;
 use App\Events\ConfirmOrder;
-use App\Events\PendingOrder;
+use App\Events\UserOrder;
 use App\Events\Chart;
 use App\Events\CurrencyPair;
 use App\Events\DailyExchange;
@@ -282,8 +283,9 @@ class OrderController extends Controller
                             $order->fee_remark = "Charge:($charge)% $fromCurSym";
                             $order->save();
                             
-                            event(new ConfirmOrder($order));
-                            event(new TradeHistory($order));
+                            event(new ExchangeOrder($order));
+                            // event(new ConfirmOrder($order));
+                            // event(new TradeHistory($order));
                             event(new CurrencyPair($order->currency_pair_id));
                             event(new DailyExchange($order->currency_pair_id));
 
@@ -333,7 +335,7 @@ class OrderController extends Controller
                             );
                             $this->manageWallet($walletParam);
 
-                            $output .= "Your Order(".$order->order_no." is confirmed for ".$givenAmount." ".$fromCurSym." of ".$price1." ".$toCurSym." \n";
+                            $output .= "Your Order(".$order->order_no." is confirmed for ".$givenAmount." ".$fromCurSym." of ".$price1." ".$toCurSym."\n";
 
                             $chargeAmount = $total * $charge / 100;
 
@@ -350,8 +352,10 @@ class OrderController extends Controller
                             $order->fee = $chargeAmount;
                             $order->fee_remark = "Charge:($charge)% $fromCurSym";
                             $order->save();
-                            event(new ConfirmOrder($order));
-                            event(new TradeHistory($order));
+                            
+                            event(new ExchangeOrder($order));
+                            // event(new ConfirmOrder($order));
+                            // event(new TradeHistory($order));
                             event(new CurrencyPair($order->currency_pair_id));
                             event(new DailyExchange($order->currency_pair_id));
 
@@ -399,8 +403,9 @@ class OrderController extends Controller
                             $order->fee_remark = "Charge:($charge)% $toCurSym";
                             $order->save();
 
-                            event(new ConfirmOrder($order));
-                            event(new TradeHistory($order));
+                            event(new ExchangeOrder($order));
+                            // event(new ConfirmOrder($order));
+                            // event(new TradeHistory($order));
                             event(new CurrencyPair($order->currency_pair_id));
                             event(new DailyExchange($order->currency_pair_id));
 
@@ -454,7 +459,7 @@ class OrderController extends Controller
                             );
                             $this->manageWallet($walletParam);
 
-                            $output .= 'Your Order(' .$order->order_no .') is confirmed for '.$givenAmount.' '.$fromCurSym.' of '.$price1.' '.$toCurSym .' .\n';
+                            $output .= 'Your Order(' .$order->order_no .') is confirmed for '.$givenAmount.' '.$fromCurSym.' of '.$price1.' '.$toCurSym ."\n";
 
                             $chargeAmount = $givenAmount * $charge / 100;
 
@@ -471,8 +476,9 @@ class OrderController extends Controller
                             $order->fee_remark = "Charge:($charge)% $fromCurSym";
                             $order->save();
 
-                            event(new ConfirmOrder($order));
-                            event(new TradeHistory($order));
+                            event(new ExchangeOrder($order));
+                            // event(new ConfirmOrder($order));
+                            // event(new TradeHistory($order));
                             event(new CurrencyPair($order->currency_pair_id));
                             event(new DailyExchange($order->currency_pair_id));
 
@@ -512,7 +518,8 @@ class OrderController extends Controller
                             $order->order_type = $request->order_type;
                             $order->order_status = "Pending";
                             $order->save();
-                            event(new PendingOrder($order));
+                            event(new UserOrder($order));
+                            event(new ExchangeOrder($order));
 
                             if($request->side == "BUY"){
                                 $total = $Remaining * $request->price;
@@ -552,9 +559,11 @@ class OrderController extends Controller
                 }
                 DB::table('orders')->where('amount','<=',0)->delete();
             DB::commit();
-                if($request->has('price') && $request->order_type != "MARKET"){
-                    $output .= $this->createOrderStopLimitConvert();
-                }
+            if($request->has('price') && $request->order_type != "MARKET"){
+                $output .= $this->createOrderStopLimitConvert();
+            }
+            
+            event(new WalletAmount($fromCurSym,$toCurSym));
             $response = array('success'=> true,'output'=>$output,'data'=>null);
             return response()->json($response, 201);
 
@@ -800,7 +809,7 @@ class OrderController extends Controller
                     }
                 }
             }
-            $output .= "Last Price: ".$lastPrice."\n";
+            // $output .= "Last Price: ".$lastPrice."\n";
             //$output .= "@Id : ".$orderStopLimit->id." @Stop ".$orderStopLimit->stop." @Limit ".$orderStopLimit->limit." @Amount ".$orderStopLimit->amount."\n";
         }
         

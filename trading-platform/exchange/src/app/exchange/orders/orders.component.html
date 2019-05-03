@@ -70,7 +70,8 @@
                   </td>
                 </tr>
                 <tr *ngIf="buyOrderList == null" class="text-center">
-                  <td colspan="3"> You have not made any trades yet. Once you make some trades, they will appear here.
+                  <td colspan="3" class="text-center"> You have not made any trades yet. Once you make some trades, they
+                    will appear here.
                   </td>
                 </tr>
               </tbody>
@@ -86,7 +87,7 @@
         <li role="presentation">
           <a href="#active-orders" class="active" data-toggle="tab">Open Orders</a>
         </li>
-        <li role="presentation" (click)="GetUserConfirmOrders('Confirmed', pairId)">
+        <li role="presentation">
           <a href="#closed-orders" data-toggle="tab">My Order</a>
         </li>
       </ul>
@@ -122,7 +123,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of openOrderlist">
+                <tr *ngFor="let item of userPendingOrder">
                   <td class="text-center">{{ item.updated_at | date:'dd-MM-yyyy hh:mm:ss' }}</td>
                   <td class="text-center">{{ item.order_type }}</td>
                   <td [ngClass]="{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}" class="text-center">
@@ -138,8 +139,8 @@
                         (click)="CancelOrder(item.id)"></i></a>
                   </td>
                 </tr>
-                <tr *ngIf="openOrderlist == null">
-                  <td colspan="7">No data found</td>
+                <tr *ngIf="userPendingOrder == undefined">
+                  <td colspan="7" class="text-center">No data found</td>
                 </tr>
               </tbody>
             </table>
@@ -173,7 +174,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of tradeHisList">
+                <tr *ngFor="let item of userConfirmOrder">
                   <td class="text-center">{{ item.updated_at | date:'dd-MM-yyyy hh:mm:ss' }}</td>
                   <td class="text-center">{{ item.order_type }}</td>
                   <td [ngClass]="{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}" class="text-center">
@@ -185,8 +186,8 @@
                     {{ item.price * item.amount | appDynamicDigit: 8 }}
                   </td>
                 </tr>
-                <tr *ngIf="tradeHisList == null">
-                  <td colspan="6">No data found</td>
+                <tr *ngIf="userConfirmOrder == undefined">
+                  <td colspan="6" class="text-center">No data found</td>
                 </tr>
               </tbody>
             </table>

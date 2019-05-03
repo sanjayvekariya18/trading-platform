@@ -3,7 +3,6 @@ import { Injectable } from "@angular/core";
 import { environment } from "../../../environments/environment";
 import { Exchange } from "../../shared/model/exchange";
 import { HttpService } from "./http.service";
-
 @Injectable()
 export class ExchangeService {
   constructor(private http: HttpClient, public httpService: HttpService) { }
@@ -77,12 +76,12 @@ export class ExchangeService {
     );
   }
 
-  GetExchange() {
+  /* GetExchange() {
     return this.http.post(
       `${environment.apiUrl}Exchange/GetExchange`,
       this.httpService.GetAuthHttpCommon()
     );
-  }
+  } */
 
   GetUserTrade(obj: any) {
     return this.http.post(
@@ -91,7 +90,7 @@ export class ExchangeService {
       obj.currency_pair_id
       }`,
       this.httpService.GetAuthHttpCommon()
-    );
+    )
   }
 
   GetUserHistory(currency_pair_id: any) {
@@ -109,25 +108,24 @@ export class ExchangeService {
     );
   }
 
-  GetMarketList(id: any) {
+  /* GetMarketList(id: number) {
     return this.http.get(
       `${environment.apiUrl}currency_pair/${id}`,
       this.httpService.GetJsonHttpCommon()
     );
-  }
+  } */
 
-  GetBaseCurrency() {
-    return this.http.get(`${environment.apiUrl}Currency/GetBaseCurrency`);
-  }
-
-  GetVolume() {
-    return this.http.get(`${environment.apiUrl}Exchange/GetCurrencyVolume`);
-  }
-
-  BindCurrencyList() {
+  GetCurrencyPairs() {
     return this.http.get(
-      `${environment.apiUrl}User/BindCurrencyList`,
-      this.httpService.GetAuthHttpCommon()
+      `${environment.apiUrl}currency_pairs`,
+      this.httpService.GetJsonHttpCommon()
+    );
+  }
+
+  GetMarketListByName(pairName: string) {
+    return this.http.get(
+      `${environment.apiUrl}currency_pair_name/${pairName}`,
+      this.httpService.GetJsonHttpCommon()
     );
   }
 
@@ -135,29 +133,6 @@ export class ExchangeService {
     return this.http.post(
       `${environment.apiUrl}private/orders/cancel`,
       `order_id=${id}`,
-      this.httpService.GetAuthHttpCommon()
-    );
-  }
-
-  GetUserTradeAnalyze(obj: any) {
-    return this.http.post(
-      `${environment.apiUrl}User/GetUserTradeAnalyze`,
-      obj,
-      this.httpService.GetAuthHttpCommon()
-    );
-  }
-
-  CancelStopLimitOrder(id: number) {
-    return this.http.get(
-      `${environment.apiUrl}Exchange/CancelStopLimitOrder/${id}`,
-      this.httpService.GetAuthHttpCommon()
-    );
-  }
-
-  GetUserTradeHistory(dataTablesParameters: any) {
-    return this.http.post(
-      environment.apiUrl + "User/GetUserTradeAnalyze",
-      dataTablesParameters,
       this.httpService.GetAuthHttpCommon()
     );
   }

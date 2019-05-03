@@ -11,7 +11,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class PendingOrder implements ShouldBroadcastNow
+class UserOrder implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -33,7 +33,7 @@ class PendingOrder implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('pending_order');
+        return new PrivateChannel('user_order');
     }
 
     public function broadcastWith()

@@ -23,10 +23,10 @@ import Swal from 'sweetalert2';
   templateUrl: "./orders.component.html"
 })
 export class OrdersComponent implements OnInit, OnChanges {
-  tradeHisList: any;
+  userConfirmOrder: any;
   sellOrderList: any;
   buyOrderList: any;
-  openOrderlist: any;
+  userPendingOrder: any;
   buyData = [];
   sellData = [];
   totalBuy: string;
@@ -53,30 +53,40 @@ export class OrdersComponent implements OnInit, OnChanges {
     public tradeService: TradeService,
     private userService: UserService,
     private toast: ToastService,
-    public _pusherService: PusherService,
+    public pusher: PusherService,
 
   ) { }
 
 
   ngOnInit() {
-    this._pusherService.ch_pending_order.bind('App\\Events\\PendingOrder', data => {
-      this.GetUserPendingOrders("Pending", this.pairId);
-      this.GetSellOrder(this.pairId);
-      this.GetBuyOrder(this.pairId);
-    });
-    this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', data => {
-      this.GetUserConfirmOrders("Confirmed", this.pairId);
-      this.GetSellOrder(this.pairId);
-      this.GetBuyOrder(this.pairId);
-    });
-    this._pusherService.ch_order_cancel.bind('App\\Events\\OrderCancel', data => {
-      this.GetUserPendingOrders("Confirmed", this.pairId);
-      this.GetSellOrder(this.pairId);
-      this.GetBuyOrder(this.pairId);
-    });
-    /* this.GetSellOrder(this.pairId);
-    this.GetBuyOrder(this.pairId); */
 
+    this.pusher.ch_exchange_order.subscribe((order: any) => {
+      if (order.order_status == "Pending" && order.side == "BUY") {
+        if (order.side == "BUY") {
+          if (this.buyOrderList == null) this.buyOrderList = [];
+          this.buyOrderList.push(order);
+          this.buyOrderList.sort((a, b) => (b.price > a.price) ? 1 : -1);
+        } else if (order.side == "SELL") {
+          if (this.sellOrderList == null) this.sellOrderList = [];
+          this.sellOrderList.push(order);
+          this.sellOrderList.sort((a, b) => (a.price > b.price) ? 1 : -1);
+        }
+      }
+    });
+
+    this.pusher.ch_user_order.subscribe((order: any) => {
+      if (order.order_status == "Pending") {
+        if (this.userPendingOrder == null) this.userPendingOrder = [];
+        this.userPendingOrder.push(order);
+        this.userPendingOrder.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
+      }
+
+      if (order.order_status == "Confirmed") {
+        if (this.userConfirmOrder == null) this.userConfirmOrder = [];
+        this.userConfirmOrder.push(order);
+        this.userConfirmOrder.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
+      }
+    });
   }
 
   ngOnChanges(change: any) {
@@ -90,8 +100,9 @@ export class OrdersComponent implements OnInit, OnChanges {
       change.mainCurrency !== undefined
         ? change.mainCurrency.currentValue
         : this.mainCurrency;
-
     this.GetUserPendingOrders("Pending", this.pairId);
+    this.GetUserConfirmOrders("Confirmed", this.pairId);
+
     this.GetSellOrder(this.pairId);
     this.GetBuyOrder(this.pairId);
   }
@@ -99,65 +110,85 @@ export class OrdersComponent implements OnInit, OnChanges {
   GetUserPendingOrders(orderstatus: string, id: number) {
     const obj = { order_status: orderstatus, currency_pair_id: id };
     this.openloading = true;
-    this.exchangeService.GetUserTrade(obj).subscribe((res: any) => {
-
-      if (res.success == true) {
-        this.openOrderlist = res.data;
-      } else {
-        if (res.output != undefined && res.output != "")
-          this.toast.error(res.output);
+    this.exchangeService.GetUserTrade(obj).subscribe(
+      (res: any) => {
+        if (res.success == true) {
+          this.userPendingOrder = res.data;
+        } else {
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
+        }
+        this.openloading = false;
+      },
+      err => {
+        this.openloading = false;
+        console.log(err);
       }
-      this.openloading = false;
-    });
+    );
   }
 
   GetUserConfirmOrders(orderstatus: string, id: number) {
     const obj = { order_status: orderstatus, currency_pair_id: id };
     this.myorderloading = true;
-    this.exchangeService.GetUserTrade(obj).subscribe((res: any) => {
-
-      if (res.success == true) {
-        this.tradeHisList = res.data;
-      } else {
-        if (res.output != undefined && res.output != "")
-          this.toast.error(res.output);
+    this.exchangeService.GetUserTrade(obj).subscribe(
+      (res: any) => {
+        if (res.success == true) {
+          this.userConfirmOrder = res.data;
+        } else {
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
+        }
+        this.myorderloading = false;
+      },
+      err => {
+        this.myorderloading = false;
+        console.log(err);
       }
-      this.myorderloading = false;
-    });
+    );
   }
 
   GetSellOrder(id: any) {
     this.sellloading = true;
-    this.exchangeService.GetSellOrder(id).subscribe((res: any) => {
-
-      if (res.success == true) {
-        if (res.data !== null && res.data.length > 0) {
-          this.sellModelChange.emit(res.data[0]);
+    this.exchangeService.GetSellOrder(id).subscribe(
+      (res: any) => {
+        if (res.success == true) {
+          if (res.data !== null && res.data.length > 0) {
+            this.sellModelChange.emit(res.data[0]);
+          }
+          this.sellOrderList = res.data;
+        } else {
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
         }
-        this.sellOrderList = res.data;
-      } else {
-        if (res.output != undefined && res.output != "")
-          this.toast.error(res.output);
+        this.sellloading = false;
+      },
+      err => {
+        this.sellloading = false;
+        console.log(err);
       }
-      this.sellloading = false;
-    });
+    );
   }
 
   GetBuyOrder(id: any) {
     this.buyloading = true;
-    this.exchangeService.GetBuyOrder(id).subscribe((res: any) => {
-
-      if (res.success == true) {
-        if (res.data !== null && res.data.length > 0) {
-          this.buyModelChange.emit(res.data[0]);
+    this.exchangeService.GetBuyOrder(id).subscribe(
+      (res: any) => {
+        if (res.success == true) {
+          if (res.data !== null && res.data.length > 0) {
+            this.buyModelChange.emit(res.data[0]);
+          }
+          this.buyOrderList = res.data;
+        } else {
+          if (res.output != undefined && res.output != "")
+            this.toast.error(res.output);
         }
-        this.buyOrderList = res.data;
-      } else {
-        if (res.output != undefined && res.output != "")
-          this.toast.error(res.output);
+        this.buyloading = false;
+      },
+      err => {
+        this.buyloading = false;
+        console.log(err);
       }
-      this.buyloading = false;
-    });
+    );
   }
 
 
@@ -173,16 +204,23 @@ export class OrdersComponent implements OnInit, OnChanges {
     }).then(result => {
       if (result.value) {
         this.openloading = true;
-        this.exchangeService.CancelOrder(id).subscribe((res: any) => {
-          if (res.success == true) {
-            this.GetUserPendingOrders("Pending", this.pairId);
-            if (res.output != undefined && res.output != "")
-              this.toast.success(res.output);
-          } else {
-            if (res.output != undefined && res.output != "")
-              this.toast.error(res.output);
+        this.exchangeService.CancelOrder(id).subscribe(
+          (res: any) => {
+            if (res.success == true) {
+              //this.GetUserPendingOrders("Pending", this.pairId);
+              if (res.output != undefined && res.output != "")
+                this.toast.success(res.output);
+            } else {
+              if (res.output != undefined && res.output != "")
+                this.toast.error(res.output);
+            }
+            this.openloading = false;
+          },
+          err => {
+            this.openloading = false;
+            console.log(err);
           }
-        });
+        );
       } else {
         this.toast.success('Your data is safe :)');
       }
@@ -191,6 +229,7 @@ export class OrdersComponent implements OnInit, OnChanges {
   }
 
   getRowBuyOrder(item: any) {
+    debugger;
     this.buyModelChange.emit(item);
   }
   getRowSellOrder(item: any) {

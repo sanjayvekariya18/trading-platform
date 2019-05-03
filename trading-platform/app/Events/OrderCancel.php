@@ -33,7 +33,7 @@ class OrderCancel implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('order_cancel');
+        return new PrivateChannel('order_cancel');
     }
 
     public function broadcastWith()

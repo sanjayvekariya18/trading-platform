@@ -17,3 +17,7 @@ Broadcast::channel('App.User.{id}', function ($user, $id) {
 /* Broadcast::channel('demo',function(){
     return "Hello World";
 }); */
+
+/* Broadcast::channel('pending_order', function ($user, $id) {
+    return (int) $user->id === (int) $id;
+}); */

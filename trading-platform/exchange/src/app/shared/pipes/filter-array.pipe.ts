@@ -4,19 +4,17 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'filterArrayPipe'
 })
 export class FilterArrayPipe implements PipeTransform {
-  transform(value, args) {
-    if (args == null) {
-      return value;
-    }
-
-    return value.filter(function(item) {
-      return (
-        item.Coin.toLowerCase().indexOf(args.toLowerCase()) > -1 ||
-        item.Name.toLowerCase().indexOf(args.toLowerCase()) > -1 ||
-        item.TotBalance.toString().includes(args) ||
-        item.OnOrders.toString().includes(args)
-      );
+  transform(array: Array<any>): Array<string> {
+    array.sort((a: any, b: any) => {
+      if (a.price < b.price) {
+        return -1;
+      } else if (a.price > b.price) {
+        return 1;
+      } else {
+        return 0;
+      }
     });
+    return array;
   }
 }
 
@@ -31,11 +29,11 @@ export class TradeDatePipe implements PipeTransform {
 
     if (args != null) {
       if (args === 0) {
-        value = value.filter(function(item) {
+        value = value.filter(function (item) {
           return item;
         });
       } else if (args !== '0') {
-        value = value.filter(function(item) {
+        value = value.filter(function (item) {
           return item.Type.toLowerCase().indexOf(args.toLowerCase()) > -1;
         });
       }

@@ -35,6 +35,7 @@ export class TradeComponent implements OnInit {
   loading: boolean;
   selectedItem: string;
   dataList: any;
+  currencyPairList: any;
   selectedRow: any;
   route: string;
   result: any;
@@ -51,7 +52,7 @@ export class TradeComponent implements OnInit {
     public router: Router,
     public common: Common,
     public tradeService: TradeService,
-    public _pusherService: PusherService,
+    public pusher: PusherService,
     private activeRoute: ActivatedRoute,
     private location: Location
 
@@ -70,10 +71,13 @@ export class TradeComponent implements OnInit {
 
   }
 
-  ngOnInit() {
 
-    this._pusherService.ch_currency_pair.bind('App\\Events\\CurrencyPair', data => {
-      this.GetMarketList(this.selectedItem);
+  ngOnInit() {
+    this.pusher.ch_currency_pair.subscribe((currencyPair: any) => {
+      if (currencyPair.original != undefined) {
+        this.dataList = currencyPair.original.data;
+        this.currencyPairList = this.dataList.filter(x => x.base_currency_id === this.selectedItem);
+      }
     });
 
     this.router.events.subscribe((event: any) => {
@@ -104,49 +108,53 @@ export class TradeComponent implements OnInit {
       this.mainCurrency = baseName[0];
       this.pairId = this.result.id;
       this.selectedRow = this.result.name;
+      this.location.replaceState("/trade/" + this.mainCurrency + "_" + this.baseCurrency);
     } else {
       this.baseCurrency = "BTC";
       this.mainCurrency = "ETH";
       this.pairId = 1;
       this.selectedItem = "1";
       this.selectedRow = "ETH/BTC";
+      this.location.replaceState("/trade/" + this.mainCurrency + "_" + this.baseCurrency);
     }
-    this.GetMarketList(this.selectedItem);
 
     this.activeRoute.params.subscribe(routeParams => {
-      this.GetPairDetail(routeParams.pair);
+      if (routeParams.pair != undefined) {
+        this.GetPairDetail(routeParams.pair);
+      } else {
+        this.GetPairDetail(this.mainCurrency + "_" + this.baseCurrency);
+      }
     });
 
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     if (currentUser) this.email = currentUser.email;
   }
 
-  GetMarketList(paramValue) {
-
-    this.loading = true;
-    this.selectedItem = paramValue;
-    localStorage.setItem("BaseMarketId", this.selectedItem);
-    this.exchangeService.GetMarketList(paramValue).subscribe((res: any) => {
-      this.loading = false;
-      this.dataList = res.data;
-      localStorage.setItem("MarketList", JSON.stringify(this.dataList));
-    });
+  GetMarketListTab(paramValue) {
+    this.currencyPairList = this.dataList.filter(x => x.base_currency_id === paramValue);
+    localStorage.setItem("MarketList", JSON.stringify(this.currencyPairList));
+    localStorage.setItem("BaseMarketId", paramValue);
   }
 
   GetPairDetail(pairName) {
     this.loading = true;
-    this.exchangeService.GetMarketList(pairName).subscribe((res: any) => {
-      this.dataList = res.data;
-      for (const pairList in res.data) {
-        if (res.data.hasOwnProperty(pairList)) {
-          const element = res.data[pairList];
-          this.selectedItem = element.base_currency_id;
-          localStorage.setItem("BaseMarketId", element.base_currency_id);
-          const pair = element.name.replace('/', '_');
-          if (pairName == pair) {
-            this.GetRowDetail(element);
+    this.exchangeService.GetMarketListByName(pairName).subscribe((res: any) => {
+      if (res.success) {
+        this.dataList = res.data;
+        for (const pairList in res.data) {
+          if (res.data.hasOwnProperty(pairList)) {
+            const element = res.data[pairList];
+            this.selectedItem = element.base_currency_id;
+            this.GetMarketListTab(this.selectedItem);
+            localStorage.setItem("BaseMarketId", element.base_currency_id);
+            const pair = element.name.replace('/', '_');
+            if (pairName == pair) {
+              this.GetRowDetail(element);
+              break;
+            }
           }
         }
+        this.loading = false;
       }
     });
   }
@@ -159,7 +167,6 @@ export class TradeComponent implements OnInit {
     this.mainCurrency = data[0];
     // this.pair = this.mainCurrency + "_" + this.baseCurrency;
     localStorage.setItem("selectedMarket", JSON.stringify(item));
-    localStorage.setItem("MarketList", JSON.stringify(this.dataList));
     this.location.replaceState("/trade/" + this.mainCurrency + "_" + this.baseCurrency);
     // this.router.navigate(["/trade"]);
   }

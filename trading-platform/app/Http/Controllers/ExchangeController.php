@@ -57,7 +57,8 @@ class ExchangeController extends Controller
                 $response = array('success' => false,'data' => null);
                 return response()->json($response, 200);
             }
-            $currency_pairs = Currency_pair::where('from_asset',$currencyId)->with('fromAsset')->with('toAsset')->get();
+            // $currency_pairs = Currency_pair::where('from_asset',$currencyId)->with('fromAsset')->with('toAsset')->get();
+            $currency_pairs = Currency_pair::with('fromAsset')->with('toAsset')->get();
             
             
             $response['data'] = (count($currency_pairs) > 0) ? $this->getCurrencyChange($currency_pairs) : null;        
@@ -78,16 +79,17 @@ class ExchangeController extends Controller
             }
             // Convert Pair into Array
             $pair = explode('_',$currencyPairName);
-
+           
             if(isset($pair[1])){
-                $fromCurency = Currency::where('asset',$pair[1])->first();
-
+                $fromCurrency = Currency::where('asset',$pair[1])->first();
                 // Check From Currency is exist or not
-                if(!$fromCurency){
-                    $currency_pairs = Currency_pair::
-                            where('from_asset',$fromCurency->id)
-                            ->with('fromAsset')->with('toAsset')->get();
-                    $response['data'] = count($currency_pairs > 0) ? $currency_pairs : null;
+                if($fromCurrency){
+                    /* $currency_pairs = Currency_pair::
+                            where('from_asset',$fromCurrency->id)
+                            ->with('fromAsset')->with('toAsset')->get(); */
+
+                    $currency_pairs = Currency_pair::with('fromAsset')->with('toAsset')->get();
+                    $response['data'] = (count($currency_pairs) > 0) ? $this->getCurrencyChange($currency_pairs) : null; 
                     $response['success'] = true;
                 }else{
                     $response = array('success' => false,'data' => null);
@@ -105,7 +107,7 @@ class ExchangeController extends Controller
     public function getCurrencyPairs()
     {
         $currency_pairs = Currency_pair::with('fromAsset')->with('toAsset')->get();
-        $response['data'] = (count($currency_pairs) > 0) ? $currency_pairs : null;
+        $response['data'] = (count($currency_pairs) > 0) ? $this->getCurrencyChange($currency_pairs) : null;
         $response['success'] = true;
         return response()->json($response, 200);
     }
@@ -168,6 +170,7 @@ class ExchangeController extends Controller
             $orders = Order::
                 where('currency_pair_id',$pairId)
                 ->where('order_status',"Confirmed")
+                ->orderBy('updated_at','DESC')
                 ->get();
 
             $response['data'] = (count($orders) > 0)? $orders : null;
