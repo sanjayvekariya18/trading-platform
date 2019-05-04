@@ -713,9 +713,12 @@ var ExchangeService = /** @class */ (function () {
     ExchangeService.prototype.SellMarketTrade = function (model) {
         return this.http.post(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "private/orders/create", "currency_pair_id=" + model.currency_pair_id + "&amount=" + model.amount + "&order_type=" + model.order_type + "&side=" + model.side, this.httpService.GetAuthHttpCommon());
     };
-    ExchangeService.prototype.GetExchange = function () {
-        return this.http.post(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "Exchange/GetExchange", this.httpService.GetAuthHttpCommon());
-    };
+    /* GetExchange() {
+      return this.http.post(
+        `${environment.apiUrl}Exchange/GetExchange`,
+        this.httpService.GetAuthHttpCommon()
+      );
+    } */
     ExchangeService.prototype.GetUserTrade = function (obj) {
         return this.http.post(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "private/orders", "order_status=" + obj.order_status + "&currency_pair_id=" + obj.currency_pair_id, this.httpService.GetAuthHttpCommon());
     };
@@ -725,29 +728,20 @@ var ExchangeService = /** @class */ (function () {
     ExchangeService.prototype.GetWalletBalance = function (obj) {
         return this.http.post(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "private/walletAmount", "BaseCurrency=" + obj.BaseCurrency + "&MainCurrency=" + obj.MainCurrency, this.httpService.GetAuthHttpCommon());
     };
-    ExchangeService.prototype.GetMarketList = function (id) {
-        return this.http.get(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "currency_pair/" + id, this.httpService.GetJsonHttpCommon());
+    /* GetMarketList(id: number) {
+      return this.http.get(
+        `${environment.apiUrl}currency_pair/${id}`,
+        this.httpService.GetJsonHttpCommon()
+      );
+    } */
+    ExchangeService.prototype.GetCurrencyPairs = function () {
+        return this.http.get(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "currency_pairs", this.httpService.GetJsonHttpCommon());
     };
-    ExchangeService.prototype.GetBaseCurrency = function () {
-        return this.http.get(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "Currency/GetBaseCurrency");
-    };
-    ExchangeService.prototype.GetVolume = function () {
-        return this.http.get(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "Exchange/GetCurrencyVolume");
-    };
-    ExchangeService.prototype.BindCurrencyList = function () {
-        return this.http.get(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "User/BindCurrencyList", this.httpService.GetAuthHttpCommon());
+    ExchangeService.prototype.GetMarketListByName = function (pairName) {
+        return this.http.get(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "currency_pair_name/" + pairName, this.httpService.GetJsonHttpCommon());
     };
     ExchangeService.prototype.CancelOrder = function (id) {
         return this.http.post(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "private/orders/cancel", "order_id=" + id, this.httpService.GetAuthHttpCommon());
-    };
-    ExchangeService.prototype.GetUserTradeAnalyze = function (obj) {
-        return this.http.post(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "User/GetUserTradeAnalyze", obj, this.httpService.GetAuthHttpCommon());
-    };
-    ExchangeService.prototype.CancelStopLimitOrder = function (id) {
-        return this.http.get(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "Exchange/CancelStopLimitOrder/" + id, this.httpService.GetAuthHttpCommon());
-    };
-    ExchangeService.prototype.GetUserTradeHistory = function (dataTablesParameters) {
-        return this.http.post(_environments_environment__WEBPACK_IMPORTED_MODULE_2__["environment"].apiUrl + "User/GetUserTradeAnalyze", dataTablesParameters, this.httpService.GetAuthHttpCommon());
     };
     ExchangeService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])(),
@@ -876,10 +870,13 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PusherService", function() { return PusherService; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
-/* harmony import */ var pusher_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
-/* harmony import */ var pusher_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(pusher_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
-/* harmony import */ var _http_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./http.service */ "./src/app/core/service/http.service.ts");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
+/* harmony import */ var pusher_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
+/* harmony import */ var pusher_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(pusher_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../environments/environment */ "./src/environments/environment.ts");
+/* harmony import */ var _http_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./http.service */ "./src/app/core/service/http.service.ts");
+/* harmony import */ var immutable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! immutable */ "./node_modules/immutable/dist/immutable.es.js");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -893,29 +890,108 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
+
+
 var PusherService = /** @class */ (function () {
     function PusherService(http, httpService) {
+        var _this = this;
         this.http = http;
         this.httpService = httpService;
-        this.pusher = new pusher_js__WEBPACK_IMPORTED_MODULE_1___default.a('7b488ce6d8fea3f95cc6', {
-            cluster: 'ap2',
-            encrypted: true
+        /* private _ch_confirm_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
+        public ch_confirm_order: Observable<List<string>> = this._ch_confirm_order.asObservable();
+    
+        private _ch_pending_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
+        public ch_pending_order: Observable<List<string>> = this._ch_pending_order.asObservable(); */
+        this._ch_user_order = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_user_order = this._ch_user_order.asObservable();
+        this._ch_wallet_amount = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_wallet_amount = this._ch_wallet_amount.asObservable();
+        this._ch_order_cancel = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_order_cancel = this._ch_order_cancel.asObservable();
+        this._ch_exchange_order = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_exchange_order = this._ch_exchange_order.asObservable();
+        this._ch_chart = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_chart = this._ch_chart.asObservable();
+        this._ch_currency_pair = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_currency_pair = this._ch_currency_pair.asObservable();
+        /* private _ch_trade_history: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
+        public ch_trade_history: Observable<List<string>> = this._ch_trade_history.asObservable(); */
+        this._ch_daily_exchange = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_daily_exchange = this._ch_daily_exchange.asObservable();
+        this.channels = [];
+        if (localStorage.getItem('currentUser')) {
+            this.currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        }
+        if (this.currentUser != undefined) {
+            this.pusher = new pusher_js__WEBPACK_IMPORTED_MODULE_2___default.a('7b488ce6d8fea3f95cc6', {
+                authEndpoint: _environments_environment__WEBPACK_IMPORTED_MODULE_4__["environment"].apiUrl + "pusher/auth",
+                cluster: 'ap2',
+                encrypted: true,
+                auth: {
+                    headers: {
+                        'Authorization': "Bearer " + this.currentUser.api_token,
+                        'Accept': "application/json"
+                    }
+                }
+            });
+            /* var channel = this.pusher.subscribe('private-confirm_order');
+            channel.bind('App\\Events\\ConfirmOrder', (data) => {
+                console.log(data.data);
+                this._ch_confirm_order.next(data.data);
+            }); */
+            /* var channel = this.pusher.subscribe('private-pending_order');
+            channel.bind('App\\Events\\PendingOrder', (data) => {
+                console.log(data.data);
+                this._ch_pending_order.next(data.data);
+            }); */
+            var channel = this.pusher.subscribe('private-user_order');
+            channel.bind('App\\Events\\UserOrder', function (data) {
+                _this._ch_user_order.next(data.data);
+            });
+            var channel = this.pusher.subscribe('private-wallet_amount');
+            channel.bind('App\\Events\\WalletAmount', function (data) {
+                _this._ch_wallet_amount.next(data.data);
+            });
+            var channel = this.pusher.subscribe('private-order_cancel');
+            channel.bind('App\\Events\\OrderCancel', function (data) {
+                console.log(data.data);
+                _this._ch_order_cancel.next(data.data);
+            });
+        }
+        else {
+            this.pusher = new pusher_js__WEBPACK_IMPORTED_MODULE_2___default.a('7b488ce6d8fea3f95cc6', {
+                cluster: 'ap2',
+                encrypted: true
+            });
+        }
+        var channel = this.pusher.subscribe('exchange_order');
+        channel.bind('App\\Events\\ExchangeOrder', function (data) {
+            _this._ch_exchange_order.next(data.data);
         });
-        this.ch_chart = this.pusher.subscribe('chart');
-        this.ch_confirm_order = this.pusher.subscribe('confirm_order');
-        this.ch_currency_pair = this.pusher.subscribe('currency_pair');
-        this.ch_pending_order = this.pusher.subscribe('pending_order');
-        this.ch_my_order = this.pusher.subscribe('my_order');
-        this.ch_trade_history = this.pusher.subscribe('trade_history');
-        this.ch_daily_exchange = this.pusher.subscribe('daily_exchange');
-        this.ch_wallet_amount = this.pusher.subscribe('wallet_amount');
-        this.ch_order_cancel = this.pusher.subscribe('order_cancel');
+        var channel = this.pusher.subscribe('chart');
+        channel.bind('App\\Events\\Chart', function (data) {
+            _this._ch_chart.next(data.data);
+        });
+        var channel = this.pusher.subscribe('currency_pair');
+        channel.bind('App\\Events\\CurrencyPair', function (data) {
+            _this._ch_currency_pair.next(data.data);
+        });
+        /* var channel = this.pusher.subscribe('trade_history');
+        channel.bind('App\\Events\\TradeHistory', (data) => {
+            this._ch_trade_history.next(data.data);
+        }); */
+        var channel = this.pusher.subscribe('daily_exchange');
+        channel.bind('App\\Events\\DailyExchange', function (data) {
+            console.log(data.data);
+            _this._ch_daily_exchange.next(data.data);
+        });
     }
     PusherService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
             providedIn: 'root',
         }),
-        __metadata("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"], _http_service__WEBPACK_IMPORTED_MODULE_3__["HttpService"]])
+        __metadata("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpClient"], _http_service__WEBPACK_IMPORTED_MODULE_5__["HttpService"]])
     ], PusherService);
     return PusherService;
 }());
@@ -1181,10 +1257,10 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 var ChartComponent = /** @class */ (function () {
-    function ChartComponent(tradeService, exchangeService, _pusherService) {
+    function ChartComponent(tradeService, exchangeService, pusher) {
         this.tradeService = tradeService;
         this.exchangeService = exchangeService;
-        this._pusherService = _pusherService;
+        this.pusher = pusher;
         this.loading = false;
         this.dailyExchange = new _shared_model__WEBPACK_IMPORTED_MODULE_2__["DailyExchange"]();
         this.isDailyExchangeLoader = false;
@@ -1192,14 +1268,14 @@ var ChartComponent = /** @class */ (function () {
     }
     ChartComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this._pusherService.ch_daily_exchange.bind('App\\Events\\DailyExchange', function (data) {
-            _this.GetDailyExchange();
+        this.pusher.ch_daily_exchange.subscribe(function (exchange) {
+            if (exchange.original != undefined)
+                _this.dailyExchange = exchange.original.data;
         });
     };
     ChartComponent.prototype.ngOnChanges = function (change) {
         this.pairName = this.mainCurrency + "/" + this.baseCurrency;
-        this.pairId =
-            change.pairId !== undefined ? change.pairId.currentValue : this.pairId;
+        this.pairId = change.pairId !== undefined ? change.pairId.currentValue : this.pairId;
         this.GetDailyExchange();
     };
     ChartComponent.prototype.GetDailyExchange = function () {
@@ -1215,6 +1291,9 @@ var ChartComponent = /** @class */ (function () {
                 }
             }
             _this.isDailyExchangeLoader = false;
+        }, function (err) {
+            _this.isDailyExchangeLoader = false;
+            console.log(err);
         });
     };
     ChartComponent.prototype.showHideChart = function (type) {
@@ -1318,7 +1397,7 @@ var ExchangeModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<!-- new theme -->\n<div class=\"crypt-boxed-area\">\n  <ul class=\"nav nav-tabs\">\n    <li role=\"presentation\">\n      <a href=\"#limit\" class=\"active\" data-toggle=\"tab\">Limit</a>\n    </li>\n    <li role=\"presentation\">\n      <a href=\"#market\" data-toggle=\"tab\">market </a>\n    </li>\n    <li role=\"presentation\">\n      <a href=\"#stop-limit\" data-toggle=\"tab\">Stop Limit</a>\n    </li>\n  </ul>\n  <div class=\"tab-content\">\n    <div role=\"tabpanel\" class=\"tab-pane active\" id=\"limit\">\n      <div class=\"row no-gutters\">\n        <app-loader [IsLoading]=\"isBuyLoading\"></app-loader>\n        <div class=\"col-md-6\">\n          <div class=\"crypt-buy-sell-form\">\n            <p>\n              Buy <span class=\"crypt-up\">{{ exchange.MainCurrency }}</span>\n              <span class=\"fright\" *ngIf=\"exchange.BaseValue != null\">\n                Available:\n                <b class=\"crypt-up\" (click)=\"BuyBaseValueClick()\" style=\"cursor: pointer;\">\n                  {{ exchange.BaseValue | appDynamicDigit: 8 }}\n                  {{ exchange.BaseCurrency }}\n                </b>\n              </span>\n            </p>\n            <div class=\"crypt-buy\">\n              <form novalidate [formGroup]=\"buyForm\" (ngSubmit)=\"Buy(buyForm.value, buyForm.valid)\">\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isBuySubmitted && buyForm.get('price').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Price</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" placeholder=\"Enter Price\" formControlName=\"price\"\n                    [(ngModel)]=\"exchange.BuyPrice\" (keyup)=\"SetBuytotal('price')\" appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">\n                      {{ exchange.BaseCurrency }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isBuySubmitted && buyForm.get('amount').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Amount</span>\n                  </div>\n                  <input type=\"number\" class=\"form-control\" placeholder=\"Enter Amount\" formControlName=\"amount\"\n                    (keyup)=\"SetBuytotal('amount')\" [(ngModel)]=\"exchange.BuyAmount\" appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">\n                      {{ exchange.MainCurrency }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2 rate-per\">\n                  <div class=\"btn-group-add btn-group\">\n                    <button type=\"button\" class=\"btn btn-sm\" *ngFor=\"let item of arrBalPerc\"\n                      (click)=\"calcBalance(item, 'buy')\">\n                      {{ item }}%\n                    </button>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Total</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" placeholder=\"0.00\" formControlName=\"total\"\n                    [(ngModel)]=\"exchange.BuyTotalFees\" (keyup)=\"SetBuytotal('total')\" appEightDigt />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">\n                      {{ exchange.BaseCurrency }}\n                    </span>\n                  </div>\n                  <span class=\"error-msg\" *ngIf=\"isBuySubmitted &&\n                    buyForm.get('total').hasError('rangeValidation')\">\n                    You have only {{ exchange.BaseValue }}\n                    {{ exchange.BaseCurrency }}\n                  </span>\n                  <span class=\"error-msg\" *ngIf=\"isBuySubmitted &&\n                    buyForm.get('total').hasError('minimumValidation')\">\n                    Minimum {{ exchange.BuyMinimum }}\n                    {{ exchange.BaseCurrency }} for Buy Trade\n                  </span>\n                </div>\n                <div>\n                  <p>\n                    Fee: <span class=\"fright\">{{ exchange.BuyFees }}</span>\n                  </p>\n                </div>\n                <div *ngIf=\"!isLogin\">\n                  <div class=\"col-md-12\">\n                    <button type=\"button\" class=\"btn crypt-button-green-full\">\n                      <span (click)=\"GoToUrl('/login')\">Login</span> to\n                      Trade\n                    </button>\n                  </div>\n                </div>\n                <div *ngIf=\"isLogin\">\n                  <div class=\"col-md-12\">\n                    <button type=\"submit\" class=\"btn crypt-button-green-full\" [ladda]=\"isBuyLoading\">\n                      <span>Buy {{ exchange.MainCurrency }}</span>\n                    </button>\n                  </div>\n                </div>\n              </form>\n            </div>\n          </div>\n        </div>\n        <div class=\"col-md-6\">\n          <div class=\"crypt-buy-sell-form\">\n            <p>\n              Sell <span class=\"crypt-down\">{{ exchange.MainCurrency }}</span>\n              <span class=\"fright\">Available:\n                <b class=\"crypt-down\" (click)=\"SellBaseValueClick()\" style=\"cursor: pointer;\">{{ exchange.MainValue | appDynamicDigit: 8\n                  }}\n                  {{ exchange.MainCurrency }}</b></span>\n            </p>\n            <div class=\"crypt-sell\">\n              <form novalidate [formGroup]=\"sellForm\" (ngSubmit)=\"Sell(sellForm.value, sellForm.valid)\">\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isSellSubmitted && sellForm.get('price').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Price</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" formControlName=\"price\" placeholder=\"0.00\"\n                    (keyup)=\"SetSelltotal('PRICE')\" [(ngModel)]=\"exchange.SellPrice\" placeholder=\"Enter Price\"\n                    appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">{{\n                      exchange.BaseCurrency\n                      }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isSellSubmitted && sellForm.get('amount').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Amount</span>\n                  </div>\n                  <input type=\"number\" class=\"form-control\" formControlName=\"amount\" placeholder=\"0.00\"\n                    (keyup)=\"SetSelltotal('AMOUNT')\" [(ngModel)]=\"exchange.SellAmount\" placeholder=\"Enter Amount\"\n                    appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">{{\n                      exchange.MainCurrency\n                      }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2 rate-per\">\n                  <div class=\"btn-group-add btn-group\">\n                    <button type=\"button\" class=\"btn btn-sm\" *ngFor=\"let item of arrBalPerc\"\n                      (click)=\"calcBalance(item, 'sell')\">\n                      {{ item }}%\n                    </button>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Total</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" formControlName=\"total\" placeholder=\"0.00\"\n                    (keyup)=\"SetSelltotal('TOTAL')\" [(ngModel)]=\"exchange.SellTotal\" placeholder=\"0.000000000\"\n                    appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">{{\n                      exchange.BaseCurrency\n                      }}</span>\n                  </div>\n                  <span class=\"error-msg\" *ngIf=\"isSellSubmitted &&\n                    sellForm.get('total').hasError('rangeValidation')\">\n                    You have only {{ exchange.MainValue }}\n                    {{ exchange.MainCurrency }}\n                  </span>\n                  <span class=\"error-msg\" *ngIf=\"isSellSubmitted &&\n                    sellForm.get('total').hasError('minimumValidation')\">Minimum\n                    {{ exchange.SellMinimum }}\n                    {{ exchange.BaseCurrency }} for Sell Trade</span>\n                </div>\n                <div>\n                  <p>\n                    Fee: <span class=\"fright\">{{ exchange.SellFees }}%</span>\n                  </p>\n                </div>\n                <div class=\"mt-1\" *ngIf=\"!isLogin\">\n                  <button type=\"button\" class=\"btn crypt-button-green-full\">\n                    <span (click)=\"GoToUrl('/login')\">Login</span> to Trade\n                  </button>\n                </div>\n                <div *ngIf=\"isLogin\">\n                  <button type=\"submit\" class=\"btn crypt-button-red-full\" [ladda]=\"isSellLoading\">\n                    <span>Sell {{ exchange.MainCurrency }}</span>\n                  </button>\n                </div>\n              </form>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div role=\"tabpanel\" class=\"tab-pane\" id=\"market\">\n      <app-market-exchange [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\">\n      </app-market-exchange>\n    </div>\n    <div role=\"tabpanel\" class=\"tab-pane\" id=\"stop-limit\">\n      <app-stoplimit [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\"></app-stoplimit>\n    </div>\n  </div>\n</div>\n\n<div class=\"modal fade modal-order cs-modal\" bsModal #modal=\"bs-modal\" tabindex=\"-1\" role=\"dialog\"\n  aria-labelledby=\"mySmallModalLabel\" [config]=\"{ backdrop: 'static' }\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h4 class=\"modal-title pull-left\">Order Details</h4>\n        <button type=\"button\" class=\"close\" data-dismiss=\"bs-modal\" (click)=\"ClosePopUp()\">\n          &times;\n        </button>\n      </div>\n      <div class=\"modal-body xs-p-30\" *ngIf=\"isOpen\">\n        <div class=\"row\">\n          <div class=\"col-md-12\">\n            <div class=\"text-info\" [innerHTML]=\"buysellmsg\"></div>\n          </div>\n        </div>\n      </div>\n      <div class=\"modal-footer\">\n        <div class=\"col-md-12 text-right xs-mt-20\">\n          <button type=\"button\" class=\"btn btn-sm btn-primary\" data-dismiss=\"bs-modal\" (click)=\"ClosePopUp()\">\n            Close\n          </button>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
+module.exports = "<!-- new theme -->\n<div class=\"crypt-boxed-area\">\n  <ul class=\"nav nav-tabs\">\n    <li role=\"presentation\">\n      <a href=\"#limit\" class=\"active\" data-toggle=\"tab\">Limit</a>\n    </li>\n    <li role=\"presentation\">\n      <a href=\"#market\" data-toggle=\"tab\">market </a>\n    </li>\n    <li role=\"presentation\">\n      <a href=\"#stop-limit\" data-toggle=\"tab\">Stop Limit</a>\n    </li>\n  </ul>\n  <div class=\"tab-content\">\n    <div role=\"tabpanel\" class=\"tab-pane active\" id=\"limit\">\n      <div class=\"row no-gutters\">\n        <app-loader [IsLoading]=\"isBuyLoading\"></app-loader>\n        <div class=\"col-md-6\">\n          <div class=\"crypt-buy-sell-form\">\n            <p>\n              Buy <span class=\"crypt-up\">{{ exchange.MainCurrency }}</span>\n              <span class=\"fright\" *ngIf=\"exchange.BaseValue != null\">\n                Available:\n                <b class=\"crypt-up\" (click)=\"BuyBaseValueClick()\" style=\"cursor: pointer;\">\n                  {{ exchange.BaseValue | appDynamicDigit: 8 }}\n                  {{ exchange.BaseCurrency }}\n                </b>\n              </span>\n            </p>\n            <div class=\"crypt-buy\">\n              <form novalidate [formGroup]=\"buyForm\" (ngSubmit)=\"Buy(buyForm.value, buyForm.valid)\">\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isBuySubmitted && buyForm.get('price').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Price</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" placeholder=\"Enter Price\" formControlName=\"price\"\n                    [(ngModel)]=\"exchange.BuyPrice\" (keyup)=\"SetBuytotal('price')\" appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">\n                      {{ exchange.BaseCurrency }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isBuySubmitted && buyForm.get('amount').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Amount</span>\n                  </div>\n                  <input type=\"number\" class=\"form-control\" placeholder=\"Enter Amount\" formControlName=\"amount\"\n                    (keyup)=\"SetBuytotal('amount')\" [(ngModel)]=\"exchange.BuyAmount\" appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">\n                      {{ exchange.MainCurrency }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2 rate-per\">\n                  <div class=\"btn-group-add btn-group\">\n                    <button type=\"button\" class=\"btn btn-sm\" *ngFor=\"let item of arrBalPerc\"\n                      (click)=\"calcBalance(item, 'buy')\">\n                      {{ item }}%\n                    </button>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Total</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" placeholder=\"0.00\" formControlName=\"total\"\n                    [(ngModel)]=\"exchange.BuyTotalFees\" (keyup)=\"SetBuytotal('total')\" appEightDigt />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">\n                      {{ exchange.BaseCurrency }}\n                    </span>\n                  </div>\n                  <span class=\"error-msg\" *ngIf=\"isBuySubmitted &&\n                    buyForm.get('total').hasError('rangeValidation')\">\n                    You have only {{ exchange.BaseValue }}\n                    {{ exchange.BaseCurrency }}\n                  </span>\n                  <span class=\"error-msg\" *ngIf=\"isBuySubmitted &&\n                    buyForm.get('total').hasError('minimumValidation')\">\n                    Minimum {{ exchange.BuyMinimum }}\n                    {{ exchange.BaseCurrency }} for Buy Trade\n                  </span>\n                </div>\n                <div>\n                  <p>\n                    Fee: <span class=\"fright\">{{ exchange.BuyFees }}</span>\n                  </p>\n                </div>\n                <div *ngIf=\"!isLogin\">\n                  <div class=\"col-md-12\">\n                    <button type=\"button\" class=\"btn crypt-button-green-full\">\n                      <span (click)=\"GoToUrl('/login')\">Login</span> to\n                      Trade\n                    </button>\n                  </div>\n                </div>\n                <div *ngIf=\"isLogin\">\n                  <div class=\"col-md-12\">\n                    <button type=\"submit\" class=\"btn crypt-button-green-full\" [ladda]=\"isBuyLoading\">\n                      <span>Buy {{ exchange.MainCurrency }}</span>\n                    </button>\n                  </div>\n                </div>\n              </form>\n            </div>\n          </div>\n        </div>\n        <div class=\"col-md-6\">\n          <div class=\"crypt-buy-sell-form\">\n            <p>\n              Sell <span class=\"crypt-down\">{{ exchange.MainCurrency }}</span>\n              <span class=\"fright\">Available:\n                <b class=\"crypt-down\" (click)=\"SellBaseValueClick()\" style=\"cursor: pointer;\">{{ exchange.MainValue | appDynamicDigit: 8\n                  }}\n                  {{ exchange.MainCurrency }}</b></span>\n            </p>\n            <div class=\"crypt-sell\">\n              <form novalidate [formGroup]=\"sellForm\" (ngSubmit)=\"Sell(sellForm.value, sellForm.valid)\">\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isSellSubmitted && sellForm.get('price').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Price</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" formControlName=\"price\" placeholder=\"0.00\"\n                    (keyup)=\"SetSelltotal('PRICE')\" [(ngModel)]=\"exchange.SellPrice\" placeholder=\"Enter Price\"\n                    appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">{{\n                      exchange.BaseCurrency\n                      }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\"\n                  [ngClass]=\"{'has-error': isSellSubmitted && sellForm.get('amount').hasError('required')}\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Amount</span>\n                  </div>\n                  <input type=\"number\" class=\"form-control\" formControlName=\"amount\" placeholder=\"0.00\"\n                    (keyup)=\"SetSelltotal('AMOUNT')\" [(ngModel)]=\"exchange.SellAmount\" placeholder=\"Enter Amount\"\n                    appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">{{\n                      exchange.MainCurrency\n                      }}</span>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2 rate-per\">\n                  <div class=\"btn-group-add btn-group\">\n                    <button type=\"button\" class=\"btn btn-sm\" *ngFor=\"let item of arrBalPerc\"\n                      (click)=\"calcBalance(item, 'sell')\">\n                      {{ item }}%\n                    </button>\n                  </div>\n                </div>\n                <div class=\"input-group mb-2\">\n                  <div class=\"input-group-prepend\">\n                    <span class=\"input-group-text\">Total</span>\n                  </div>\n                  <input type=\"text\" class=\"form-control\" formControlName=\"total\" placeholder=\"0.00\"\n                    (keyup)=\"SetSelltotal('TOTAL')\" [(ngModel)]=\"exchange.SellTotal\" placeholder=\"0.000000000\"\n                    appEightDigit />\n                  <div class=\"input-group-append\">\n                    <span class=\"input-group-text\">{{\n                      exchange.BaseCurrency\n                      }}</span>\n                  </div>\n                  <span class=\"error-msg\" *ngIf=\"isSellSubmitted &&\n                    sellForm.get('total').hasError('rangeValidation')\">\n                    You have only {{ exchange.MainValue }}\n                    {{ exchange.MainCurrency }}\n                  </span>\n                  <span class=\"error-msg\" *ngIf=\"isSellSubmitted &&\n                    sellForm.get('total').hasError('minimumValidation')\">Minimum\n                    {{ exchange.SellMinimum }}\n                    {{ exchange.BaseCurrency }} for Sell Trade</span>\n                </div>\n                <div>\n                  <p>\n                    Fee: <span class=\"fright\">{{ exchange.SellFees }}%</span>\n                  </p>\n                </div>\n                <div class=\"mt-1\" *ngIf=\"!isLogin\">\n                  <button type=\"button\" class=\"btn crypt-button-green-full\">\n                    <span (click)=\"GoToUrl('/login')\">Login</span> to Trade\n                  </button>\n                </div>\n                <div *ngIf=\"isLogin\">\n                  <button type=\"submit\" class=\"btn crypt-button-red-full\" [ladda]=\"isSellLoading\">\n                    <span>Sell {{ exchange.MainCurrency }}</span>\n                  </button>\n                </div>\n              </form>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div role=\"tabpanel\" class=\"tab-pane\" id=\"market\">\n      <app-market-exchange [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\"\n        [baseValue]=\"baseValue\" [mainValue]=\"mainValue\">\n      </app-market-exchange>\n    </div>\n    <div role=\"tabpanel\" class=\"tab-pane\" id=\"stop-limit\">\n      <app-stoplimit [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\"\n        [baseValue]=\"baseValue\" [mainValue]=\"mainValue\"></app-stoplimit>\n    </div>\n  </div>\n</div>\n\n<div class=\"modal fade modal-order cs-modal\" bsModal #modal=\"bs-modal\" tabindex=\"-1\" role=\"dialog\"\n  aria-labelledby=\"mySmallModalLabel\" [config]=\"{ backdrop: 'static' }\" aria-hidden=\"true\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h4 class=\"modal-title pull-left\">Order Details</h4>\n        <button type=\"button\" class=\"close\" data-dismiss=\"bs-modal\" (click)=\"ClosePopUp()\">\n          &times;\n        </button>\n      </div>\n      <div class=\"modal-body xs-p-30\" *ngIf=\"isOpen\">\n        <div class=\"row\">\n          <div class=\"col-md-12\">\n            <div class=\"text-info\" [innerHTML]=\"buysellmsg\"></div>\n          </div>\n        </div>\n      </div>\n      <div class=\"modal-footer\">\n        <div class=\"col-md-12 text-right xs-mt-20\">\n          <button type=\"button\" class=\"btn btn-sm btn-primary\" data-dismiss=\"bs-modal\" (click)=\"ClosePopUp()\">\n            Close\n          </button>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -1358,7 +1437,7 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 var ExchangeComponent = /** @class */ (function () {
-    function ExchangeComponent(authenticationService, exchangeService, fb, toast, router, tradeService, _pusherService, common) {
+    function ExchangeComponent(authenticationService, exchangeService, fb, toast, router, tradeService, pusher, common) {
         var _this = this;
         this.authenticationService = authenticationService;
         this.exchangeService = exchangeService;
@@ -1366,7 +1445,7 @@ var ExchangeComponent = /** @class */ (function () {
         this.toast = toast;
         this.router = router;
         this.tradeService = tradeService;
-        this._pusherService = _pusherService;
+        this.pusher = pusher;
         this.common = common;
         this.isOpen = false;
         this.buysellmsg = "";
@@ -1387,8 +1466,9 @@ var ExchangeComponent = /** @class */ (function () {
         var _this = this;
         this.BindData();
         this.authenticationService.CheckUserLoggedIn();
-        this._pusherService.ch_wallet_amount.bind('App\\Events\\WalletAmount', function (data) {
-            _this.GetWalletBalance(null);
+        this.pusher.ch_wallet_amount.subscribe(function (wallet) {
+            if (wallet.original != undefined)
+                _this.BindExchange(wallet.original.data);
         });
     };
     ExchangeComponent.prototype.ngOnChanges = function (change) {
@@ -1452,24 +1532,32 @@ var ExchangeComponent = /** @class */ (function () {
         };
         this.exchangeService.GetWalletBalance(obj).subscribe(function (res) {
             if (res.success == true) {
-                _this.BindExchange(res);
+                _this.BindExchange(res.data);
+                _this.baseValue = res.data.BaseCurrencyValue;
+                _this.mainValue = res.data.MainCurrencyValue;
                 if (change != null) {
                     _this.ChangeUpdateModel(change);
                 }
             }
+            else {
+                if (res.output != undefined && res.output != "")
+                    _this.toast.error(res.output);
+            }
+        }, function (err) {
+            console.log(err);
         });
     };
-    ExchangeComponent.prototype.BindExchange = function (res) {
-        this.exchange.BaseValue = res.data.BaseCurrencyValue;
-        this.exchange.MainValue = res.data.MainCurrencyValue;
-        this.exchange.BuyFees = res.data.TradeFees;
-        this.exchange.SellFees = res.data.TradeFees;
-        this.exchange.BuyMinimum = res.data.MinTrade;
-        this.exchange.SellMinimum = res.data.MinTrade;
+    ExchangeComponent.prototype.BindExchange = function (data) {
+        this.exchange.BaseValue = data.BaseCurrencyValue;
+        this.exchange.MainValue = data.MainCurrencyValue;
+        this.exchange.BuyFees = data.TradeFees;
+        this.exchange.SellFees = data.TradeFees;
+        this.exchange.BuyMinimum = data.MinTrade;
+        this.exchange.SellMinimum = data.MinTrade;
         this.buyForm.patchValue({ Range: this.exchange.BaseValue });
         this.sellForm.patchValue({ Range: this.exchange.MainValue });
-        this.buyForm.patchValue({ Minimum: res.data.MinTrade });
-        this.sellForm.patchValue({ Minimum: res.data.MinTrade });
+        this.buyForm.patchValue({ Minimum: data.MinTrade });
+        this.sellForm.patchValue({ Minimum: data.MinTrade });
     };
     ExchangeComponent.prototype.ResetForm = function () {
         this.exchange.BuyPrice = null;
@@ -1548,19 +1636,17 @@ var ExchangeComponent = /** @class */ (function () {
                 if (res.success == true) {
                     _this.isBuySubmitted = false;
                     _this.ResetForm();
-                    _this.GetWalletBalance(null);
-                    // this.buysellmsg = res.output;
-                    // this.RefreshMarket(this.pairId);
-                    // this.ShowPopUp();
                     if (res.output != undefined && res.output != "")
                         _this.toast.success(res.output);
-                    _this.isBuyLoading = false;
                 }
                 else {
                     if (res.output != undefined && res.output != "")
                         _this.toast.error(res.output);
-                    _this.isBuyLoading = false;
                 }
+                _this.isBuyLoading = false;
+            }, function (err) {
+                _this.isBuyLoading = false;
+                console.log(err);
             });
         }
     };
@@ -1600,19 +1686,17 @@ var ExchangeComponent = /** @class */ (function () {
                 if (res.success == true) {
                     _this.isSellSubmitted = false;
                     _this.ResetForm();
-                    _this.GetWalletBalance(null);
-                    _this.isSellLoading = false;
                     if (res.output != undefined && res.output != "")
                         _this.toast.success(res.output);
-                    // this.buysellmsg = res.output;
-                    // this.RefreshMarket(this.pairId);
-                    // this.ShowPopUp();
                 }
                 else {
-                    _this.isSellLoading = false;
                     if (res.output != undefined && res.output != "")
                         _this.toast.error(res.output);
                 }
+                _this.isSellLoading = false;
+            }, function (err) {
+                _this.isSellLoading = false;
+                console.log(err);
             });
         }
     };
@@ -1702,6 +1786,14 @@ var ExchangeComponent = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
         __metadata("design:type", Object)
     ], ExchangeComponent.prototype, "sellModel", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
+        __metadata("design:type", Object)
+    ], ExchangeComponent.prototype, "baseValue", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
+        __metadata("design:type", Object)
+    ], ExchangeComponent.prototype, "mainValue", void 0);
     ExchangeComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             selector: "app-exchange",
@@ -1762,19 +1854,25 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 var HomeTradeHistoryComponent = /** @class */ (function () {
-    function HomeTradeHistoryComponent(exchangeService, tradeService, toast, _pusherService) {
+    function HomeTradeHistoryComponent(exchangeService, tradeService, toast, pusher) {
         this.exchangeService = exchangeService;
         this.tradeService = tradeService;
         this.toast = toast;
-        this._pusherService = _pusherService;
+        this.pusher = pusher;
+        this.tradeHisList = [];
         this.tradeListLoading = false;
         this.config = {};
         this.GetTradeObservable();
     }
     HomeTradeHistoryComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', function (data) {
-            _this.GetUserHistory(_this.pairId);
+        this.pusher.ch_exchange_order.subscribe(function (order) {
+            if (order.order_status == "Confirmed" && (order.side == "BUY" || order.side == "SELL")) {
+                if (_this.tradeHisList == null)
+                    _this.tradeHisList = [];
+                _this.tradeHisList.push(order);
+                _this.tradeHisList.sort(function (a, b) { return (b.updated_at > a.updated_at) ? 1 : -1; });
+            }
         });
     };
     HomeTradeHistoryComponent.prototype.ngOnChanges = function (change) {
@@ -1808,6 +1906,9 @@ var HomeTradeHistoryComponent = /** @class */ (function () {
                     _this.toast.error(res.output);
             }
             _this.tradeListLoading = false;
+        }, function (err) {
+            _this.tradeListLoading = false;
+            console.log(err);
         });
     };
     __decorate([
@@ -1884,7 +1985,7 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 var MarketExchangeComponent = /** @class */ (function () {
-    function MarketExchangeComponent(authenticationService, exchangeService, fb, toast, tradeService, common, _pusherService) {
+    function MarketExchangeComponent(authenticationService, exchangeService, fb, toast, tradeService, common, pusher) {
         var _this = this;
         this.authenticationService = authenticationService;
         this.exchangeService = exchangeService;
@@ -1892,7 +1993,7 @@ var MarketExchangeComponent = /** @class */ (function () {
         this.toast = toast;
         this.tradeService = tradeService;
         this.common = common;
-        this._pusherService = _pusherService;
+        this.pusher = pusher;
         this.exchange = new _shared_model__WEBPACK_IMPORTED_MODULE_6__["MarketExchangeModal"]();
         this.isBuyLoading = false;
         this.isSellLoading = false;
@@ -1907,11 +2008,13 @@ var MarketExchangeComponent = /** @class */ (function () {
         });
     }
     MarketExchangeComponent.prototype.ngOnInit = function () {
+        var _this = this;
         this.BindData();
         this.authenticationService.CheckUserLoggedIn();
-        this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', function (data) {
+        this.pusher.ch_wallet_amount.subscribe(function (wallet) {
+            if (wallet.original != undefined)
+                _this.BindExchange(wallet.original.data);
         });
-        this.GetWalletBalance(null);
     };
     MarketExchangeComponent.prototype.BindData = function () {
         this.buyForm = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroup"]({
@@ -1938,6 +2041,10 @@ var MarketExchangeComponent = /** @class */ (function () {
                     : this.mainCurrency;
             this.pairName = this.mainCurrency + "/" + this.baseCurrency;
         }
+        // if (change.baseValue !== undefined || change.mainValue !== undefined ) {
+        this.exchange.BaseValue = change.baseValue !== undefined ? change.baseValue.currentValue : this.exchange.BaseValue;
+        this.exchange.MainValue = change.mainValue !== undefined ? change.mainValue.currentValue : this.exchange.MainValue;
+        // }
     };
     MarketExchangeComponent.prototype.GetWalletBalance = function (change) {
         var _this = this;
@@ -1948,13 +2055,19 @@ var MarketExchangeComponent = /** @class */ (function () {
         };
         this.exchangeService.GetWalletBalance(obj).subscribe(function (res) {
             if (res.success == true) {
-                _this.BindExchange(res);
+                _this.BindExchange(res.data);
             }
+            else {
+                if (res.output != undefined && res.output != "")
+                    _this.toast.error(res.output);
+            }
+        }, function (err) {
+            console.log(err);
         });
     };
-    MarketExchangeComponent.prototype.BindExchange = function (res) {
-        this.exchange.BaseValue = res.data.BaseCurrencyValue;
-        this.exchange.MainValue = res.data.MainCurrencyValue;
+    MarketExchangeComponent.prototype.BindExchange = function (data) {
+        this.exchange.BaseValue = data.BaseCurrencyValue;
+        this.exchange.MainValue = data.MainCurrencyValue;
     };
     MarketExchangeComponent.prototype.BuyMarket = function (model, isValid) {
         var _this = this;
@@ -1971,7 +2084,7 @@ var MarketExchangeComponent = /** @class */ (function () {
                 if (res.success == true) {
                     _this.isBuySubmitted = false;
                     _this.ResetForm();
-                    _this.GetWalletBalance(null);
+                    //this.GetWalletBalance(null);
                     // this.buysellmsg = res.output;
                     // this.ShowPopUp();
                     if (res.output != undefined && res.output != "")
@@ -2005,7 +2118,7 @@ var MarketExchangeComponent = /** @class */ (function () {
                 if (res.success == true) {
                     _this.isSellSubmitted = false;
                     _this.ResetForm();
-                    _this.GetWalletBalance(null);
+                    //this.GetWalletBalance(null);
                     //this.buysellmsg = res.output;
                     //this.RefreshMarket(this.pairId);
                     //this.ShowPopUp();
@@ -2090,6 +2203,14 @@ var MarketExchangeComponent = /** @class */ (function () {
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
         __metadata("design:type", Number)
+    ], MarketExchangeComponent.prototype, "baseValue", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
+        __metadata("design:type", Number)
+    ], MarketExchangeComponent.prototype, "mainValue", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
+        __metadata("design:type", Number)
     ], MarketExchangeComponent.prototype, "orderType", void 0);
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
@@ -2138,7 +2259,7 @@ var MarketExchangeComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<!-- New Theme -->\n<div class=\"row sm-gutters\">\n  <div class=\"col-lg-3 col-md-3 col-xl-3\">\n    <div class=\"crypt-market-status\">\n      <ul class=\"nav nav-tabs\">\n        <li role=\"presentation\">\n          <a class=\"crypt-down\" href=\"javascript:void(0);\">SELL ODERS</a>\n        </li>\n      </ul>\n      <div class=\"tab-content\">\n        <div role=\"tabpanel\" class=\"tab-pane active mx-height\" id=\"SELL\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"sellloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th scope=\"col\">Price</th>\n                  <th scope=\"col\">Amount</th>\n                  <th scope=\"col\">Value</th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr class=\"animated fadeInUp\" *ngFor=\"let item of sellOrderList\" (click)=\"getRowSellOrder(item)\"\n                  style=\"cursor: pointer;\">\n                  <td>{{ item.price | appDynamicDigit: 8 }} </td>\n                  <td> {{ item.amount | appDynamicDigit: 8 }} </td>\n                  <td>\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                </tr>\n                <tr *ngIf=\"sellOrderList == null\" class=\"text-center\">\n                  <td colspan=\"3\"> You have not made any trades yet. Once you make some trades, they will appear here.\n                  </td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"col-lg-3 col-md-3 col-xl-3\">\n    <div class=\"crypt-market-status\">\n      <ul class=\"nav nav-tabs\">\n        <li role=\"presentation\">\n          <a class=\"crypt-up\" href=\"javascript:void(0);\">BUY ORDERS</a>\n        </li>\n      </ul>\n      <div class=\"tab-content\">\n        <div role=\"tabpanel\" class=\"tab-pane active mx-height\" id=\"BUY\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"buyloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th scope=\"col\">Price</th>\n                  <th scope=\"col\">Amount</th>\n                  <th scope=\"col\">Value</th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr class=\"animated fadeInUp\" *ngFor=\"let item of buyOrderList\" (click)=\"getRowBuyOrder(item)\"\n                  style=\"cursor: pointer;\">\n                  <td>{{ item.price | appDynamicDigit: 8 }} </td>\n                  <td> {{ item.amount | appDynamicDigit: 8 }} </td>\n                  <td>\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                </tr>\n                <tr *ngIf=\"buyOrderList == null\" class=\"text-center\">\n                  <td colspan=\"3\"> You have not made any trades yet. Once you make some trades, they will appear here.\n                  </td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"col-lg-6 col-md-6 col-xl-6\">\n    <div class=\"crypt-market-status\">\n      <ul class=\"nav nav-tabs\">\n        <li role=\"presentation\">\n          <a href=\"#active-orders\" class=\"active\" data-toggle=\"tab\">Open Orders</a>\n        </li>\n        <li role=\"presentation\" (click)=\"GetUserConfirmOrders('Confirmed', pairId)\">\n          <a href=\"#closed-orders\" data-toggle=\"tab\">My Order</a>\n        </li>\n      </ul>\n      <div class=\"tab-content\">\n        <div role=\"tabpanel\" class=\"tab-pane active\" id=\"active-orders\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"openloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th class=\"text-center\" scope=\"col\">\n                    Date\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Type\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Side\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Price <span>({{ baseCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Amount <span>({{ mainCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Value <span>({{ baseCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Cancel Order\n                  </th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr *ngFor=\"let item of openOrderlist\">\n                  <td class=\"text-center\">{{ item.updated_at | date:'dd-MM-yyyy hh:mm:ss' }}</td>\n                  <td class=\"text-center\">{{ item.order_type }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.side }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.price | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">{{ item.amount | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                  <td class=\"text-center\">\n                    <a href=\"javascript:void(0);\"><i class=\"fa fa-times crypt-down\" title=\"Cancel Order\"\n                        (click)=\"CancelOrder(item.id)\"></i></a>\n                  </td>\n                </tr>\n                <tr *ngIf=\"openOrderlist == null\">\n                  <td colspan=\"7\">No data found</td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n        <div role=\"tabpanel\" class=\"tab-pane\" id=\"closed-orders\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"myorderloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th class=\"text-center\" scope=\"col\">\n                    Date\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Type\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Side\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Price <span>({{ baseCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Amount <span>({{ mainCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Value <span>({{ baseCurrency }})</span>\n                  </th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr *ngFor=\"let item of tradeHisList\">\n                  <td class=\"text-center\">{{ item.updated_at | date:'dd-MM-yyyy hh:mm:ss' }}</td>\n                  <td class=\"text-center\">{{ item.order_type }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.side }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.price | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">{{ item.amount | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                </tr>\n                <tr *ngIf=\"tradeHisList == null\">\n                  <td colspan=\"6\">No data found</td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
+module.exports = "<!-- New Theme -->\n<div class=\"row sm-gutters\">\n  <div class=\"col-lg-3 col-md-3 col-xl-3\">\n    <div class=\"crypt-market-status\">\n      <ul class=\"nav nav-tabs\">\n        <li role=\"presentation\">\n          <a class=\"crypt-down\" href=\"javascript:void(0);\">SELL ODERS</a>\n        </li>\n      </ul>\n      <div class=\"tab-content\">\n        <div role=\"tabpanel\" class=\"tab-pane active mx-height\" id=\"SELL\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"sellloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th scope=\"col\">Price</th>\n                  <th scope=\"col\">Amount</th>\n                  <th scope=\"col\">Value</th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr class=\"animated fadeInUp\" *ngFor=\"let item of sellOrderList\" (click)=\"getRowSellOrder(item)\"\n                  style=\"cursor: pointer;\">\n                  <td>{{ item.price | appDynamicDigit: 8 }} </td>\n                  <td> {{ item.amount | appDynamicDigit: 8 }} </td>\n                  <td>\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                </tr>\n                <tr *ngIf=\"sellOrderList == null\" class=\"text-center\">\n                  <td colspan=\"3\"> You have not made any trades yet. Once you make some trades, they will appear here.\n                  </td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"col-lg-3 col-md-3 col-xl-3\">\n    <div class=\"crypt-market-status\">\n      <ul class=\"nav nav-tabs\">\n        <li role=\"presentation\">\n          <a class=\"crypt-up\" href=\"javascript:void(0);\">BUY ORDERS</a>\n        </li>\n      </ul>\n      <div class=\"tab-content\">\n        <div role=\"tabpanel\" class=\"tab-pane active mx-height\" id=\"BUY\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"buyloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th scope=\"col\">Price</th>\n                  <th scope=\"col\">Amount</th>\n                  <th scope=\"col\">Value</th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr class=\"animated fadeInUp\" *ngFor=\"let item of buyOrderList\" (click)=\"getRowBuyOrder(item)\"\n                  style=\"cursor: pointer;\">\n                  <td>{{ item.price | appDynamicDigit: 8 }} </td>\n                  <td> {{ item.amount | appDynamicDigit: 8 }} </td>\n                  <td>\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                </tr>\n                <tr *ngIf=\"buyOrderList == null\" class=\"text-center\">\n                  <td colspan=\"3\" class=\"text-center\"> You have not made any trades yet. Once you make some trades, they\n                    will appear here.\n                  </td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"col-lg-6 col-md-6 col-xl-6\">\n    <div class=\"crypt-market-status\">\n      <ul class=\"nav nav-tabs\">\n        <li role=\"presentation\">\n          <a href=\"#active-orders\" class=\"active\" data-toggle=\"tab\">Open Orders</a>\n        </li>\n        <li role=\"presentation\">\n          <a href=\"#closed-orders\" data-toggle=\"tab\">My Order</a>\n        </li>\n      </ul>\n      <div class=\"tab-content\">\n        <div role=\"tabpanel\" class=\"tab-pane active\" id=\"active-orders\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"openloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th class=\"text-center\" scope=\"col\">\n                    Date\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Type\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Side\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Price <span>({{ baseCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Amount <span>({{ mainCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Value <span>({{ baseCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Cancel Order\n                  </th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr *ngFor=\"let item of userPendingOrder\">\n                  <td class=\"text-center\">{{ item.updated_at | date:'dd-MM-yyyy hh:mm:ss' }}</td>\n                  <td class=\"text-center\">{{ item.order_type }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.side }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.price | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">{{ item.amount | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                  <td class=\"text-center\">\n                    <a href=\"javascript:void(0);\"><i class=\"fa fa-times crypt-down\" title=\"Cancel Order\"\n                        (click)=\"CancelOrder(item.id)\"></i></a>\n                  </td>\n                </tr>\n                <tr *ngIf=\"userPendingOrder == undefined\">\n                  <td colspan=\"7\" class=\"text-center\">No data found</td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n        <div role=\"tabpanel\" class=\"tab-pane\" id=\"closed-orders\">\n          <div class=\"data-box support-scroll-container ps\" [perfectScrollbar]=\"config\"\n            style=\"position: relative; max-height: calc(50vh - 110px);\">\n            <app-loader [IsLoading]=\"myorderloading\"></app-loader>\n            <table class=\"table table-striped\">\n              <thead>\n                <tr>\n                  <th class=\"text-center\" scope=\"col\">\n                    Date\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Type\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Side\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Price <span>({{ baseCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Amount <span>({{ mainCurrency }})</span>\n                  </th>\n                  <th class=\"text-center\" scope=\"col\">\n                    Value <span>({{ baseCurrency }})</span>\n                  </th>\n                </tr>\n              </thead>\n              <tbody>\n                <tr *ngFor=\"let item of userConfirmOrder\">\n                  <td class=\"text-center\">{{ item.updated_at | date:'dd-MM-yyyy hh:mm:ss' }}</td>\n                  <td class=\"text-center\">{{ item.order_type }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.side }}</td>\n                  <td [ngClass]=\"{'crypt-up': item.side=='BUY','crypt-down': item.side=='SELL'}\" class=\"text-center\">\n                    {{ item.price | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">{{ item.amount | appDynamicDigit: 8 }}</td>\n                  <td class=\"text-center\">\n                    {{ item.price * item.amount | appDynamicDigit: 8 }}\n                  </td>\n                </tr>\n                <tr *ngIf=\"userConfirmOrder == undefined\">\n                  <td colspan=\"6\" class=\"text-center\">No data found</td>\n                </tr>\n              </tbody>\n            </table>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -2169,12 +2290,12 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 var OrdersComponent = /** @class */ (function () {
-    function OrdersComponent(exchangeService, tradeService, userService, toast, _pusherService) {
+    function OrdersComponent(exchangeService, tradeService, userService, toast, pusher) {
         this.exchangeService = exchangeService;
         this.tradeService = tradeService;
         this.userService = userService;
         this.toast = toast;
-        this._pusherService = _pusherService;
+        this.pusher = pusher;
         this.buyData = [];
         this.sellData = [];
         this.buyCount = 0;
@@ -2192,23 +2313,36 @@ var OrdersComponent = /** @class */ (function () {
     }
     OrdersComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this._pusherService.ch_pending_order.bind('App\\Events\\PendingOrder', function (data) {
-            _this.GetUserPendingOrders("Pending", _this.pairId);
-            _this.GetSellOrder(_this.pairId);
-            _this.GetBuyOrder(_this.pairId);
+        this.pusher.ch_exchange_order.subscribe(function (order) {
+            if (order.order_status == "Pending" && order.side == "BUY") {
+                if (order.side == "BUY") {
+                    if (_this.buyOrderList == null)
+                        _this.buyOrderList = [];
+                    _this.buyOrderList.push(order);
+                    _this.buyOrderList.sort(function (a, b) { return (b.price > a.price) ? 1 : -1; });
+                }
+                else if (order.side == "SELL") {
+                    if (_this.sellOrderList == null)
+                        _this.sellOrderList = [];
+                    _this.sellOrderList.push(order);
+                    _this.sellOrderList.sort(function (a, b) { return (a.price > b.price) ? 1 : -1; });
+                }
+            }
         });
-        this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', function (data) {
-            _this.GetUserConfirmOrders("Confirmed", _this.pairId);
-            _this.GetSellOrder(_this.pairId);
-            _this.GetBuyOrder(_this.pairId);
+        this.pusher.ch_user_order.subscribe(function (order) {
+            if (order.order_status == "Pending") {
+                if (_this.userPendingOrder == null)
+                    _this.userPendingOrder = [];
+                _this.userPendingOrder.push(order);
+                _this.userPendingOrder.sort(function (a, b) { return (b.updated_at > a.updated_at) ? 1 : -1; });
+            }
+            if (order.order_status == "Confirmed") {
+                if (_this.userConfirmOrder == null)
+                    _this.userConfirmOrder = [];
+                _this.userConfirmOrder.push(order);
+                _this.userConfirmOrder.sort(function (a, b) { return (b.updated_at > a.updated_at) ? 1 : -1; });
+            }
         });
-        this._pusherService.ch_order_cancel.bind('App\\Events\\OrderCancel', function (data) {
-            _this.GetUserPendingOrders("Confirmed", _this.pairId);
-            _this.GetSellOrder(_this.pairId);
-            _this.GetBuyOrder(_this.pairId);
-        });
-        /* this.GetSellOrder(this.pairId);
-        this.GetBuyOrder(this.pairId); */
     };
     OrdersComponent.prototype.ngOnChanges = function (change) {
         this.pairId =
@@ -2222,6 +2356,7 @@ var OrdersComponent = /** @class */ (function () {
                 ? change.mainCurrency.currentValue
                 : this.mainCurrency;
         this.GetUserPendingOrders("Pending", this.pairId);
+        this.GetUserConfirmOrders("Confirmed", this.pairId);
         this.GetSellOrder(this.pairId);
         this.GetBuyOrder(this.pairId);
     };
@@ -2231,13 +2366,16 @@ var OrdersComponent = /** @class */ (function () {
         this.openloading = true;
         this.exchangeService.GetUserTrade(obj).subscribe(function (res) {
             if (res.success == true) {
-                _this.openOrderlist = res.data;
+                _this.userPendingOrder = res.data;
             }
             else {
                 if (res.output != undefined && res.output != "")
                     _this.toast.error(res.output);
             }
             _this.openloading = false;
+        }, function (err) {
+            _this.openloading = false;
+            console.log(err);
         });
     };
     OrdersComponent.prototype.GetUserConfirmOrders = function (orderstatus, id) {
@@ -2246,13 +2384,16 @@ var OrdersComponent = /** @class */ (function () {
         this.myorderloading = true;
         this.exchangeService.GetUserTrade(obj).subscribe(function (res) {
             if (res.success == true) {
-                _this.tradeHisList = res.data;
+                _this.userConfirmOrder = res.data;
             }
             else {
                 if (res.output != undefined && res.output != "")
                     _this.toast.error(res.output);
             }
             _this.myorderloading = false;
+        }, function (err) {
+            _this.myorderloading = false;
+            console.log(err);
         });
     };
     OrdersComponent.prototype.GetSellOrder = function (id) {
@@ -2270,6 +2411,9 @@ var OrdersComponent = /** @class */ (function () {
                     _this.toast.error(res.output);
             }
             _this.sellloading = false;
+        }, function (err) {
+            _this.sellloading = false;
+            console.log(err);
         });
     };
     OrdersComponent.prototype.GetBuyOrder = function (id) {
@@ -2287,6 +2431,9 @@ var OrdersComponent = /** @class */ (function () {
                     _this.toast.error(res.output);
             }
             _this.buyloading = false;
+        }, function (err) {
+            _this.buyloading = false;
+            console.log(err);
         });
     };
     OrdersComponent.prototype.CancelOrder = function (id) {
@@ -2303,7 +2450,7 @@ var OrdersComponent = /** @class */ (function () {
                 _this.openloading = true;
                 _this.exchangeService.CancelOrder(id).subscribe(function (res) {
                     if (res.success == true) {
-                        _this.GetUserPendingOrders("Pending", _this.pairId);
+                        //this.GetUserPendingOrders("Pending", this.pairId);
                         if (res.output != undefined && res.output != "")
                             _this.toast.success(res.output);
                     }
@@ -2311,6 +2458,10 @@ var OrdersComponent = /** @class */ (function () {
                         if (res.output != undefined && res.output != "")
                             _this.toast.error(res.output);
                     }
+                    _this.openloading = false;
+                }, function (err) {
+                    _this.openloading = false;
+                    console.log(err);
                 });
             }
             else {
@@ -2320,6 +2471,7 @@ var OrdersComponent = /** @class */ (function () {
         });
     };
     OrdersComponent.prototype.getRowBuyOrder = function (item) {
+        debugger;
         this.buyModelChange.emit(item);
     };
     OrdersComponent.prototype.getRowSellOrder = function (item) {
@@ -2386,7 +2538,7 @@ var OrdersComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<app-loader [IsLoading]=\"loading\"></app-loader>\n\n<div class=\"row\">\n  <div class=\"col-md-12\">\n    <div class=\"btn-group\" aria-label=\"Button group with nested dropdown\">\n      <button type=\"button\" class=\"btn btn-sm btn-primary\" (click)=\"FilterChart(1,'Time','T')\">Time</button>\n      <div class=\"btn-group\" role=\"group\">\n        <button id=\"btnGroupDrop1\" type=\"button\" class=\"btn btn-sm btn-primary dropdown-toggle\" data-toggle=\"dropdown\"\n          aria-haspopup=\"true\" aria-expanded=\"false\">\n          {{miniteheader}}\n        </button>\n        <div class=\"dropdown-menu\" aria-labelledby=\"btnGroupDrop1\">\n          <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(1,'1m','m')\">1m</a>\n          <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(300,'5m','m')\">5m</a>\n          <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(900,'15m','m')\">15m</a>\n          <!-- <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(1800,'30m','m')\">30m</a> -->\n        </div>\n      </div>\n      <div class=\"btn-group\" role=\"group\">\n        <button id=\"btnGroupDrop2\" type=\"button\" class=\"btn btn-sm btn-primary dropdown-toggle\" data-toggle=\"dropdown\"\n          aria-haspopup=\"true\" aria-expanded=\"false\">\n          {{hourheader}}\n        </button>\n        <div class=\"dropdown-menu\" aria-labelledby=\"btnGroupDrop2\">\n          <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(3600,'1h','h')\">1h</a>\n          <!-- <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(7200,'2h','h')\">2h</a> -->\n          <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(14400,'4h','h')\">4h</a>\n          <!-- <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(21600,'6h','h')\">6h</a>\n          <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(43200,'12h','h')\">12h</a> -->\n        </div>\n      </div>\n      <button type=\"button\" class=\"btn btn-sm btn-primary\" (click)=\"FilterChart(86400,'1D','D')\">1D</button>\n      <button type=\"button\" class=\"btn btn-sm btn-primary\" (click)=\"FilterChart(604800,'1W','W')\">1W</button>\n      <!-- <button type=\"button\" class=\"btn btn-sm btn-primary\" (click)=\"FilterChart(2592000,'1M','M')\">1M</button> -->\n    </div>\n  </div>\n</div>\n<br />\n<div id=\"chartdiv\"></div>"
+module.exports = "<app-loader [IsLoading]=\"loading\"></app-loader>\n\n<div class=\"row\">\n  <div class=\"col-md-12\">\n    <div class=\"btn-group\" aria-label=\"Button group with nested dropdown\">\n      <button type=\"button\" class=\"btn btn-sm btn-primary\" (click)=\"FilterChart(1,'Time','T')\">Time</button>\n      <div class=\"btn-group\" role=\"group\">\n        <button id=\"btnGroupDrop1\" type=\"button\" class=\"btn btn-sm btn-primary dropdown-toggle\" data-toggle=\"dropdown\"\n          aria-haspopup=\"true\" aria-expanded=\"false\">\n          {{miniteheader}}\n        </button>\n        <div class=\"dropdown-menu\" aria-labelledby=\"btnGroupDrop1\">\n          <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(60,'1m','m')\">1m</a>\n          <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(300,'5m','m')\">5m</a>\n          <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(900,'15m','m')\">15m</a>\n          <!-- <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(1800,'30m','m')\">30m</a> -->\n        </div>\n      </div>\n      <div class=\"btn-group\" role=\"group\">\n        <button id=\"btnGroupDrop2\" type=\"button\" class=\"btn btn-sm btn-primary dropdown-toggle\" data-toggle=\"dropdown\"\n          aria-haspopup=\"true\" aria-expanded=\"false\">\n          {{hourheader}}\n        </button>\n        <div class=\"dropdown-menu\" aria-labelledby=\"btnGroupDrop2\">\n          <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(3600,'1h','h')\">1h</a>\n          <!-- <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(7200,'2h','h')\">2h</a> -->\n          <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(14400,'4h','h')\">4h</a>\n          <!-- <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(21600,'6h','h')\">6h</a>\n          <a class=\"dropdown-item\" href=\"javascript:void(0);\" (click)=\"FilterChart(43200,'12h','h')\">12h</a> -->\n        </div>\n      </div>\n      <button type=\"button\" class=\"btn btn-sm btn-primary\" (click)=\"FilterChart(86400,'1D','D')\">1D</button>\n      <button type=\"button\" class=\"btn btn-sm btn-primary\" (click)=\"FilterChart(604800,'1W','W')\">1W</button>\n      <!-- <button type=\"button\" class=\"btn btn-sm btn-primary\" (click)=\"FilterChart(2592000,'1M','M')\">1M</button> -->\n    </div>\n  </div>\n</div>\n<br />\n<div id=\"chartdiv\"></div>"
 
 /***/ }),
 
@@ -2418,9 +2570,10 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 var OriginalChartComponent = /** @class */ (function () {
-    function OriginalChartComponent(tradeService, exchangeService) {
+    function OriginalChartComponent(tradeService, exchangeService, pusher) {
         this.tradeService = tradeService;
         this.exchangeService = exchangeService;
+        this.pusher = pusher;
         this.loading = false;
         this.dailyExchange = new _shared_model__WEBPACK_IMPORTED_MODULE_3__["DailyExchange"]();
         this.isDailyExchangeLoader = false;
@@ -2428,10 +2581,14 @@ var OriginalChartComponent = /** @class */ (function () {
         this.miniteheader = 'm';
         this.hourheader = 'h';
         this.isOriginal = false;
-        this.ChartObservable();
-        this.GetDailyExchangeObservable();
     }
     OriginalChartComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.pusher.ch_exchange_order.subscribe(function (order) {
+            if (order.order_status == "Confirmed") {
+                _this.chartData(180);
+            }
+        });
     };
     OriginalChartComponent.prototype.ngOnChanges = function (change) {
         this.pairId =
@@ -2514,25 +2671,6 @@ var OriginalChartComponent = /** @class */ (function () {
             that.loading = false;
         });
     };
-    OriginalChartComponent.prototype.ChartObservable = function () {
-        var _this = this;
-        this.tradeService.chartRefreshAll$().subscribe(function (data) {
-            var interval = localStorage.getItem('chartInterval');
-            _this.chartData(interval);
-        });
-    };
-    OriginalChartComponent.prototype.GetDailyExchangeObservable = function () {
-        var _this = this;
-        this.tradeService.dailyExchangeAll$().subscribe(function (data) {
-            if (data.length > 0) {
-                _this.dailyExchange = new _shared_model__WEBPACK_IMPORTED_MODULE_3__["DailyExchange"]();
-                _this.dailyExchange = data[0];
-            }
-            else {
-                _this.dailyExchange = new _shared_model__WEBPACK_IMPORTED_MODULE_3__["DailyExchange"]();
-            }
-        });
-    };
     OriginalChartComponent.prototype.FilterChart = function (minite, header, type) {
         if (type === 'm') {
             this.miniteheader = header;
@@ -2561,7 +2699,8 @@ var OriginalChartComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./original-chart.component.html */ "./src/app/exchange/original-chart/original-chart.component.html")
         }),
         __metadata("design:paramtypes", [_core_service__WEBPACK_IMPORTED_MODULE_2__["TradeService"],
-            _core_service__WEBPACK_IMPORTED_MODULE_2__["ExchangeService"]])
+            _core_service__WEBPACK_IMPORTED_MODULE_2__["ExchangeService"],
+            _core_service__WEBPACK_IMPORTED_MODULE_2__["PusherService"]])
     ], OriginalChartComponent);
     return OriginalChartComponent;
 }());
@@ -2613,7 +2752,7 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 var StoplimitComponent = /** @class */ (function () {
-    function StoplimitComponent(authenticationService, exchangeService, fb, toast, common, router, _pusherService) {
+    function StoplimitComponent(authenticationService, exchangeService, fb, toast, common, router, pusher) {
         var _this = this;
         this.authenticationService = authenticationService;
         this.exchangeService = exchangeService;
@@ -2621,7 +2760,7 @@ var StoplimitComponent = /** @class */ (function () {
         this.toast = toast;
         this.common = common;
         this.router = router;
-        this._pusherService = _pusherService;
+        this.pusher = pusher;
         this.isBuySubmitted = false;
         this.isSellSubmitted = false;
         this.isBuyLoading = false;
@@ -2647,13 +2786,17 @@ var StoplimitComponent = /** @class */ (function () {
                     ? change.mainCurrency.currentValue
                     : this.mainCurrency;
         }
+        this.stopLimitObj.BaseValue = change.baseValue !== undefined ? change.baseValue.currentValue : this.stopLimitObj.BaseValue;
+        this.stopLimitObj.MainValue = change.mainValue !== undefined ? change.mainValue.currentValue : this.stopLimitObj.MainValue;
     };
     StoplimitComponent.prototype.ngOnInit = function () {
+        var _this = this;
         this.authenticationService.CheckUserLoggedIn();
         this.BindData();
-        this._pusherService.ch_confirm_order.bind('App\\Events\\ConfirmOrder', function (data) {
+        this.pusher.ch_wallet_amount.subscribe(function (wallet) {
+            if (wallet.original != undefined)
+                _this.BindExchange(wallet.original.data);
         });
-        this.GetWalletBalance(null);
     };
     StoplimitComponent.prototype.GetWalletBalance = function (change) {
         var _this = this;
@@ -2668,9 +2811,9 @@ var StoplimitComponent = /** @class */ (function () {
             }
         });
     };
-    StoplimitComponent.prototype.BindExchange = function (res) {
-        this.stopLimitObj.BaseValue = res.data.BaseCurrencyValue;
-        this.stopLimitObj.MainValue = res.data.MainCurrencyValue;
+    StoplimitComponent.prototype.BindExchange = function (data) {
+        this.stopLimitObj.BaseValue = data.BaseCurrencyValue;
+        this.stopLimitObj.MainValue = data.MainCurrencyValue;
     };
     StoplimitComponent.prototype.BindData = function () {
         this.buyForm = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroup"]({
@@ -2760,7 +2903,7 @@ var StoplimitComponent = /** @class */ (function () {
                 if (res.success == true) {
                     _this.isBuySubmitted = false;
                     _this.ResetForm();
-                    _this.GetWalletBalance(null);
+                    //this.GetWalletBalance(null);
                     if (res.output != undefined && res.output != "")
                         _this.toast.success(res.output);
                 }
@@ -2788,7 +2931,7 @@ var StoplimitComponent = /** @class */ (function () {
                 if (res.success == true) {
                     _this.isSellSubmitted = false;
                     _this.ResetForm();
-                    _this.GetWalletBalance(null);
+                    //this.GetWalletBalance(null);
                     if (res.output != undefined && res.output != "")
                         _this.toast.success(res.output);
                 }
@@ -2816,6 +2959,14 @@ var StoplimitComponent = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
         __metadata("design:type", String)
     ], StoplimitComponent.prototype, "pairId", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
+        __metadata("design:type", Number)
+    ], StoplimitComponent.prototype, "baseValue", void 0);
+    __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
+        __metadata("design:type", Number)
+    ], StoplimitComponent.prototype, "mainValue", void 0);
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"])(),
         __metadata("design:type", Boolean)
@@ -3880,16 +4031,19 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var FilterArrayPipe = /** @class */ (function () {
     function FilterArrayPipe() {
     }
-    FilterArrayPipe.prototype.transform = function (value, args) {
-        if (args == null) {
-            return value;
-        }
-        return value.filter(function (item) {
-            return (item.Coin.toLowerCase().indexOf(args.toLowerCase()) > -1 ||
-                item.Name.toLowerCase().indexOf(args.toLowerCase()) > -1 ||
-                item.TotBalance.toString().includes(args) ||
-                item.OnOrders.toString().includes(args));
+    FilterArrayPipe.prototype.transform = function (array) {
+        array.sort(function (a, b) {
+            if (a.price < b.price) {
+                return -1;
+            }
+            else if (a.price > b.price) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
         });
+        return array;
     };
     FilterArrayPipe = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Pipe"])({
@@ -4140,7 +4294,7 @@ var notifierDefaultOptions = {
     },
     theme: 'material',
     behaviour: {
-        autoHide: 5000,
+        autoHide: false,
         onClick: false,
         onMouseover: 'pauseAutoHide',
         showDismissButton: true,
@@ -4209,7 +4363,7 @@ var SharedModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header>\n  <div class=\"container-full-width\">\n    <div class=\"crypt-header\">\n      <div class=\"row\">\n        <div class=\"col-xl-4 col-lg-4 col-md-4 col-sm-5\">\n          <div class=\"row\">\n            <div class=\"col-xs-2\">\n              <div class=\"crypt-logo\">\n                <img src=\"../../../assets/exchanger/images/logo.png\" alt=\"\" />\n              </div>\n            </div>\n          </div>\n        </div>\n        <div class=\"col-xl-8 col-lg-8 col-md-8 d-none d-md-block d-lg-block\">\n          <ul class=\"crypt-heading-menu fright\">\n            <!-- <li>\n              <a [routerLink]=\"['/user/balance']\" routerLinkActive=\"active\">Exchange</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistory']\" routerLinkActive=\"active\">Overview</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistory']\" routerLinkActive=\"active\">Market Cap</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistoory']\" routerLinkActive=\"active\">Trading</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistory']\" routerLinkActive=\"active\">Account</a>\n            </li> -->\n            <li class=\"crypt-box-menu menu-green\" *ngIf=\"!isLogin\">\n              <a href=\"javascript:void(0);\" [routerLink]=\"['/login']\">login</a>\n            </li>\n            <li class=\"btn btn-danger\" *ngIf=\"isLogin\">\n              <a href=\"javascript:void(0);\" (click)=\"Logout();\">logout</a>\n            </li>\n          </ul>\n        </div>\n        <i class=\"menu-toggle pe-7s-menu d-xs-block d-sm-block d-md-none\n          d-sm-none\"></i>\n      </div>\n    </div>\n  </div>\n  <div class=\"crypt-mobile-menu\">\n    <ul class=\"crypt-heading-menu\">\n      <li class=\"active\"><a href=\"#\">Exchange</a></li>\n      <li><a href=\"#\">Market Cap</a></li>\n      <li><a href=\"#\">Treanding</a></li>\n      <li><a href=\"#\">Tools</a></li>\n      <li class=\"crypt-box-menu menu-red\"><a href=\"#\">register</a></li>\n      <li class=\"crypt-box-menu menu-green\"><a href=\"#\">login</a></li>\n    </ul>\n    <div class=\"crypt-gross-market-cap\">\n      <h5>$34.795.90 <span class=\"crypt-up pl-2\">+3.435 %</span></h5>\n      <h6>0.7925.90 BTC <span class=\"crypt-down pl-2\">+7.435 %</span></h6>\n    </div>\n  </div>\n</header>\n<div class=\"container-fluid\">\n  <div class=\"row sm-gutters\">\n    <div class=\"col-md-3 col-lg-3 col-xl-3 col-xxl-2\">\n      <div class=\"crypt-market-status mt-3\">\n        <div>\n          <ul class=\"nav nav-tabs\" id=\"crypt-tab\">\n            <li role=\"presentation\">\n              <a href=\"#btc\" data-toggle=\"tab\" [ngClass]=\"{ active: selectedItem == '1' }\"\n                (click)=\"GetMarketList(1)\">btc</a>\n            </li>\n\n            <li role=\"presentation\">\n              <a href=\"#eth\" data-toggle=\"tab\" [ngClass]=\"{ active: selectedItem == '2' }\"\n                (click)=\"GetMarketList(2)\">eth</a>\n            </li>\n            <li role=\"presentation\">\n              <a href=\"#usdt\" class=\"active\" data-toggle=\"tab\" [ngClass]=\"{ active: selectedItem == '3' }\"\n                (click)=\"GetMarketList(3)\">usdt</a>\n            </li>\n          </ul>\n          <div class=\"tab-content crypt-tab-content\">\n            <div role=\"tabpanel\" class=\" active\" id=\"usd\">\n              <app-loader [IsLoading]=\"loading\"></app-loader>\n              <table class=\"table table-striped\">\n                <thead>\n                  <tr class=\"table-head\">\n                    <th scope=\"col\">Pair</th>\n                    <th scope=\"col\">Price</th>\n                    <th scope=\"col\">Change</th>\n                  </tr>\n                </thead>\n                <tbody class=\"crypt-table-hover\">\n\n                  <tr *ngFor=\"let item of dataList\" (click)=\"GetRowDetail(item)\" class=\"cr_success\"\n                    style=\"line-height: 2.2em;\" [ngClass]=\"{ 'bg-row': item.name == selectedRow }\">\n\n                    <td class=\"align-middle\">{{ item.name }}</td>\n\n                    <td class=\"crypt-down align-middle\">\n                      <span class=\"pr-2 text-center\" data-toggle=\"tooltip\" data-placement=\"right\"\n                        data-original-title=\"$ 0.05\">{{ item.price | appDynamicDigit: 8 }}</span>\n                    </td>\n\n                    <td appColor [attr.value]=\"item.change\">\n                      <span class=\"d-block\">{{ item.change | appDynamicDigit: 2 }}%</span>\n                    </td>\n\n                  </tr>\n                  <tr *ngIf=\"dataList?.length == 0\">\n                    <td colspan=\"3\">No data found</td>\n                  </tr>\n                </tbody>\n              </table>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-6 col-lg-6 col-xl-6 col-xxl-8\">\n      <app-chart [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\"></app-chart>\n      <app-exchange [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\" [side]=\"side\"\n        [price]=\"price\" [amount]=\"amount\" [total]=\"total\" [buyModel]=\"buyModel\" [sellModel]=\"sellModel\"></app-exchange>\n\n      <!-- <div id=\"depthchart\" class=\"depthchart h-40 crypt-dark-segment\"></div> -->\n    </div>\n    <div class=\"col-md-4 col-lg-3 col-xl-3 col-xxl-2\">\n      <app-home-trade-history [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\" [pairId]=\"pairId\">\n      </app-home-trade-history>\n    </div>\n  </div>\n</div>\n<div class=\"container-fluid\">\n  <app-orders [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\" [pairId]=\"pairId\"\n    (orederTypeChange)=\"changeOrderType($event)\" (priceChange)=\"changePrice($event)\"\n    (amountChange)=\"changeAmount($event)\" (totalChange)=\"changeTotal($event)\" (buyModelChange)=\"changeBuyModel($event)\"\n    (sellModelChange)=\"changeSellModel($event)\"></app-orders>\n</div>\n<footer></footer>"
+module.exports = "<header>\n  <div class=\"container-full-width\">\n    <div class=\"crypt-header\">\n      <div class=\"row\">\n        <div class=\"col-xl-4 col-lg-4 col-md-4 col-sm-5\">\n          <div class=\"row\">\n            <div class=\"col-xs-2\">\n              <div class=\"crypt-logo\">\n                <img src=\"../../../assets/exchanger/images/logo.png\" alt=\"\" />\n              </div>\n            </div>\n          </div>\n        </div>\n        <div class=\"col-xl-8 col-lg-8 col-md-8 d-none d-md-block d-lg-block\">\n          <ul class=\"crypt-heading-menu fright\">\n            <!-- <li>\n              <a [routerLink]=\"['/user/balance']\" routerLinkActive=\"active\">Exchange</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistory']\" routerLinkActive=\"active\">Overview</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistory']\" routerLinkActive=\"active\">Market Cap</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistoory']\" routerLinkActive=\"active\">Trading</a>\n            </li>\n            <li>\n              <a [routerLink]=\"['/user/balancehistory']\" routerLinkActive=\"active\">Account</a>\n            </li> -->\n            <li class=\"crypt-box-menu menu-green\" *ngIf=\"!isLogin\">\n              <a href=\"javascript:void(0);\" [routerLink]=\"['/login']\">login</a>\n            </li>\n            <li class=\"btn btn-danger\" *ngIf=\"isLogin\">\n              <a href=\"javascript:void(0);\" (click)=\"Logout();\">logout</a>\n            </li>\n          </ul>\n        </div>\n        <i class=\"menu-toggle pe-7s-menu d-xs-block d-sm-block d-md-none\n          d-sm-none\"></i>\n      </div>\n    </div>\n  </div>\n  <div class=\"crypt-mobile-menu\">\n    <ul class=\"crypt-heading-menu\">\n      <li class=\"active\"><a href=\"#\">Exchange</a></li>\n      <li><a href=\"#\">Market Cap</a></li>\n      <li><a href=\"#\">Treanding</a></li>\n      <li><a href=\"#\">Tools</a></li>\n      <li class=\"crypt-box-menu menu-red\"><a href=\"#\">register</a></li>\n      <li class=\"crypt-box-menu menu-green\"><a href=\"#\">login</a></li>\n    </ul>\n    <div class=\"crypt-gross-market-cap\">\n      <h5>$34.795.90 <span class=\"crypt-up pl-2\">+3.435 %</span></h5>\n      <h6>0.7925.90 BTC <span class=\"crypt-down pl-2\">+7.435 %</span></h6>\n    </div>\n  </div>\n</header>\n<div class=\"container-fluid\">\n  <div class=\"row sm-gutters\">\n    <div class=\"col-md-3 col-lg-3 col-xl-3 col-xxl-2\">\n      <div class=\"crypt-market-status mt-3\">\n        <div>\n          <ul class=\"nav nav-tabs\" id=\"crypt-tab\">\n            <li role=\"presentation\">\n              <a href=\"#btc\" data-toggle=\"tab\" [ngClass]=\"{ active: selectedItem == '1' }\"\n                (click)=\"GetMarketListTab(1)\">btc</a>\n            </li>\n\n            <li role=\"presentation\">\n              <a href=\"#eth\" data-toggle=\"tab\" [ngClass]=\"{ active: selectedItem == '2' }\"\n                (click)=\"GetMarketListTab(2)\">eth</a>\n            </li>\n            <li role=\"presentation\">\n              <a href=\"#usdt\" class=\"active\" data-toggle=\"tab\" [ngClass]=\"{ active: selectedItem == '3' }\"\n                (click)=\"GetMarketListTab(3)\">usdt</a>\n            </li>\n          </ul>\n          <div class=\"tab-content crypt-tab-content\">\n            <div role=\"tabpanel\" class=\" active\" id=\"usd\">\n              <app-loader [IsLoading]=\"loading\"></app-loader>\n              <table class=\"table table-striped\">\n                <thead>\n                  <tr class=\"table-head\">\n                    <th scope=\"col\">Pair</th>\n                    <th scope=\"col\">Price</th>\n                    <th scope=\"col\">Change</th>\n                  </tr>\n                </thead>\n                <tbody class=\"crypt-table-hover\">\n\n                  <tr *ngFor=\"let item of currencyPairList\" (click)=\"GetRowDetail(item)\" class=\"cr_success\"\n                    style=\"line-height: 2.2em;\" [ngClass]=\"{ 'bg-row': item.name == selectedRow }\">\n\n                    <td class=\"align-middle\">{{ item.name }}</td>\n\n                    <td class=\"crypt-down align-middle\">\n                      <span class=\"pr-2 text-center\" data-toggle=\"tooltip\" data-placement=\"right\"\n                        data-original-title=\"$ 0.05\">{{ item.price | appDynamicDigit: 8 }}</span>\n                    </td>\n\n                    <td appColor [attr.value]=\"item.change\">\n                      <span class=\"d-block\">{{ item.change | appDynamicDigit: 2 }}%</span>\n                    </td>\n\n                  </tr>\n                  <tr *ngIf=\"dataList?.length == 0\">\n                    <td colspan=\"3\">No data found</td>\n                  </tr>\n                </tbody>\n              </table>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div class=\"col-md-6 col-lg-6 col-xl-6 col-xxl-8\">\n      <app-chart [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\"></app-chart>\n      <app-exchange [pairId]=\"pairId\" [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\" [side]=\"side\"\n        [price]=\"price\" [amount]=\"amount\" [total]=\"total\" [buyModel]=\"buyModel\" [sellModel]=\"sellModel\"></app-exchange>\n\n      <!-- <div id=\"depthchart\" class=\"depthchart h-40 crypt-dark-segment\"></div> -->\n    </div>\n    <div class=\"col-md-4 col-lg-3 col-xl-3 col-xxl-2\">\n      <app-home-trade-history [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\" [pairId]=\"pairId\">\n      </app-home-trade-history>\n    </div>\n  </div>\n</div>\n<div class=\"container-fluid\">\n  <app-orders [baseCurrency]=\"baseCurrency\" [mainCurrency]=\"mainCurrency\" [pairId]=\"pairId\"\n    (orederTypeChange)=\"changeOrderType($event)\" (priceChange)=\"changePrice($event)\"\n    (amountChange)=\"changeAmount($event)\" (totalChange)=\"changeTotal($event)\" (buyModelChange)=\"changeBuyModel($event)\"\n    (sellModelChange)=\"changeSellModel($event)\"></app-orders>\n</div>\n<footer></footer>"
 
 /***/ }),
 
@@ -4243,7 +4397,7 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 var TradeComponent = /** @class */ (function () {
-    function TradeComponent(url, authenticationService, exchangeService, toast, router, common, tradeService, _pusherService, activeRoute, location) {
+    function TradeComponent(url, authenticationService, exchangeService, toast, router, common, tradeService, pusher, activeRoute, location) {
         var _this = this;
         this.url = url;
         this.authenticationService = authenticationService;
@@ -4252,7 +4406,7 @@ var TradeComponent = /** @class */ (function () {
         this.router = router;
         this.common = common;
         this.tradeService = tradeService;
-        this._pusherService = _pusherService;
+        this.pusher = pusher;
         this.activeRoute = activeRoute;
         this.location = location;
         this.baseCurrencyData = [];
@@ -4269,8 +4423,11 @@ var TradeComponent = /** @class */ (function () {
     }
     TradeComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this._pusherService.ch_currency_pair.bind('App\\Events\\CurrencyPair', function (data) {
-            _this.GetMarketList(_this.selectedItem);
+        this.pusher.ch_currency_pair.subscribe(function (currencyPair) {
+            if (currencyPair.original != undefined) {
+                _this.dataList = currencyPair.original.data;
+                _this.currencyPairList = _this.dataList.filter(function (x) { return x.base_currency_id === _this.selectedItem; });
+            }
         });
         this.router.events.subscribe(function (event) {
             if (event != null &&
@@ -4296,6 +4453,7 @@ var TradeComponent = /** @class */ (function () {
             this.mainCurrency = baseName[0];
             this.pairId = this.result.id;
             this.selectedRow = this.result.name;
+            this.location.replaceState("/trade/" + this.mainCurrency + "_" + this.baseCurrency);
         }
         else {
             this.baseCurrency = "BTC";
@@ -4303,41 +4461,45 @@ var TradeComponent = /** @class */ (function () {
             this.pairId = 1;
             this.selectedItem = "1";
             this.selectedRow = "ETH/BTC";
+            this.location.replaceState("/trade/" + this.mainCurrency + "_" + this.baseCurrency);
         }
-        this.GetMarketList(this.selectedItem);
         this.activeRoute.params.subscribe(function (routeParams) {
-            _this.GetPairDetail(routeParams.pair);
+            if (routeParams.pair != undefined) {
+                _this.GetPairDetail(routeParams.pair);
+            }
+            else {
+                _this.GetPairDetail(_this.mainCurrency + "_" + _this.baseCurrency);
+            }
         });
         var currentUser = JSON.parse(localStorage.getItem("currentUser"));
         if (currentUser)
             this.email = currentUser.email;
     };
-    TradeComponent.prototype.GetMarketList = function (paramValue) {
-        var _this = this;
-        this.loading = true;
-        this.selectedItem = paramValue;
-        localStorage.setItem("BaseMarketId", this.selectedItem);
-        this.exchangeService.GetMarketList(paramValue).subscribe(function (res) {
-            _this.loading = false;
-            _this.dataList = res.data;
-            localStorage.setItem("MarketList", JSON.stringify(_this.dataList));
-        });
+    TradeComponent.prototype.GetMarketListTab = function (paramValue) {
+        this.currencyPairList = this.dataList.filter(function (x) { return x.base_currency_id === paramValue; });
+        localStorage.setItem("MarketList", JSON.stringify(this.currencyPairList));
+        localStorage.setItem("BaseMarketId", paramValue);
     };
     TradeComponent.prototype.GetPairDetail = function (pairName) {
         var _this = this;
         this.loading = true;
-        this.exchangeService.GetMarketList(pairName).subscribe(function (res) {
-            _this.dataList = res.data;
-            for (var pairList in res.data) {
-                if (res.data.hasOwnProperty(pairList)) {
-                    var element = res.data[pairList];
-                    _this.selectedItem = element.base_currency_id;
-                    localStorage.setItem("BaseMarketId", element.base_currency_id);
-                    var pair = element.name.replace('/', '_');
-                    if (pairName == pair) {
-                        _this.GetRowDetail(element);
+        this.exchangeService.GetMarketListByName(pairName).subscribe(function (res) {
+            if (res.success) {
+                _this.dataList = res.data;
+                for (var pairList in res.data) {
+                    if (res.data.hasOwnProperty(pairList)) {
+                        var element = res.data[pairList];
+                        _this.selectedItem = element.base_currency_id;
+                        _this.GetMarketListTab(_this.selectedItem);
+                        localStorage.setItem("BaseMarketId", element.base_currency_id);
+                        var pair = element.name.replace('/', '_');
+                        if (pairName == pair) {
+                            _this.GetRowDetail(element);
+                            break;
+                        }
                     }
                 }
+                _this.loading = false;
             }
         });
     };
@@ -4349,7 +4511,6 @@ var TradeComponent = /** @class */ (function () {
         this.mainCurrency = data[0];
         // this.pair = this.mainCurrency + "_" + this.baseCurrency;
         localStorage.setItem("selectedMarket", JSON.stringify(item));
-        localStorage.setItem("MarketList", JSON.stringify(this.dataList));
         this.location.replaceState("/trade/" + this.mainCurrency + "_" + this.baseCurrency);
         // this.router.navigate(["/trade"]);
     };
