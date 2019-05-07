@@ -62,14 +62,17 @@ export class OrdersComponent implements OnInit, OnChanges {
 
     this.pusher.ch_exchange_order.subscribe((order: any) => {
       if (order.order_status == "Pending" && order.side == "BUY") {
+
         if (order.side == "BUY") {
           if (this.buyOrderList == null) this.buyOrderList = [];
           this.buyOrderList.push(order);
           this.buyOrderList.sort((a, b) => (b.price > a.price) ? 1 : -1);
+          this.buyOrderList = this.groupByPrice(this.buyOrderList);
         } else if (order.side == "SELL") {
           if (this.sellOrderList == null) this.sellOrderList = [];
           this.sellOrderList.push(order);
           this.sellOrderList.sort((a, b) => (a.price > b.price) ? 1 : -1);
+          this.sellOrderList = this.groupByPrice(this.sellOrderList);
         }
       }
     });
@@ -79,12 +82,14 @@ export class OrdersComponent implements OnInit, OnChanges {
         if (this.userPendingOrder == null) this.userPendingOrder = [];
         this.userPendingOrder.push(order);
         this.userPendingOrder.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
+        this.userPendingOrder = this.groupByPrice(this.userPendingOrder);
       }
 
       if (order.order_status == "Confirmed") {
         if (this.userConfirmOrder == null) this.userConfirmOrder = [];
         this.userConfirmOrder.push(order);
         this.userConfirmOrder.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
+        this.userConfirmOrder = this.groupByPrice(this.userConfirmOrder);
       }
     });
   }
@@ -114,6 +119,8 @@ export class OrdersComponent implements OnInit, OnChanges {
       (res: any) => {
         if (res.success == true) {
           this.userPendingOrder = res.data;
+          if (res.data != null)
+            this.userPendingOrder = this.groupByPrice(this.userPendingOrder);
         } else {
           if (res.output != undefined && res.output != "")
             this.toast.error(res.output);
@@ -134,6 +141,8 @@ export class OrdersComponent implements OnInit, OnChanges {
       (res: any) => {
         if (res.success == true) {
           this.userConfirmOrder = res.data;
+          if (res.data != null)
+            this.userConfirmOrder = this.groupByPrice(this.userConfirmOrder);
         } else {
           if (res.output != undefined && res.output != "")
             this.toast.error(res.output);
@@ -191,8 +200,6 @@ export class OrdersComponent implements OnInit, OnChanges {
     );
   }
 
-
-
   CancelOrder(id: number) {
     Swal({
       cancelButtonText: 'No, keep it',
@@ -228,8 +235,23 @@ export class OrdersComponent implements OnInit, OnChanges {
     });
   }
 
+  groupByPrice(data: any) {
+    var result = [];
+    data.reduce(function (res, value) {
+      if (!res[value.price]) {
+        let temp = JSON.parse(JSON.stringify(value));
+        temp.price = value.price;
+        temp.amount = 0;
+        res[value.price] = temp;
+        result.push(res[value.price])
+      }
+      res[value.price].amount = parseFloat(res[value.price].amount) + parseFloat(value.amount);
+      return res;
+    }, {});
+    return result;
+  }
+
   getRowBuyOrder(item: any) {
-    debugger;
     this.buyModelChange.emit(item);
   }
   getRowSellOrder(item: any) {

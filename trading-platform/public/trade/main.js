@@ -2320,12 +2320,14 @@ var OrdersComponent = /** @class */ (function () {
                         _this.buyOrderList = [];
                     _this.buyOrderList.push(order);
                     _this.buyOrderList.sort(function (a, b) { return (b.price > a.price) ? 1 : -1; });
+                    _this.buyOrderList = _this.groupByPrice(_this.buyOrderList);
                 }
                 else if (order.side == "SELL") {
                     if (_this.sellOrderList == null)
                         _this.sellOrderList = [];
                     _this.sellOrderList.push(order);
                     _this.sellOrderList.sort(function (a, b) { return (a.price > b.price) ? 1 : -1; });
+                    _this.sellOrderList = _this.groupByPrice(_this.sellOrderList);
                 }
             }
         });
@@ -2335,12 +2337,14 @@ var OrdersComponent = /** @class */ (function () {
                     _this.userPendingOrder = [];
                 _this.userPendingOrder.push(order);
                 _this.userPendingOrder.sort(function (a, b) { return (b.updated_at > a.updated_at) ? 1 : -1; });
+                _this.userPendingOrder = _this.groupByPrice(_this.userPendingOrder);
             }
             if (order.order_status == "Confirmed") {
                 if (_this.userConfirmOrder == null)
                     _this.userConfirmOrder = [];
                 _this.userConfirmOrder.push(order);
                 _this.userConfirmOrder.sort(function (a, b) { return (b.updated_at > a.updated_at) ? 1 : -1; });
+                _this.userConfirmOrder = _this.groupByPrice(_this.userConfirmOrder);
             }
         });
     };
@@ -2367,6 +2371,8 @@ var OrdersComponent = /** @class */ (function () {
         this.exchangeService.GetUserTrade(obj).subscribe(function (res) {
             if (res.success == true) {
                 _this.userPendingOrder = res.data;
+                if (res.data != null)
+                    _this.userPendingOrder = _this.groupByPrice(_this.userPendingOrder);
             }
             else {
                 if (res.output != undefined && res.output != "")
@@ -2385,6 +2391,8 @@ var OrdersComponent = /** @class */ (function () {
         this.exchangeService.GetUserTrade(obj).subscribe(function (res) {
             if (res.success == true) {
                 _this.userConfirmOrder = res.data;
+                if (res.data != null)
+                    _this.userConfirmOrder = _this.groupByPrice(_this.userConfirmOrder);
             }
             else {
                 if (res.output != undefined && res.output != "")
@@ -2470,8 +2478,22 @@ var OrdersComponent = /** @class */ (function () {
             _this.openloading = false;
         });
     };
+    OrdersComponent.prototype.groupByPrice = function (data) {
+        var result = [];
+        data.reduce(function (res, value) {
+            if (!res[value.price]) {
+                var temp = JSON.parse(JSON.stringify(value));
+                temp.price = value.price;
+                temp.amount = 0;
+                res[value.price] = temp;
+                result.push(res[value.price]);
+            }
+            res[value.price].amount = parseFloat(res[value.price].amount) + parseFloat(value.amount);
+            return res;
+        }, {});
+        return result;
+    };
     OrdersComponent.prototype.getRowBuyOrder = function (item) {
-        debugger;
         this.buyModelChange.emit(item);
     };
     OrdersComponent.prototype.getRowSellOrder = function (item) {
