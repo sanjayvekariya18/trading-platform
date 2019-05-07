@@ -61,8 +61,7 @@ export class OrdersComponent implements OnInit, OnChanges {
   ngOnInit() {
 
     this.pusher.ch_exchange_order.subscribe((order: any) => {
-      if (order.order_status == "Pending" && order.side == "BUY") {
-
+      if (order.order_status == "Pending") {
         if (order.side == "BUY") {
           if (this.buyOrderList == null) this.buyOrderList = [];
           this.buyOrderList.push(order);
@@ -82,14 +81,12 @@ export class OrdersComponent implements OnInit, OnChanges {
         if (this.userPendingOrder == null) this.userPendingOrder = [];
         this.userPendingOrder.push(order);
         this.userPendingOrder.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
-        this.userPendingOrder = this.groupByPrice(this.userPendingOrder);
       }
 
       if (order.order_status == "Confirmed") {
         if (this.userConfirmOrder == null) this.userConfirmOrder = [];
         this.userConfirmOrder.push(order);
         this.userConfirmOrder.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
-        this.userConfirmOrder = this.groupByPrice(this.userConfirmOrder);
       }
     });
   }
@@ -119,8 +116,6 @@ export class OrdersComponent implements OnInit, OnChanges {
       (res: any) => {
         if (res.success == true) {
           this.userPendingOrder = res.data;
-          if (res.data != null)
-            this.userPendingOrder = this.groupByPrice(this.userPendingOrder);
         } else {
           if (res.output != undefined && res.output != "")
             this.toast.error(res.output);
@@ -141,8 +136,6 @@ export class OrdersComponent implements OnInit, OnChanges {
       (res: any) => {
         if (res.success == true) {
           this.userConfirmOrder = res.data;
-          if (res.data != null)
-            this.userConfirmOrder = this.groupByPrice(this.userConfirmOrder);
         } else {
           if (res.output != undefined && res.output != "")
             this.toast.error(res.output);

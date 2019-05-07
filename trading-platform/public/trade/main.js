@@ -2314,7 +2314,7 @@ var OrdersComponent = /** @class */ (function () {
     OrdersComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.pusher.ch_exchange_order.subscribe(function (order) {
-            if (order.order_status == "Pending" && order.side == "BUY") {
+            if (order.order_status == "Pending") {
                 if (order.side == "BUY") {
                     if (_this.buyOrderList == null)
                         _this.buyOrderList = [];
@@ -2337,14 +2337,12 @@ var OrdersComponent = /** @class */ (function () {
                     _this.userPendingOrder = [];
                 _this.userPendingOrder.push(order);
                 _this.userPendingOrder.sort(function (a, b) { return (b.updated_at > a.updated_at) ? 1 : -1; });
-                _this.userPendingOrder = _this.groupByPrice(_this.userPendingOrder);
             }
             if (order.order_status == "Confirmed") {
                 if (_this.userConfirmOrder == null)
                     _this.userConfirmOrder = [];
                 _this.userConfirmOrder.push(order);
                 _this.userConfirmOrder.sort(function (a, b) { return (b.updated_at > a.updated_at) ? 1 : -1; });
-                _this.userConfirmOrder = _this.groupByPrice(_this.userConfirmOrder);
             }
         });
     };
@@ -2371,8 +2369,6 @@ var OrdersComponent = /** @class */ (function () {
         this.exchangeService.GetUserTrade(obj).subscribe(function (res) {
             if (res.success == true) {
                 _this.userPendingOrder = res.data;
-                if (res.data != null)
-                    _this.userPendingOrder = _this.groupByPrice(_this.userPendingOrder);
             }
             else {
                 if (res.output != undefined && res.output != "")
@@ -2391,8 +2387,6 @@ var OrdersComponent = /** @class */ (function () {
         this.exchangeService.GetUserTrade(obj).subscribe(function (res) {
             if (res.success == true) {
                 _this.userConfirmOrder = res.data;
-                if (res.data != null)
-                    _this.userConfirmOrder = _this.groupByPrice(_this.userConfirmOrder);
             }
             else {
                 if (res.output != undefined && res.output != "")
