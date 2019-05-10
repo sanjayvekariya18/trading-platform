@@ -40,11 +40,26 @@
                   (click)="calcBalance(item, 'buy')">{{item}}%</button>
               </div>
             </div>
-            <div class="mt-1">
+            <div *ngIf="!isLogin">
+              <div class="col-md-12">
+                <button type="button" class="btn crypt-button-red-full">
+                  <span style="text-decoration: underline;" (click)="GoToUrl('login')">Login</span> or
+                  <span style="text-decoration: underline;" (click)="GoToUrl('register')">Register</span> to Trade
+                </button>
+              </div>
+            </div>
+            <div *ngIf="isLogin">
+              <div class="col-md-12">
+                <button type="submit" class="btn crypt-button-green-full" [ladda]="isBuyLoading">
+                  <span>Buy {{ exchange.MainCurrency }}</span>
+                </button>
+              </div>
+            </div>
+            <!-- <div class="mt-1">
               <button type="submit" class=" btn crypt-button-green-full" [ladda]="isBuyLoading">
                 <span>Buy {{ exchange.MainCurrency }}</span>
               </button>
-            </div>
+            </div> -->
           </div>
         </form>
       </div>
@@ -91,13 +106,27 @@
                   (click)="calcBalance(item, 'sell')">{{item}}%</button>
               </div>
             </div>
-            <div class="mt-1">
-              <!-- <a href="#" class="crypt-button-red-full">Sell</a> -->
+            <div *ngIf="!isLogin">
+              <div class="col-md-12">
+                <button type="button" class="btn crypt-button-red-full">
+                  <span style="text-decoration: underline;" (click)="GoToUrl('login')">Login</span> or
+                  <span style="text-decoration: underline;" (click)="GoToUrl('register')">Register</span> to Trade
+                </button>
+              </div>
+            </div>
+            <div *ngIf="isLogin">
+              <div class="col-md-12">
+                <button type="submit" class="btn crypt-button-red-full" [ladda]="isSellLoading">
+                  <span>Sell {{ exchange.MainCurrency }}</span>
+                </button>
+              </div>
+            </div>
+            <!-- <div class="mt-1">
               <button type="submit" class="btn crypt-button-red-full" style="text-transform: uppercase"
                 [ladda]="isSellLoading">
                 <span>Sell {{ exchange.MainCurrency }}</span>
               </button>
-            </div>
+            </div> -->
           </div>
         </div>
       </form>

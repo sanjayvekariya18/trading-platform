@@ -61,7 +61,7 @@ export class AuthenticationService {
     if (localStorage.getItem("currentUser")) {
       const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-      const setDate: any = new Date(Date.parse(currentUser.SetDate));
+      /* const setDate: any = new Date(Date.parse(currentUser.updated_at));
       const currentDate: any = new Date();
       const hourdiff: number = currentDate - setDate;
       const hours = Math.floor(hourdiff / 3600 / 1000);
@@ -70,14 +70,14 @@ export class AuthenticationService {
         this.isUserNameChanged.emit("");
         this.isLoginChanged.emit(false);
         localStorage.removeItem("currentUser");
-        window.location.href = "/trade";
+        window.location.href = "/login";
         return false;
-      }
+      } */
 
       const name =
-        `${currentUser.Firstname}${currentUser.Lastname}` === ""
-          ? currentUser.Email
-          : `${currentUser.Firstname} ${currentUser.Lastname}`;
+        `${currentUser.name}` === ""
+          ? currentUser.email
+          : `${currentUser.name}`;
       this.isUserNameChanged.emit(name);
       this.isLoginChanged.emit(true);
       return true;

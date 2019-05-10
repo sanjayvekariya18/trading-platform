@@ -245,6 +245,7 @@ export class StoplimitComponent implements OnInit, OnChanges {
   }
 
   GoToUrl(route) {
-    this.router.navigate(["/" + route + ""]);
+    // this.router.navigate(["/" + route + ""]);
+    window.location.href = "/" + route;
   }
 }

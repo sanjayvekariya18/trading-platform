@@ -93,6 +93,13 @@ export class ExchangeService {
     )
   }
 
+  userLogout() {
+    return this.http.post(
+      `${environment.apiUrl}logout`,
+      this.httpService.GetAuthHttpCommon()
+    )
+  }
+
   GetUserHistory(currency_pair_id: any) {
     return this.http.get(
       `${environment.apiUrl}trade_history/${currency_pair_id}`,

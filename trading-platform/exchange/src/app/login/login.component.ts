@@ -53,6 +53,6 @@ export class LoginComponent {
   SetLogin(data) {
     localStorage.setItem("currentUser", JSON.stringify(data));
     this.authenticationService.CheckUserLoggedIn();
-    window.location.href = "/trade/ETH_BTC";
+    window.location.href = "/trade#ETH_BTC";
   }
 }

@@ -45,9 +45,10 @@ Route::get('active_order','ExchangeController@getActiveOrders');
 Route::get('close_order','ExchangeController@getCloseOrders');
 Route::get('currencies','ExchangeController@getCurrencies');
 Route::get('chartData/{interval}/{pair_id}','ExchangeController@getChartData');
-Route::post('logout','Auth\LoginController@userLogout');  
+// Route::post('logout','Auth\LoginController@userLogout');  
 
 Route::middleware('auth:api')->prefix('private')->group(function() {
+    // Route::get('logout', 'Auth\LoginController@userLogout');
     Route::post('orders','OrderController@tradeOrders');
     Route::post('orders/create','OrderController@store');
     Route::post('orders/cancel','OrderController@cancelOrder');

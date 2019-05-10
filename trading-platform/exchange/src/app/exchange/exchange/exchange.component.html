@@ -90,9 +90,9 @@
                 </div>
                 <div *ngIf="!isLogin">
                   <div class="col-md-12">
-                    <button type="button" class="btn crypt-button-green-full">
-                      <span (click)="GoToUrl('/login')">Login</span> to
-                      Trade
+                    <button type="button" class="btn crypt-button-red-full">
+                      <span style="text-decoration: underline;" (click)="GoToUrl('login')">Login</span> or
+                      <span style="text-decoration: underline;" (click)="GoToUrl('register')">Register</span> to Trade
                     </button>
                   </div>
                 </div>
@@ -182,8 +182,9 @@
                   </p>
                 </div>
                 <div class="mt-1" *ngIf="!isLogin">
-                  <button type="button" class="btn crypt-button-green-full">
-                    <span (click)="GoToUrl('/login')">Login</span> to Trade
+                  <button type="button" class="btn crypt-button-red-full">
+                    <span style="text-decoration: underline;" (click)="GoToUrl('login')">Login</span> or
+                    <span style="text-decoration: underline;" (click)="GoToUrl('register')">Register</span> to Trade
                   </button>
                 </div>
                 <div *ngIf="isLogin">

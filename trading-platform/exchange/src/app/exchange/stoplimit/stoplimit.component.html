@@ -57,9 +57,10 @@
             </div>
           </div>
           <div class="mt-1" *ngIf="!isLogin">
-            <button type="button" class="btn crypt-button-green-full">
-              <span (click)="GoToUrl('login')">Login</span> or
-              <span (click)="GoToUrl('register')">Register</span> to Trade</button>
+            <button type="button" class="btn crypt-button-red-full">
+              <span style="text-decoration: underline;" (click)="GoToUrl('login')">Login</span> or
+              <span style="text-decoration: underline;" (click)="GoToUrl('register')">Register</span> to Trade
+            </button>
           </div>
           <div class="mt-1" *ngIf="isLogin">
             <button type="submit" class="btn crypt-button-green-full" [ladda]="isBuyLoading">
@@ -127,8 +128,8 @@
           </div>
           <div class="col-md-12" *ngIf="!isLogin">
             <button type="button" class="btn crypt-button-red-full">
-              <span (click)="GoToUrl('login')">Login</span> or
-              <span (click)="GoToUrl('register')">Register</span> to Trade</button>
+              <span style="text-decoration: underline;" (click)="GoToUrl('login')">Login</span> or
+              <span style="text-decoration: underline;" (click)="GoToUrl('register')">Register</span> to Trade</button>
           </div>
           <div class="mt-1" *ngIf="isLogin">
             <button type="submit" class="btn crypt-button-red-full" [ladda]="isSellLoading">

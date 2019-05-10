@@ -353,7 +353,8 @@ export class ExchangeComponent implements OnInit, OnChanges {
   }
 
   GoToUrl(route) {
-    this.router.navigate(["/" + route + ""]);
+    // this.router.navigate(["/" + route + ""]);
+    window.location.href = "/" + route;
   }
 
   BuyBaseValueClick() {

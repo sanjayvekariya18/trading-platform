@@ -61,14 +61,21 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($request->only($login_type, 'password'))) {
+            $user = $this->guard()->user();
             if($request->wantsJson()){
-                $user = $this->guard()->user();
-                $user->generateToken();
+                $userDetail = array(
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'api_token' => $user->createToken('Exchnage')->accessToken
+                );
                 $response['success'] = true;
                 $response['output'] = "";
-                $response['data'] = $user;
+                $response['data'] = $userDetail;
                 return response()->json($response, 200);
             }else{
+                $token = $user->createToken('Exchnage')->accessToken;
+                // \Cookie::queue("Authorization", "Bearer ".$token);
+                \Session::put('access_token',$token);
                 return redirect()->intended($this->redirectPath());
             }
         }else{
@@ -87,13 +94,18 @@ class LoginController extends Controller
         }
     }
 
-    public function userLogout(Request $request)
+    /* public function userLogout(Request $request)
     {
-        $user = \Auth::guard('api')->user();
-        if ($user) {
-            $user->api_token = null;
-            $user->save();
-        }
+        $request->user()->token()->revoke();
         return response()->json(['data' => 'User logged out.'], 200);
+    } */
+
+    public function logout(Request $request)
+    {
+        \Session::forget('access_token');
+        // $cookie = \Cookie::forget('Authorization');
+        $this->performLogout($request);
+        // return redirect('/')->withCookie($cookie);
+        return redirect('/');
     }
 }

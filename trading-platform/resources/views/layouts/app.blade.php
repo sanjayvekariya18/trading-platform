@@ -276,11 +276,25 @@
   @yield('js_content')
 
   <script>
-    @auth
+    @if(auth()->check())
+      @php
+        $user = auth()->user();
+        $userDetail = array(
+            'name' => $user->name,
+            'email' => $user->email,
+            'api_token' => session()->get('access_token')
+        );
+      @endphp
       if (localStorage.getItem("currentUser") === null) {
-        localStorage.setItem("currentUser", JSON.stringify({!! json_encode(\Auth::user()) !!})); // Storing value with key
+        localStorage.setItem("currentUser", JSON.stringify({!! json_encode($userDetail) !!})); // Storing value with key
       }
-    @endauth
+    @else
+      localStorage.removeItem("currentUser");
+      localStorage.removeItem("BaseMarketId");
+      localStorage.removeItem("MarketList");
+      localStorage.removeItem("selectedMarket");
+      localStorage.removeItem("chartInterval");
+    @endif
   </script>
   </body>
   </html>

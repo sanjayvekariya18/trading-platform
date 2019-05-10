@@ -108,14 +108,14 @@ export class TradeComponent implements OnInit {
       this.mainCurrency = baseName[0];
       this.pairId = this.result.id;
       this.selectedRow = this.result.name;
-      this.location.replaceState("/trade/" + this.mainCurrency + "_" + this.baseCurrency);
+      this.location.replaceState("/trade#" + this.mainCurrency + "_" + this.baseCurrency);
     } else {
       this.baseCurrency = "BTC";
       this.mainCurrency = "ETH";
       this.pairId = 1;
       this.selectedItem = "1";
       this.selectedRow = "ETH/BTC";
-      this.location.replaceState("/trade/" + this.mainCurrency + "_" + this.baseCurrency);
+      this.location.replaceState("/trade#" + this.mainCurrency + "_" + this.baseCurrency);
     }
 
     this.activeRoute.params.subscribe(routeParams => {
@@ -126,8 +126,10 @@ export class TradeComponent implements OnInit {
       }
     });
 
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if (currentUser) this.email = currentUser.email;
+    if (localStorage.getItem("currentUser")) {
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      this.email = currentUser.email;
+    }
   }
 
   GetMarketListTab(paramValue) {
@@ -167,7 +169,7 @@ export class TradeComponent implements OnInit {
     this.mainCurrency = data[0];
     // this.pair = this.mainCurrency + "_" + this.baseCurrency;
     localStorage.setItem("selectedMarket", JSON.stringify(item));
-    this.location.replaceState("/trade/" + this.mainCurrency + "_" + this.baseCurrency);
+    this.location.replaceState("/trade#" + this.mainCurrency + "_" + this.baseCurrency);
     // this.router.navigate(["/trade"]);
   }
 
@@ -180,8 +182,13 @@ export class TradeComponent implements OnInit {
   }
 
   Logout() {
-    this.authenticationService.Logout();
-    this.router.navigate(["/login"]);
+    this.exchangeService.userLogout().subscribe((res: any) => {
+      if (res.data != undefined) {
+        this.authenticationService.Logout();
+        window.location.href = "/login";
+      }
+    });
+    // this.router.navigate(["/login"]);
   }
 
   changeBaseCurrency($event) {

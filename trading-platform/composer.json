@@ -14,6 +14,7 @@
         "ixudra/curl": "^6.16",
         "jadjoubran/laravel-angular": "^0.4.0",
         "laravel/framework": "5.8.*",
+        "laravel/passport": "^7.2",
         "laravel/tinker": "^1.0",
         "predis/predis": "^1.1",
         "pusher/pusher-php-server": "^3.4"

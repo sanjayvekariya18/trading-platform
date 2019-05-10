@@ -255,6 +255,11 @@ export class MarketExchangeComponent implements OnInit, OnChanges {
     this.isOpen = true;
   }
 
+  GoToUrl(route) {
+    // this.router.navigate(["/" + route + ""]);
+    window.location.href = "/" + route;
+  }
+
   ResetForm() {
     this.exchange.BuyAmount = null;
     this.exchange.SellAmount = null;

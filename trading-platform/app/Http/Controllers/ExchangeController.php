@@ -204,6 +204,7 @@ class ExchangeController extends Controller
                     ->orderBy('price')
                     ->groupBy('price')
                     ->groupBy('side')
+                    ->limit(100)
                     ->get();
             $response['data'] = (count($orders) > 0)? $orders : null;
             $response['success'] = true;
@@ -236,6 +237,7 @@ class ExchangeController extends Controller
                     ->orderBy('price','DESC')
                     ->groupBy('price')
                     ->groupBy('side')
+                    ->limit(100)
                     ->get();
             $response['data'] = (count($orders) > 0) ? $orders : null;
             $response['success'] = true;
