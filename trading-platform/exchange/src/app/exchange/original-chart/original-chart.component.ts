@@ -34,8 +34,8 @@ export class OriginalChartComponent implements OnChanges, OnInit {
   }
 
   ngOnInit() {
-    this.pusher.ch_exchange_order.subscribe((order: any) => {
-      if (order.order_status == "Confirmed") {
+    this.pusher.ch_chart.subscribe((chart: any) => {
+      if (chart.original != undefined) {
         this.chartData(180);
       }
     });

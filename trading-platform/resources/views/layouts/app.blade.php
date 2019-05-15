@@ -280,6 +280,7 @@
       @php
         $user = auth()->user();
         $userDetail = array(
+            'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
             'api_token' => session()->get('access_token')

@@ -11,7 +11,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class OrderCancel implements ShouldBroadcastNow
+class SellOrder implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -33,13 +33,15 @@ class OrderCancel implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('order_cancel'.\Auth::id());
+        return new Channel('sell_order');
     }
 
     public function broadcastWith()
     {
+        
         return [
-            'data' => $this->order
+            // 'data' => $this->order
+            'data' => app('App\Http\Controllers\ExchangeController')->getSellOrders($this->order->currency_pair_id)
         ];
     }
 }

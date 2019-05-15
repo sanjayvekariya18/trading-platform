@@ -35,7 +35,7 @@ class WalletAmount implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('wallet_amount');
+        return new PrivateChannel('wallet_amount'.\Auth::id());
     }
 
     public function broadcastWith()

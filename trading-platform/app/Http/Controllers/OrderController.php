@@ -11,10 +11,11 @@ use App\Order_stop_limit;
 use App\User;
 use App\Wallets;
 use DB;
-use Ixudra\Curl\Facades\Curl;
-use App\Events\ExchangeOrder;
-use App\Events\ConfirmOrder;
-use App\Events\UserOrder;
+use App\Events\PendingOrder;
+use App\Events\BuyOrder;
+use App\Events\SellOrder;
+use App\Events\UserConfirmOrder;
+use App\Events\UserOpenOrder;
 use App\Events\Chart;
 use App\Events\CurrencyPair;
 use App\Events\DailyExchange;
@@ -83,7 +84,15 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-            
+        // \Auth::loginUsingId(1);
+
+        // Check Authenticated User
+        if(!\Auth::check()){
+            $output = "You are not authorized User.";
+            $response = array('success'=> false,'output'=>$output,'data'=>null);
+            return response()->json($response, 200);
+        }
+
         $regex = "/^(?=.+)(?:[1-9]\d*|0)?(?:\.\d+)?$/";
 
         if($request->has('price') && $request->order_type != "MARKET"){
@@ -283,12 +292,16 @@ class OrderController extends Controller
                             $order->fee_remark = "Charge:($charge)% $fromCurSym";
                             $order->save();
                             
-                            event(new ExchangeOrder($order));
-                            // event(new ConfirmOrder($order));
-                            // event(new TradeHistory($order));
+                            // event(new ExchangeOrder($order));
+                            event(new BuyOrder($order));
+                            event(new SellOrder($order));
+                            event(new UserOpenOrder($order));
+                            event(new UserConfirmOrder($order));
+                            event(new TradeHistory($order));
                             event(new CurrencyPair($order->currency_pair_id));
                             event(new DailyExchange($order->currency_pair_id));
-
+                            event(new Chart($order->currency_pair_id));
+                            
                             $remark1 = "Trade buy confirmed order no. : ".$order->order_no;
                             $total = $givenAmount * $price1;
                             $walletParam = array(
@@ -353,11 +366,14 @@ class OrderController extends Controller
                             $order->fee_remark = "Charge:($charge)% $fromCurSym";
                             $order->save();
                             
-                            event(new ExchangeOrder($order));
-                            // event(new ConfirmOrder($order));
-                            // event(new TradeHistory($order));
+                            event(new BuyOrder($order));
+                            event(new SellOrder($order));
+                            event(new UserOpenOrder($order));
+                            event(new UserConfirmOrder($order));
+                            event(new TradeHistory($order));
                             event(new CurrencyPair($order->currency_pair_id));
                             event(new DailyExchange($order->currency_pair_id));
+                            event(new Chart($order->currency_pair_id));
 
                             $remark1 = "Trade sell confirmed order no: ".$order->order_no;
 
@@ -403,11 +419,14 @@ class OrderController extends Controller
                             $order->fee_remark = "Charge:($charge)% $toCurSym";
                             $order->save();
 
-                            event(new ExchangeOrder($order));
-                            // event(new ConfirmOrder($order));
-                            // event(new TradeHistory($order));
+                            event(new BuyOrder($order));
+                            event(new SellOrder($order));
+                            event(new UserOpenOrder($order));
+                            event(new UserConfirmOrder($order));
+                            event(new TradeHistory($order));
                             event(new CurrencyPair($order->currency_pair_id));
                             event(new DailyExchange($order->currency_pair_id));
+                            event(new Chart($order->currency_pair_id));
 
                             $remark1 = "Trade sell confirmed order no: ".$order->order_no;
                             $total = $givenAmount * $price1;
@@ -476,11 +495,14 @@ class OrderController extends Controller
                             $order->fee_remark = "Charge:($charge)% $fromCurSym";
                             $order->save();
 
-                            event(new ExchangeOrder($order));
-                            // event(new ConfirmOrder($order));
-                            // event(new TradeHistory($order));
+                            event(new BuyOrder($order));
+                            event(new SellOrder($order));
+                            event(new UserOpenOrder($order));
+                            event(new UserConfirmOrder($order));
+                            event(new TradeHistory($order));
                             event(new CurrencyPair($order->currency_pair_id));
                             event(new DailyExchange($order->currency_pair_id));
+                            event(new Chart($order->currency_pair_id));
 
                             $remark1 ='Trade buy confirmed order no :'.$order->order_no;    
                             $walletParam = array(
@@ -518,8 +540,8 @@ class OrderController extends Controller
                             $order->order_type = $request->order_type;
                             $order->order_status = "Pending";
                             $order->save();
-                            event(new UserOrder($order));
-                            event(new ExchangeOrder($order));
+                            event(new PendingOrder($order));
+                            event(new UserOpenOrder($order));
 
                             if($request->side == "BUY"){
                                 $total = $Remaining * $request->price;
@@ -709,6 +731,7 @@ class OrderController extends Controller
                 }
                 $output = $remark;
             DB::commit();
+            event(new WalletAmount($fromCurSym,$toCurSym));
             $response = array('success'=> true,'output'=>$output,'data'=>null);
             return response()->json($response, 201);
         } catch (\Exception $ex) {
@@ -847,7 +870,7 @@ class OrderController extends Controller
                 }
                 DB::table("orders")->where('id',$order->id)->update(['order_status' => "Canceled"]);
                 event(new OrderCancel($order));
-
+                event(new UserOpenOrder($order,"Canceled"));
                 if($order->side == "BUY"){
                     $amount = $order->amount * $order->price;
                     $remark = "Cancel-Buy-Order No-".$order->order_no;

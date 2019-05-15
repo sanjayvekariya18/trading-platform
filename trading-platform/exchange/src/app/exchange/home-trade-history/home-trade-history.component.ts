@@ -30,12 +30,12 @@ export class HomeTradeHistoryComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.pusher.ch_exchange_order.subscribe((order: any) => {
-      if (order.order_status == "Confirmed" && (order.side == "BUY" || order.side == "SELL")) {
+    this.pusher.ch_trade_history.subscribe((order: any) => {
+      // if (order.order_status == "Confirmed" && (order.side == "BUY" || order.side == "SELL")) {
         if (this.tradeHisList == null) this.tradeHisList = [];
         this.tradeHisList.push(order);
         this.tradeHisList.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
-      }
+      // }
     });
 
   }

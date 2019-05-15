@@ -39,7 +39,8 @@ class ExchangeOrder implements ShouldBroadcastNow
     public function broadcastWith()
     {
         return [
-            'data' => $this->order
+            // 'data' => $this->order
+            'data' => app('App\Http\Controllers\ExchangeController')->getBuyOrders($this->order->currency_pair_id)
         ];
     }
 }

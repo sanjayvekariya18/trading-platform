@@ -11,6 +11,29 @@ use App\Wallets;
 use Carbon\Carbon;
 class ExchangeController extends Controller
 {
+    public function createTestOrder()
+    {
+        echo "<pre>";
+        $request = new Request;
+        $request->setMethod('POST');
+        $orderAmount = 2.10000000;
+        for ($i=1; $i <= 200; $i++) { 
+            $orderAmount -= 0.01;
+            echo "$i => $orderAmount<br>";
+            $request->request->add([
+                'user_id' => 1,
+                'currency_pair_id'=> 1,
+                'amount' => 1,
+                'price' => $orderAmount,
+                'order_type' => "LIMIT",
+                'side' => "BUY",
+            ]);
+            $response = app('App\Http\Controllers\OrderController')->store($request);
+            print_r($response->getData());  
+        }
+        // die;
+    }
+
     public function getAllOrders()
     {
         $orders = Order::all();

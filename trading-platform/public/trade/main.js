@@ -902,25 +902,28 @@ var PusherService = /** @class */ (function () {
         var _this = this;
         this.http = http;
         this.httpService = httpService;
-        /* private _ch_confirm_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
-        public ch_confirm_order: Observable<List<string>> = this._ch_confirm_order.asObservable();
-    
-        private _ch_pending_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
-        public ch_pending_order: Observable<List<string>> = this._ch_pending_order.asObservable(); */
-        this._ch_user_order = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
-        this.ch_user_order = this._ch_user_order.asObservable();
+        // Private Channels
+        this._ch_user_open_order = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_user_open_order = this._ch_user_open_order.asObservable();
+        this._ch_user_confirm_order = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_user_confirm_order = this._ch_user_confirm_order.asObservable();
         this._ch_wallet_amount = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
         this.ch_wallet_amount = this._ch_wallet_amount.asObservable();
         this._ch_order_cancel = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
         this.ch_order_cancel = this._ch_order_cancel.asObservable();
-        this._ch_exchange_order = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
-        this.ch_exchange_order = this._ch_exchange_order.asObservable();
+        // Public Channels
+        this._ch_buy_order = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_buy_order = this._ch_buy_order.asObservable();
+        this._ch_sell_order = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_sell_order = this._ch_sell_order.asObservable();
+        this._ch_pending_order = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_pending_order = this._ch_pending_order.asObservable();
         this._ch_chart = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
         this.ch_chart = this._ch_chart.asObservable();
         this._ch_currency_pair = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
         this.ch_currency_pair = this._ch_currency_pair.asObservable();
-        /* private _ch_trade_history: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
-        public ch_trade_history: Observable<List<string>> = this._ch_trade_history.asObservable(); */
+        this._ch_trade_history = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
+        this.ch_trade_history = this._ch_trade_history.asObservable();
         this._ch_daily_exchange = new rxjs__WEBPACK_IMPORTED_MODULE_1__["BehaviorSubject"](Object(immutable__WEBPACK_IMPORTED_MODULE_6__["List"])([]));
         this.ch_daily_exchange = this._ch_daily_exchange.asObservable();
         this.channels = [];
@@ -939,25 +942,21 @@ var PusherService = /** @class */ (function () {
                     }
                 }
             });
-            /* var channel = this.pusher.subscribe('private-confirm_order');
-            channel.bind('App\\Events\\ConfirmOrder', (data) => {
+            var channel = this.pusher.subscribe('private-user_open_order' + this.currentUser.id);
+            channel.bind('App\\Events\\UserOpenOrder', function (data) {
                 console.log(data.data);
-                this._ch_confirm_order.next(data.data);
-            }); */
-            /* var channel = this.pusher.subscribe('private-pending_order');
-            channel.bind('App\\Events\\PendingOrder', (data) => {
-                console.log(data.data);
-                this._ch_pending_order.next(data.data);
-            }); */
-            var channel = this.pusher.subscribe('private-user_order');
-            channel.bind('App\\Events\\UserOrder', function (data) {
-                _this._ch_user_order.next(data.data);
+                _this._ch_user_open_order.next(data.data);
             });
-            var channel = this.pusher.subscribe('private-wallet_amount');
+            var channel = this.pusher.subscribe('private-user_confirm_order' + this.currentUser.id);
+            channel.bind('App\\Events\\UserConfirmOrder', function (data) {
+                console.log(data.data);
+                _this._ch_user_confirm_order.next(data.data);
+            });
+            var channel = this.pusher.subscribe('private-wallet_amount' + this.currentUser.id);
             channel.bind('App\\Events\\WalletAmount', function (data) {
                 _this._ch_wallet_amount.next(data.data);
             });
-            var channel = this.pusher.subscribe('private-order_cancel');
+            var channel = this.pusher.subscribe('private-order_cancel' + this.currentUser.id);
             channel.bind('App\\Events\\OrderCancel', function (data) {
                 console.log(data.data);
                 _this._ch_order_cancel.next(data.data);
@@ -969,9 +968,17 @@ var PusherService = /** @class */ (function () {
                 encrypted: true
             });
         }
-        var channel = this.pusher.subscribe('exchange_order');
-        channel.bind('App\\Events\\ExchangeOrder', function (data) {
-            _this._ch_exchange_order.next(data.data);
+        var channel = this.pusher.subscribe('buy_order');
+        channel.bind('App\\Events\\BuyOrder', function (data) {
+            _this._ch_buy_order.next(data.data);
+        });
+        var channel = this.pusher.subscribe('sell_order');
+        channel.bind('App\\Events\\SellOrder', function (data) {
+            _this._ch_sell_order.next(data.data);
+        });
+        var channel = this.pusher.subscribe('pending_order');
+        channel.bind('App\\Events\\PendingOrder', function (data) {
+            _this._ch_pending_order.next(data.data);
         });
         var channel = this.pusher.subscribe('chart');
         channel.bind('App\\Events\\Chart', function (data) {
@@ -981,10 +988,10 @@ var PusherService = /** @class */ (function () {
         channel.bind('App\\Events\\CurrencyPair', function (data) {
             _this._ch_currency_pair.next(data.data);
         });
-        /* var channel = this.pusher.subscribe('trade_history');
-        channel.bind('App\\Events\\TradeHistory', (data) => {
-            this._ch_trade_history.next(data.data);
-        }); */
+        var channel = this.pusher.subscribe('trade_history');
+        channel.bind('App\\Events\\TradeHistory', function (data) {
+            _this._ch_trade_history.next(data.data);
+        });
         var channel = this.pusher.subscribe('daily_exchange');
         channel.bind('App\\Events\\DailyExchange', function (data) {
             console.log(data.data);
@@ -1871,13 +1878,13 @@ var HomeTradeHistoryComponent = /** @class */ (function () {
     }
     HomeTradeHistoryComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.pusher.ch_exchange_order.subscribe(function (order) {
-            if (order.order_status == "Confirmed" && (order.side == "BUY" || order.side == "SELL")) {
-                if (_this.tradeHisList == null)
-                    _this.tradeHisList = [];
-                _this.tradeHisList.push(order);
-                _this.tradeHisList.sort(function (a, b) { return (b.updated_at > a.updated_at) ? 1 : -1; });
-            }
+        this.pusher.ch_trade_history.subscribe(function (order) {
+            // if (order.order_status == "Confirmed" && (order.side == "BUY" || order.side == "SELL")) {
+            if (_this.tradeHisList == null)
+                _this.tradeHisList = [];
+            _this.tradeHisList.push(order);
+            _this.tradeHisList.sort(function (a, b) { return (b.updated_at > a.updated_at) ? 1 : -1; });
+            // }
         });
     };
     HomeTradeHistoryComponent.prototype.ngOnChanges = function (change) {
@@ -2322,36 +2329,63 @@ var OrdersComponent = /** @class */ (function () {
     }
     OrdersComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.pusher.ch_exchange_order.subscribe(function (order) {
-            if (order.order_status == "Pending") {
-                if (order.side == "BUY") {
-                    if (_this.buyOrderList == null)
-                        _this.buyOrderList = [];
-                    _this.buyOrderList.push(order);
-                    _this.buyOrderList.sort(function (a, b) { return (b.price > a.price) ? 1 : -1; });
-                    _this.buyOrderList = _this.groupByPrice(_this.buyOrderList);
-                }
-                else if (order.side == "SELL") {
-                    if (_this.sellOrderList == null)
-                        _this.sellOrderList = [];
-                    _this.sellOrderList.push(order);
-                    _this.sellOrderList.sort(function (a, b) { return (a.price > b.price) ? 1 : -1; });
-                    _this.sellOrderList = _this.groupByPrice(_this.sellOrderList);
-                }
+        this.pusher.ch_pending_order.subscribe(function (order) {
+            /* if (order.original == undefined){
+              return false;
+            } */
+            // if (order.order_status == "Pending") {
+            if (order.side == "BUY") {
+                if (_this.buyOrderList == null)
+                    _this.buyOrderList = [];
+                _this.buyOrderList.push(order);
+                _this.buyOrderList.sort(function (a, b) { return (b.price > a.price) ? 1 : -1; });
+                _this.buyOrderList = _this.groupByPrice(_this.buyOrderList);
             }
+            else if (order.side == "SELL") {
+                if (_this.sellOrderList == null)
+                    _this.sellOrderList = [];
+                _this.sellOrderList.push(order);
+                _this.sellOrderList.sort(function (a, b) { return (a.price > b.price) ? 1 : -1; });
+                _this.sellOrderList = _this.groupByPrice(_this.sellOrderList);
+            }
+            // }
         });
-        this.pusher.ch_user_order.subscribe(function (order) {
+        this.pusher.ch_user_open_order.subscribe(function (order) {
             if (order.order_status == "Pending") {
                 if (_this.userPendingOrder == null)
                     _this.userPendingOrder = [];
                 _this.userPendingOrder.push(order);
                 _this.userPendingOrder.sort(function (a, b) { return (b.updated_at > a.updated_at) ? 1 : -1; });
             }
-            if (order.order_status == "Confirmed") {
-                if (_this.userConfirmOrder == null)
-                    _this.userConfirmOrder = [];
-                _this.userConfirmOrder.push(order);
-                _this.userConfirmOrder.sort(function (a, b) { return (b.updated_at > a.updated_at) ? 1 : -1; });
+            else if (order.original != undefined) {
+                // if (order.order_status == "Confirmed") {
+                _this.userPendingOrder = order.original.data;
+                // }
+            }
+        });
+        this.pusher.ch_user_confirm_order.subscribe(function (order) {
+            if (order.original != undefined) {
+                _this.userConfirmOrder = order.original.data;
+            }
+            /* if (order.order_status == "Pending") {
+              if (this.userPendingOrder == null) this.userPendingOrder = [];
+              this.userPendingOrder.push(order);
+              this.userPendingOrder.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
+            } */
+            /* if (order.order_status == "Confirmed") {
+              if (this.userConfirmOrder == null) this.userConfirmOrder = [];
+              this.userConfirmOrder.push(order);
+              this.userConfirmOrder.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
+            } */
+        });
+        this.pusher.ch_buy_order.subscribe(function (order) {
+            if (order.original != undefined) {
+                _this.buyOrderList = order.original.data;
+            }
+        });
+        this.pusher.ch_sell_order.subscribe(function (order) {
+            if (order.original != undefined) {
+                _this.sellOrderList = order.original.data;
             }
         });
     };
@@ -2609,8 +2643,8 @@ var OriginalChartComponent = /** @class */ (function () {
     }
     OriginalChartComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.pusher.ch_exchange_order.subscribe(function (order) {
-            if (order.order_status == "Confirmed") {
+        this.pusher.ch_chart.subscribe(function (chart) {
+            if (chart.original != undefined) {
                 _this.chartData(180);
             }
         });

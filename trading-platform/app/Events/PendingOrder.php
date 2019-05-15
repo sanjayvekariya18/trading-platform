@@ -11,7 +11,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class OrderCancel implements ShouldBroadcastNow
+class PendingOrder implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -33,13 +33,13 @@ class OrderCancel implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('order_cancel'.\Auth::id());
+        return new Channel('pending_order');
     }
 
     public function broadcastWith()
     {
         return [
-            'data' => $this->order
+            'data' => $this->order,
         ];
     }
 }

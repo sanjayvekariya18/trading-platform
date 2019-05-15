@@ -22,7 +22,7 @@ class WalletTableSeeder extends Seeder
             foreach ($currencies as $currency) {
                 $data[] = array(
                     'user_id' => $user->id, 
-                    'balance' => 100.00000000, 
+                    'balance' => 2000.00000000, 
                     'balance_lock' => 0.00000000, 
                     'currency_id' => $currency->id, 
                 );

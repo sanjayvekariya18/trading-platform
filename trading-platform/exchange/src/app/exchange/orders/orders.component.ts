@@ -60,8 +60,11 @@ export class OrdersComponent implements OnInit, OnChanges {
 
   ngOnInit() {
 
-    this.pusher.ch_exchange_order.subscribe((order: any) => {
-      if (order.order_status == "Pending") {
+    this.pusher.ch_pending_order.subscribe((order: any) => {
+      /* if (order.original == undefined){
+        return false;
+      } */
+      // if (order.order_status == "Pending") {
         if (order.side == "BUY") {
           if (this.buyOrderList == null) this.buyOrderList = [];
           this.buyOrderList.push(order);
@@ -73,20 +76,48 @@ export class OrdersComponent implements OnInit, OnChanges {
           this.sellOrderList.sort((a, b) => (a.price > b.price) ? 1 : -1);
           this.sellOrderList = this.groupByPrice(this.sellOrderList);
         }
-      }
+      // }
     });
 
-    this.pusher.ch_user_order.subscribe((order: any) => {
+    this.pusher.ch_user_open_order.subscribe((order: any) => {
       if (order.order_status == "Pending") {
         if (this.userPendingOrder == null) this.userPendingOrder = [];
         this.userPendingOrder.push(order);
         this.userPendingOrder.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
+      }else if(order.original != undefined){
+        // if (order.order_status == "Confirmed") {
+          this.userPendingOrder = order.original.data;
+        // }
       }
+    });
 
-      if (order.order_status == "Confirmed") {
+    this.pusher.ch_user_confirm_order.subscribe((order: any) => {
+      if (order.original != undefined){
+        this.userConfirmOrder = order.original.data;
+      }
+      
+      /* if (order.order_status == "Pending") {
+        if (this.userPendingOrder == null) this.userPendingOrder = [];
+        this.userPendingOrder.push(order);
+        this.userPendingOrder.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
+      } */
+
+      /* if (order.order_status == "Confirmed") {
         if (this.userConfirmOrder == null) this.userConfirmOrder = [];
         this.userConfirmOrder.push(order);
         this.userConfirmOrder.sort((a, b) => (b.updated_at > a.updated_at) ? 1 : -1);
+      } */
+    });
+
+    this.pusher.ch_buy_order.subscribe((order: any) => {
+      if (order.original != undefined){
+        this.buyOrderList = order.original.data;
+      }
+    });
+
+    this.pusher.ch_sell_order.subscribe((order: any) => {
+      if (order.original != undefined){
+        this.sellOrderList = order.original.data;
       }
     });
   }

@@ -12,24 +12,31 @@ import { List } from 'immutable';
 export class PusherService {
     pusher: any;
     private channels: any[];
+    
+    // Private Channels
+    private _ch_user_open_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
+    public ch_user_open_order: Observable<List<string>> = this._ch_user_open_order.asObservable();
 
-    /* private _ch_confirm_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
-    public ch_confirm_order: Observable<List<string>> = this._ch_confirm_order.asObservable();
-
-    private _ch_pending_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
-    public ch_pending_order: Observable<List<string>> = this._ch_pending_order.asObservable(); */
-
-    private _ch_user_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
-    public ch_user_order: Observable<List<string>> = this._ch_user_order.asObservable();
+    private _ch_user_confirm_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
+    public ch_user_confirm_order: Observable<List<string>> = this._ch_user_confirm_order.asObservable();
 
     private _ch_wallet_amount: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
     public ch_wallet_amount: Observable<List<string>> = this._ch_wallet_amount.asObservable();
 
     private _ch_order_cancel: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
     public ch_order_cancel: Observable<List<string>> = this._ch_order_cancel.asObservable();
+    
+    
+    // Public Channels
 
-    private _ch_exchange_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
-    public ch_exchange_order: Observable<List<string>> = this._ch_exchange_order.asObservable();
+    private _ch_buy_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
+    public ch_buy_order: Observable<List<string>> = this._ch_buy_order.asObservable();
+
+    private _ch_sell_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
+    public ch_sell_order: Observable<List<string>> = this._ch_sell_order.asObservable();
+
+    private _ch_pending_order: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
+    public ch_pending_order: Observable<List<string>> = this._ch_pending_order.asObservable();
 
     private _ch_chart: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
     public ch_chart: Observable<List<string>> = this._ch_chart.asObservable();
@@ -37,8 +44,8 @@ export class PusherService {
     private _ch_currency_pair: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
     public ch_currency_pair: Observable<List<string>> = this._ch_currency_pair.asObservable();
 
-    /* private _ch_trade_history: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
-    public ch_trade_history: Observable<List<string>> = this._ch_trade_history.asObservable(); */
+    private _ch_trade_history: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
+    public ch_trade_history: Observable<List<string>> = this._ch_trade_history.asObservable();
 
     private _ch_daily_exchange: BehaviorSubject<List<string>> = new BehaviorSubject(List([]));
     public ch_daily_exchange: Observable<List<string>> = this._ch_daily_exchange.asObservable();
@@ -50,7 +57,6 @@ export class PusherService {
         if (localStorage.getItem('currentUser')) {
             this.currentUser = JSON.parse(localStorage.getItem("currentUser"));
         }
-
 
         if (this.currentUser != undefined) {
             this.pusher = new Pusher('7b488ce6d8fea3f95cc6', {
@@ -65,29 +71,24 @@ export class PusherService {
                 }
             });
 
-            /* var channel = this.pusher.subscribe('private-confirm_order');
-            channel.bind('App\\Events\\ConfirmOrder', (data) => {
+            var channel = this.pusher.subscribe('private-user_open_order'+this.currentUser.id);
+            channel.bind('App\\Events\\UserOpenOrder', (data) => {
                 console.log(data.data);
-                this._ch_confirm_order.next(data.data);
-            }); */
-
-            /* var channel = this.pusher.subscribe('private-pending_order');
-            channel.bind('App\\Events\\PendingOrder', (data) => {
-                console.log(data.data);
-                this._ch_pending_order.next(data.data);
-            }); */
-
-            var channel = this.pusher.subscribe('private-user_order');
-            channel.bind('App\\Events\\UserOrder', (data) => {
-                this._ch_user_order.next(data.data);
+                this._ch_user_open_order.next(data.data);
             });
 
-            var channel = this.pusher.subscribe('private-wallet_amount');
+            var channel = this.pusher.subscribe('private-user_confirm_order'+this.currentUser.id);
+            channel.bind('App\\Events\\UserConfirmOrder', (data) => {
+                console.log(data.data);
+                this._ch_user_confirm_order.next(data.data);
+            });
+
+            var channel = this.pusher.subscribe('private-wallet_amount'+this.currentUser.id);
             channel.bind('App\\Events\\WalletAmount', (data) => {
                 this._ch_wallet_amount.next(data.data);
             });
 
-            var channel = this.pusher.subscribe('private-order_cancel');
+            var channel = this.pusher.subscribe('private-order_cancel'+this.currentUser.id);
             channel.bind('App\\Events\\OrderCancel', (data) => {
                 console.log(data.data);
                 this._ch_order_cancel.next(data.data);
@@ -100,9 +101,19 @@ export class PusherService {
             });
         }
 
-        var channel = this.pusher.subscribe('exchange_order');
-        channel.bind('App\\Events\\ExchangeOrder', (data) => {
-            this._ch_exchange_order.next(data.data);
+        var channel = this.pusher.subscribe('buy_order');
+        channel.bind('App\\Events\\BuyOrder', (data) => {
+            this._ch_buy_order.next(data.data);
+        });
+
+        var channel = this.pusher.subscribe('sell_order');
+        channel.bind('App\\Events\\SellOrder', (data) => {
+            this._ch_sell_order.next(data.data);
+        });
+
+        var channel = this.pusher.subscribe('pending_order');
+        channel.bind('App\\Events\\PendingOrder', (data) => {
+            this._ch_pending_order.next(data.data);
         });
 
         var channel = this.pusher.subscribe('chart');
@@ -115,10 +126,10 @@ export class PusherService {
             this._ch_currency_pair.next(data.data);
         });
 
-        /* var channel = this.pusher.subscribe('trade_history');
+        var channel = this.pusher.subscribe('trade_history');
         channel.bind('App\\Events\\TradeHistory', (data) => {
             this._ch_trade_history.next(data.data);
-        }); */
+        });
 
         var channel = this.pusher.subscribe('daily_exchange');
         channel.bind('App\\Events\\DailyExchange', (data) => {

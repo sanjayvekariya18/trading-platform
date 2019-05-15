@@ -39,7 +39,7 @@ class Chart implements ShouldBroadcastNow
     public function broadcastWith()
     {
         return [
-            'data' => app('App\Http\Controllers\ExchangeController')->getChartData($this->currencyPairId)
+            'data' => app('App\Http\Controllers\ExchangeController')->getChartData($this->currencyPairId,180)
         ];
     }
 }
